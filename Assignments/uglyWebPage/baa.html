@@ -42,6 +42,7 @@
             background-clip: text;
             animation: rainbow 3s linear infinite;
             letter-spacing: 0.3em;
+            will-change: background-position;
         }
 
         .score-value {
@@ -53,6 +54,7 @@
             background-clip: text;
             animation: rainbow 3s linear infinite;
             letter-spacing: 0.1em;
+            will-change: background-position;
         }
 
         @keyframes rainbow {
@@ -71,6 +73,8 @@
             transition: transform 0.2s ease, opacity 0.3s ease;
             user-select: none;
             animation: float 3s ease-in-out infinite;
+            will-change: transform;
+            transform: translateZ(0); /* Force GPU acceleration */
         }
 
         .sheep:hover {
@@ -129,6 +133,7 @@
             animation: rainbow 3s linear infinite;
             letter-spacing: 0.5em;
             font-weight: bold;
+            will-change: background-position;
         }
 
         h1 .char {
@@ -140,12 +145,13 @@
 <body>
     <div class="score-board">
         <div class="score-label">Sheep Collected</div>
-        <div class="score-value" id="score">0</div>
+        <div class="score-value" id="score">0 / 50</div>
     </div>
 
     <h1 id="title">Collect the Sheep!</h1>
 
     <div class="celebration" id="celebration">+1 🤮</div>
+    <div class="win-message" id="winMessage">🎉 You Win! 🎉</div>
 
     <script>
         let score = 0;
@@ -154,7 +160,7 @@
         const body = document.body;
 
         // Number of sheep to scatter
-        const numSheep = 15;
+        const numSheep = 30;
 
         // Create and scatter sheep
         function createSheep() {
@@ -166,7 +172,7 @@
                 const isBald = Math.random() < 0.3;
                 sheep.textContent = isBald ? '🐏' : '🐑';
                 
-                // Random position
+                // Random position using transform for better performance
                 const x = Math.random() * (window.innerWidth - 100);
                 const y = Math.random() * (window.innerHeight - 100) + 100; // Start below header
                 
@@ -212,16 +218,20 @@
             }, 300);
         }
 
-        // Handle window resize
+        // Handle window resize with debouncing for better performance
+        let resizeTimeout;
         window.addEventListener('resize', function() {
-            // Reposition sheep if needed
-            const sheepElements = document.querySelectorAll('.sheep:not(.collected)');
-            sheepElements.forEach(sheep => {
-                const x = Math.random() * (window.innerWidth - 100);
-                const y = Math.random() * (window.innerHeight - 100) + 100;
-                sheep.style.left = x + 'px';
-                sheep.style.top = y + 'px';
-            });
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                // Reposition sheep if needed (only if not collected)
+                const sheepElements = document.querySelectorAll('.sheep:not(.collected)');
+                sheepElements.forEach(sheep => {
+                    const x = Math.random() * (window.innerWidth - 100);
+                    const y = Math.random() * (window.innerHeight - 100) + 100;
+                    sheep.style.left = x + 'px';
+                    sheep.style.top = y + 'px';
+                });
+            }, 150); // Debounce resize events
         });
 
         // Make title text have uneven spacing
