@@ -146,6 +146,12 @@
         <!-- For now using a placeholder - replace with your audio file -->
         <source src="" type="audio/mpeg">
     </audio>
+    <audio id="explosionSound" preload="auto">
+        <!-- Add your explosion sound effect here -->
+        <!-- Example: <source src="explosion.mp3" type="audio/mpeg"> -->
+        <!-- Or use an online source -->
+        <source src="" type="audio/mpeg">
+    </audio>
     <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop" alt="Man getting closer" class="zooming-man" id="zoomingMan">
     <h1>Team Tiim Teem</h1>
     <p>The FitnessGram™ Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues. The 20 meter pacer test will begin in 30 seconds. Line up at the start. The running speed starts slowly, but gets faster each minute after you hear this signal. [beep] A single lap should be completed each time you hear this sound. [ding] Remember to run in a straight line, and run as long as possible. The second time you fail to complete a lap before the sound, your test is over. The test will begin on the word start. On your mark, get ready, start.</p>
@@ -321,6 +327,21 @@
         document.addEventListener('click', playRecorderMusic, { once: true });
         document.addEventListener('keydown', playRecorderMusic, { once: true });
         document.addEventListener('touchstart', playRecorderMusic, { once: true });
+        
+        // Explosion sound on every click
+        function playExplosionSound() {
+            const explosion = document.getElementById('explosionSound');
+            if (explosion) {
+                explosion.volume = 1.0; // Max volume
+                explosion.currentTime = 0; // Reset to start
+                explosion.play().catch(e => {
+                    // If autoplay is blocked, that's okay - it will work on subsequent clicks
+                });
+            }
+        }
+        
+        // Play explosion sound on every click anywhere on the page
+        document.addEventListener('click', playExplosionSound);
     </script>
 </body>
 </html>
