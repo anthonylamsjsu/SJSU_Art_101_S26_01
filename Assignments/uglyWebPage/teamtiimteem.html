@@ -168,30 +168,11 @@
             utterance.rate = 0.9; // Slower, more relaxed like Jennifer Coolidge
             utterance.pitch = 0.7; // Slightly higher pitch
             
-            // Try to select a female voice similar to Jennifer Coolidge
+            // Use the default TTS voice
             const voices = window.speechSynthesis.getVoices();
-            // Look for female voices - prefer lower-pitched female voices
-            const femaleVoices = voices.filter(v => {
-                const name = v.name.toLowerCase();
-                return (v.lang.startsWith('en') && 
-                       (name.includes('female') || 
-                        name.includes('karen') || 
-                        name.includes('samantha') ||
-                        name.includes('susan') ||
-                        name.includes('victoria') ||
-                        name.includes('zira') ||
-                        v.default === true));
-            });
-            
-            // Prefer lower-pitched female voices or default to first English female voice
-            if (femaleVoices.length > 0) {
-                utterance.voice = femaleVoices[0];
-            } else {
-                // Fallback to any English voice
-                const englishVoices = voices.filter(v => v.lang.startsWith('en'));
-                if (englishVoices.length > 0) {
-                    utterance.voice = englishVoices[0];
-                }
+            const defaultVoice = voices.find(v => v.default) || voices[0];
+            if (defaultVoice) {
+                utterance.voice = defaultVoice;
             }
             
             // Cancel any existing speech
