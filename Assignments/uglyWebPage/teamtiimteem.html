@@ -24,8 +24,6 @@
         
         .video-popup {
             position: fixed;
-            width: 400px;
-            height: 300px;
             background: #000;
             border: 5px solid #FF0000;
             border-radius: 10px;
@@ -59,7 +57,6 @@
         .video-content {
             width: 100%;
             height: calc(100% - 50px);
-            background: linear-gradient(45deg, #FF0000, #0000FF, #00FF00);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -78,9 +75,65 @@
         .ad-text {
             padding: 20px;
         }
+        
+        .line-left {
+            text-align: left;
+            display: block;
+        }
+        
+        .line-center {
+            text-align: center;
+            display: block;
+        }
+        
+        .line-right {
+            text-align: right;
+            display: block;
+        }
+        
+        .line-justify {
+            text-align: justify;
+            display: block;
+        }
+        
+        h1 {
+            font-family: "Papyrus", "Brush Script MT", "Lucida Handwriting", "Courier New", fantasy;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 3px 3px 0px #FF0000, -3px -3px 0px #00FF00;
+        }
+        
+        .zooming-man {
+            position: fixed;
+            width: 200px;
+            height: 300px;
+            object-fit: cover;
+            z-index: 5000;
+            border: 5px solid #FF0000;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.9);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease-out;
+        }
     </style>
 </head>
 <body>
+    <audio id="recorderMusic" autoplay loop>
+        <!-- Add your bad recorder audio file here -->
+        <!-- Example: <source src="bad-recorder.mp3" type="audio/mpeg"> -->
+        <!-- Or use an online source like: -->
+        <!-- <source src="https://example.com/bad-recorder.mp3" type="audio/mpeg"> -->
+        <!-- For now using a placeholder - replace with your audio file -->
+        <source src="" type="audio/mpeg">
+    </audio>
+    <audio id="explosionSound" preload="auto">
+        <!-- Add your explosion sound effect here -->
+        <!-- Example: <source src="explosion.mp3" type="audio/mpeg"> -->
+        <!-- Or use an online source -->
+        <source src="" type="audio/mpeg">
+    </audio>
+    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=600&fit=crop&q=80" alt="Elderly Filipino man" class="zooming-man" id="zoomingMan">
     <h1>Team Tiim Teem</h1>
     <p>The FitnessGram™ Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues. The 20 meter pacer test will begin in 30 seconds. Line up at the start. The running speed starts slowly, but gets faster each minute after you hear this signal. [beep] A single lap should be completed each time you hear this sound. [ding] Remember to run in a straight line, and run as long as possible. The second time you fail to complete a lap before the sound, your test is over. The test will begin on the word start. On your mark, get ready, start.</p>
     
@@ -107,29 +160,96 @@
         // Show first popup immediately
         setTimeout(showScamPopup, 500);
         
-        // Text-to-speech at max volume
+        // Text-to-speech at max volume with Jennifer Coolidge-like voice
         function readAllText() {
             const allText = document.body.innerText || document.body.textContent;
             const utterance = new SpeechSynthesisUtterance(allText);
-            utterance.volume = 1.0; // Max volume
-            utterance.rate = 1.0;
-            utterance.pitch = 1.0;
+            utterance.volume = 1.0; // Max volume (1.0 is the maximum allowed)
+            utterance.rate = 0.9; // Slower, more relaxed like Jennifer Coolidge
+            utterance.pitch = 0.7; // Slightly higher pitch
+            
+            // Use the default TTS voice
+            const voices = window.speechSynthesis.getVoices();
+            const defaultVoice = voices.find(v => v.default) || voices[0];
+            if (defaultVoice) {
+                utterance.voice = defaultVoice;
+            }
+            
             // Cancel any existing speech
             window.speechSynthesis.cancel();
+            
+            // Loop the narration when it ends
+            utterance.onend = function() {
+                readAllText();
+            };
+            
             window.speechSynthesis.speak(utterance);
+        }
+        
+        // Function to start TTS when ready
+        function startTTS() {
+            const voices = window.speechSynthesis.getVoices();
+            if (voices.length > 0) {
+                readAllText();
+            } else {
+                // If voices not loaded yet, try again shortly
+                setTimeout(startTTS, 100);
+            }
+        }
+        
+        // Load voices when available and start TTS
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = function() {
+                startTTS();
+            };
         }
         
         // Try to start immediately and on multiple events
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', readAllText);
+            document.addEventListener('DOMContentLoaded', startTTS);
         } else {
-            readAllText();
+            startTTS();
         }
         
-        window.addEventListener('load', readAllText);
+        window.addEventListener('load', startTTS);
         
-        // Also try after a very short delay
-        setTimeout(readAllText, 50);
+        // Try multiple times with increasing delays to ensure it starts
+        setTimeout(startTTS, 50);
+        setTimeout(startTTS, 200);
+        setTimeout(startTTS, 500);
+        setTimeout(startTTS, 1000);
+        
+        // Make each line centered differently
+        function applyDifferentAlignments() {
+            const p = document.querySelector('p');
+            if (p) {
+                const text = p.textContent;
+                const sentences = text.split(/[.!?]\s+/).filter(s => s.trim());
+                const alignments = ['line-left', 'line-center', 'line-right', 'line-justify'];
+                
+                p.innerHTML = sentences.map((sentence, index) => {
+                    const alignment = alignments[index % alignments.length];
+                    return `<span class="${alignment}">${sentence.trim()}${index < sentences.length - 1 ? '.' : ''}</span>`;
+                }).join(' ');
+            }
+            
+            const h1 = document.querySelector('h1');
+            if (h1) {
+                const words = h1.textContent.split(' ');
+                const alignments = ['line-left', 'line-center', 'line-right'];
+                h1.innerHTML = words.map((word, index) => {
+                    const alignment = alignments[index % alignments.length];
+                    return `<span class="${alignment}">${word}</span>`;
+                }).join(' ');
+            }
+        }
+        
+        // Apply alignments when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', applyDifferentAlignments);
+        } else {
+            applyDifferentAlignments();
+        }
         
         // Fake video advertisement popups
         const fakeAds = [
@@ -147,20 +267,46 @@
             const popup = document.createElement('div');
             popup.className = 'video-popup';
             
+            // Random sizes
+            const sizes = [
+                { width: 300, height: 200 },
+                { width: 400, height: 300 },
+                { width: 500, height: 400 },
+                { width: 250, height: 350 },
+                { width: 600, height: 250 },
+                { width: 350, height: 500 }
+            ];
+            const size = sizes[Math.floor(Math.random() * sizes.length)];
+            popup.style.width = size.width + 'px';
+            popup.style.height = size.height + 'px';
+            
             // Random position
-            const x = Math.random() * (window.innerWidth - 400);
-            const y = Math.random() * (window.innerHeight - 300);
+            const x = Math.random() * (window.innerWidth - size.width);
+            const y = Math.random() * (window.innerHeight - size.height);
             popup.style.left = x + 'px';
             popup.style.top = y + 'px';
             
             const adText = fakeAds[Math.floor(Math.random() * fakeAds.length)];
+            
+            // Different background images/styles
+            const backgrounds = [
+                'linear-gradient(45deg, #FF0000, #0000FF, #00FF00)',
+                'linear-gradient(135deg, #FF00FF, #FFFF00, #00FFFF)',
+                'url("https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=400&h=300&fit=crop")',
+                'url("https://images.unsplash.com/photo-1557683316-973673baf926?w=400&h=300&fit=crop")',
+                'url("https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&h=300&fit=crop")',
+                'radial-gradient(circle, #FF0000, #000000)',
+                'repeating-linear-gradient(45deg, #FF0000, #FF0000 10px, #0000FF 10px, #0000FF 20px)',
+                'url("https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400&h=300&fit=crop")'
+            ];
+            const background = backgrounds[Math.floor(Math.random() * backgrounds.length)];
             
             popup.innerHTML = `
                 <div class="video-header">
                     <span>ADVERTISEMENT</span>
                     <button class="close-btn" onclick="this.parentElement.parentElement.remove()">X</button>
                 </div>
-                <div class="video-content">
+                <div class="video-content" style="background: ${background}; background-size: cover; background-position: center;">
                     <div class="ad-text">${adText}</div>
                 </div>
             `;
@@ -180,6 +326,86 @@
         
         // Create first popup after 1 second
         setTimeout(createVideoPopup, 1000);
+        
+        // Bad recorder background music
+        function playRecorderMusic() {
+            const audio = document.getElementById('recorderMusic');
+            if (audio) {
+                audio.volume = 1.0; // Max volume
+                audio.play().catch(e => {
+                    // Autoplay might be blocked, try again on user interaction
+                    console.log('Autoplay blocked, will try on interaction');
+                });
+            }
+        }
+        
+        // Try to play music on load
+        window.addEventListener('load', function() {
+            setTimeout(playRecorderMusic, 100);
+        });
+        
+        // Also try on any user interaction (click, keypress, etc.)
+        document.addEventListener('click', playRecorderMusic, { once: true });
+        document.addEventListener('keydown', playRecorderMusic, { once: true });
+        document.addEventListener('touchstart', playRecorderMusic, { once: true });
+        
+        // Explosion sound on every click
+        function playExplosionSound() {
+            const explosion = document.getElementById('explosionSound');
+            if (explosion) {
+                explosion.volume = 1.0; // Max volume
+                explosion.currentTime = 0; // Reset to start
+                explosion.play().catch(e => {
+                    // If autoplay is blocked, that's okay - it will work on subsequent clicks
+                });
+            }
+        }
+        
+        // Play explosion sound on every click anywhere on the page
+        document.addEventListener('click', playExplosionSound);
+        
+        // Make the pointing person follow the mouse cursor and slowly zoom in
+        const pointingPerson = document.getElementById('zoomingMan');
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let currentScale = 0.5; // Start small
+        const zoomSpeed = 0.005; // How fast to zoom in per frame (increased from 0.001 to 0.005 for 5x faster)
+        const maxScale = 3; // Maximum zoom level
+        
+        function updatePointingPersonPosition() {
+            if (pointingPerson) {
+                // Continuously increase scale to make it slowly get closer
+                currentScale = Math.min(currentScale + zoomSpeed, maxScale);
+                
+                // Update position and scale
+                pointingPerson.style.left = mouseX + 'px';
+                pointingPerson.style.top = mouseY + 'px';
+                pointingPerson.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
+            }
+        }
+        
+        // Track mouse movement
+        document.addEventListener('mousemove', function(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+        
+        // Also follow on touch devices
+        document.addEventListener('touchmove', function(e) {
+            if (e.touches.length > 0) {
+                mouseX = e.touches[0].clientX;
+                mouseY = e.touches[0].clientY;
+            }
+        });
+        
+        // Continuously update position and zoom
+        function animatePointingPerson() {
+            updatePointingPersonPosition();
+            requestAnimationFrame(animatePointingPerson);
+        }
+        
+        // Start animation
+        animatePointingPerson();
     </script>
 </body>
 </html>

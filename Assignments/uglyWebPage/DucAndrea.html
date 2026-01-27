@@ -14,7 +14,7 @@
         body {
             cursor: none;
             overflow: hidden;
-            background: #000;
+            background: #1e974c;
             height: 100vh;
             width: 100vw;
         }
@@ -46,31 +46,240 @@
         }
 
         .content {
-            position: relative;
+            position: absolute;
             z-index: 1;
-            color: #ff00ff;
+            color: #00ff7b;
             font-size: 48px;
             text-align: center;
-            padding-top: 50vh;
-            text-shadow: 0 0 20px #00ffff, 0 0 40px #ff00ff;
-            animation: blink 1s infinite;
+            text-shadow: 0 0 20px #1f691c, 0 0 40px #d98bd9;
+            animation: spin 2s linear infinite, blink 1s infinite;
+            transform-origin: center;
+        }
+
+        .content h1, .content p {
+            display: inline-block;
+            animation: spin 1.5s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         @keyframes blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.3; }
         }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: popupAppear 0.5s ease-out;
+        }
+
+        .popup {
+            background: linear-gradient(135deg, #ff00ff 0%, #00ffff 50%, #ffff00 100%);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 0 50px #ff00ff, 0 0 100px #00ffff;
+            border: 5px solid #fff;
+            animation: popupShake 0.5s infinite, popupPulse 2s infinite;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .popup h2 {
+            color: #fff;
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 0px #000, 0 0 20px #fff;
+            animation: textBounce 1s infinite;
+        }
+
+        .popup p {
+            color: #fff;
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 0px #000;
+        }
+
+        .claim-button {
+            background: #00ff00;
+            color: #000;
+            font-size: 28px;
+            font-weight: bold;
+            padding: 20px 40px;
+            border: 4px solid #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 0 30px #00ff00, 0 0 60px #00ff00;
+            animation: buttonPulse 1s infinite;
+            transition: transform 0.1s;
+        }
+
+        .claim-button:hover {
+            transform: scale(1.1);
+            background: #ffff00;
+        }
+
+        .claim-button:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes popupAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes popupShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px) rotate(-1deg); }
+            75% { transform: translateX(5px) rotate(1deg); }
+        }
+
+        @keyframes popupPulse {
+            0%, 100% { box-shadow: 0 0 50px #ff00ff, 0 0 100px #00ffff; }
+            50% { box-shadow: 0 0 80px #ff00ff, 0 0 150px #00ffff; }
+        }
+
+        @keyframes textBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes buttonPulse {
+            0%, 100% { box-shadow: 0 0 30px #00ff00, 0 0 60px #00ff00; }
+            50% { box-shadow: 0 0 50px #00ff00, 0 0 100px #00ff00; }
+        }
+
+        .popup-ad {
+            position: fixed;
+            width: 300px;
+            height: 250px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff, #ffff00, #ff00ff);
+            background-size: 400% 400%;
+            animation: gradientShift 2s ease infinite, shake 0.5s infinite;
+            border: 5px solid #ff0000;
+            border-radius: 10px;
+            z-index: 10000;
+            padding: 20px;
+            box-shadow: 0 0 50px #ff00ff, 0 0 100px #00ffff;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #000;
+            font-weight: bold;
+            font-size: 24px;
+            text-align: center;
+            text-shadow: 2px 2px 4px #fff;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(-5px, -5px) rotate(-2deg); }
+            50% { transform: translate(5px, 5px) rotate(2deg); }
+            75% { transform: translate(-5px, 5px) rotate(-2deg); }
+        }
+
+        .popup-ad h2 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            animation: blink 0.5s infinite;
+        }
+
+        .popup-ad p {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ff0000;
+            color: #fff;
+            border: none;
+            width: 30px;
+            height: 30px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 50%;
+            z-index: 10001;
+        }
+
+        .close-btn:hover {
+            background: #ff6666;
+            transform: scale(1.2);
+        }
     </style>
 </head>
 <body>
+    <audio id="backgroundMusic" autoplay loop volume="1.0">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        <!-- Fallback: You can also add a local music file -->
+        <!-- <source src="music.mp3" type="audio/mpeg"> -->
+    </audio>
+
+    <!-- Popup Modal -->
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup">
+            <h2>🎉 CONGRATULATIONS! 🎉</h2>
+            <p>You've won a FREE iPad!</p>
+            <p style="font-size: 18px;">Click the button below to claim your reward!</p>
+            <button class="claim-button" onclick="claimReward()">CLAIM REWARD</button>
+        </div>
+    </div>
+
     <div class="custom-cursor"></div>
     <div class="cursor-dot"></div>
     <div class="content">
         <h1>Really Good Web Page</h1>
         <p>Really Good Web Page</p>
+        
     </div>
 
     <script>
+        // Set volume to maximum and ensure autoplay
+        const audio = document.getElementById('backgroundMusic');
+        audio.volume = 1.0; // Maximum volume (1.0 = 100%)
+        
+        // Try to play audio (some browsers require user interaction first)
+        audio.play().catch(error => {
+            console.log('Autoplay prevented. User interaction required.');
+            // Add click handler to start music on first interaction
+            document.addEventListener('click', () => {
+                audio.play();
+            }, { once: true });
+        });
         const customCursor = document.querySelector('.custom-cursor');
         const cursorDot = document.querySelector('.cursor-dot');
 
@@ -85,6 +294,123 @@
             customCursor.style.top = oppositeY + 'px';
             cursorDot.style.left = oppositeX + 'px';
             cursorDot.style.top = oppositeY + 'px';
+        });
+
+        // Make text move randomly around the screen
+        const content = document.querySelector('.content');
+        
+        function moveTextRandomly() {
+            const maxX = window.innerWidth - 400; // Account for text width
+            const maxY = window.innerHeight - 200; // Account for text height
+            
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+            
+            content.style.left = randomX + 'px';
+            content.style.top = randomY + 'px';
+        }
+
+        // Move text to random position every 1-3 seconds
+        function startRandomMovement() {
+            moveTextRandomly();
+            const randomInterval = 1000 + Math.random() * 2000; // 1-3 seconds
+            setTimeout(startRandomMovement, randomInterval);
+        }
+
+        // Start random movement after page loads
+        window.addEventListener('load', () => {
+            startRandomMovement();
+        });
+
+        // Popup modal functionality
+        function claimReward() {
+            alert('Thank you for claiming! Please enter your credit card information to receive your FREE iPad!');
+            // Make popup reappear after a delay (annoying!)
+            setTimeout(() => {
+                document.getElementById('popupOverlay').style.display = 'flex';
+            }, 2000);
+        }
+
+        // Show popup immediately when page loads
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('popupOverlay').style.display = 'flex';
+            }, 500);
+        });
+
+        // Make popup reappear if user tries to click outside (very annoying!)
+        document.getElementById('popupOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('popupOverlay')) {
+                // Popup reappears after a short delay
+                setTimeout(() => {
+                    document.getElementById('popupOverlay').style.display = 'flex';
+                }, 1000);
+            }
+        });
+
+        // Function to create popup ads
+        function createPopupAd(x, y) {
+            const ad = document.createElement('div');
+            ad.className = 'popup-ad';
+            
+            // Random ad messages
+            const adMessages = [
+                'CLICK HERE NOW!',
+                'FREE MONEY!!!',
+                'YOU WON!',
+                'URGENT: CLICK ME!',
+                'SPECIAL OFFER!',
+                'DON\'T MISS OUT!',
+                'LIMITED TIME!',
+                'ACT NOW!'
+            ];
+            
+            const randomMessage = adMessages[Math.floor(Math.random() * adMessages.length)];
+            
+            ad.innerHTML = `
+                <button class="close-btn" onclick="this.parentElement.remove()">×</button>
+                <h2>${randomMessage}</h2>
+                <p>Click for more!</p>
+                <p>🎉 SPECIAL DEAL 🎉</p>
+            `;
+            
+            // Position the ad near the click location
+            const offsetX = (Math.random() - 0.5) * 200;
+            const offsetY = (Math.random() - 0.5) * 200;
+            ad.style.left = (x + offsetX) + 'px';
+            ad.style.top = (y + offsetY) + 'px';
+            
+            // Make clicking the ad create more ads
+            ad.addEventListener('click', (e) => {
+                if (e.target.className !== 'close-btn') {
+                    // Create 2-3 more ads when clicking an ad
+                    const numAds = 2 + Math.floor(Math.random() * 2);
+                    for (let i = 0; i < numAds; i++) {
+                        setTimeout(() => {
+                            createPopupAd(
+                                e.clientX + (Math.random() - 0.5) * 300,
+                                e.clientY + (Math.random() - 0.5) * 300
+                            );
+                        }, i * 100);
+                    }
+                }
+            });
+            
+            document.body.appendChild(ad);
+        }
+
+        // Add click handler to the entire page
+        document.addEventListener('click', (e) => {
+            // Don't create ads when clicking on the modal overlay or its children
+            if (!e.target.closest('.popup-overlay') && !e.target.closest('.popup')) {
+                // Create 1-2 popup ads on each click
+                const numAds = 1 + Math.floor(Math.random() * 2);
+                for (let i = 0; i < numAds; i++) {
+                    setTimeout(() => {
+                        createPopupAd(e.clientX, e.clientY);
+                    }, i * 100);
+                }
+            }
         });
     </script>
 </body>
