@@ -4,8 +4,263 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Team Tiim Teem</title>
+    <style>
+        body {
+            background-color: #0000FF;
+            margin-left: 3%;
+            padding-top: 5%;
+            color: #573a54;
+            font-size: 100px;
+            animation: shake 0.1s infinite;
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(2px, -1px); }
+            50% { transform: translate(-1px, 2px); }
+            75% { transform: translate(-2px, 1px); }
+        }
+        
+        .video-popup {
+            position: fixed;
+            width: 400px;
+            height: 300px;
+            background: #000;
+            border: 5px solid #FF0000;
+            border-radius: 10px;
+            z-index: 10000;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.8);
+            overflow: hidden;
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+        }
+        
+        .video-header {
+            background: #FF0000;
+            color: #FFF;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .close-btn {
+            background: #FFF;
+            color: #000;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 3px;
+        }
+        
+        .video-content {
+            width: 100%;
+            height: calc(100% - 50px);
+            background: linear-gradient(45deg, #FF0000, #0000FF, #00FF00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFF;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            animation: flash 0.5s infinite;
+        }
+        
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .ad-text {
+            padding: 20px;
+        }
+        
+        .line-left {
+            text-align: left;
+            display: block;
+        }
+        
+        .line-center {
+            text-align: center;
+            display: block;
+        }
+        
+        .line-right {
+            text-align: right;
+            display: block;
+        }
+        
+        .line-justify {
+            text-align: justify;
+            display: block;
+        }
+        
+        h1 {
+            font-family: "Papyrus", "Brush Script MT", "Lucida Handwriting", "Courier New", fantasy;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 3px 3px 0px #FF0000, -3px -3px 0px #00FF00;
+        }
+    </style>
 </head>
 <body>
     <h1>Team Tiim Teem</h1>
+    <p>The FitnessGram™ Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues. The 20 meter pacer test will begin in 30 seconds. Line up at the start. The running speed starts slowly, but gets faster each minute after you hear this signal. [beep] A single lap should be completed each time you hear this sound. [ding] Remember to run in a straight line, and run as long as possible. The second time you fail to complete a lap before the sound, your test is over. The test will begin on the word start. On your mark, get ready, start.</p>
+    
+    <script>
+        const scamMessages = [
+            "CONGRATULATIONS! You've won $1,000,000! Click OK to claim your prize!",
+            "WARNING: Your computer has been infected with 47 viruses! Click OK to remove them now!",
+            "URGENT: Your account will be suspended in 5 minutes! Click OK to verify your identity!",
+            "You are the 1,000,000th visitor! Claim your FREE iPhone now!",
+            "ALERT: Suspicious activity detected! Click OK to secure your account immediately!",
+            "You've been selected for a FREE gift card! Click OK to redeem!",
+            "WARNING: Your browser is outdated! Click OK to update now or risk security breach!",
+            "CONGRATULATIONS! You qualify for a government grant! Click OK to apply!"
+        ];
+        
+        function showScamPopup() {
+            const message = scamMessages[Math.floor(Math.random() * scamMessages.length)];
+            alert(message);
+        }
+        
+        // Show popup every 2 seconds
+        setInterval(showScamPopup, 2000);
+        
+        // Show first popup immediately
+        setTimeout(showScamPopup, 500);
+        
+        // Text-to-speech at max volume with annoying voice
+        function readAllText() {
+            const allText = document.body.innerText || document.body.textContent;
+            const utterance = new SpeechSynthesisUtterance(allText);
+            utterance.volume = 1.0; // Max volume
+            utterance.rate = 1.8; // Faster, more annoying
+            utterance.pitch = 2.5; // Very high pitch - squeaky and annoying
+            
+            // Try to select a more annoying voice if available
+            const voices = window.speechSynthesis.getVoices();
+            // Prefer higher-pitched or child-like voices
+            const annoyingVoices = voices.filter(v => 
+                v.name.toLowerCase().includes('child') || 
+                v.name.toLowerCase().includes('zira') ||
+                v.name.toLowerCase().includes('samantha') ||
+                v.lang.startsWith('en')
+            );
+            if (annoyingVoices.length > 0) {
+                utterance.voice = annoyingVoices[0];
+            }
+            
+            // Cancel any existing speech
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        }
+        
+        // Load voices when available
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = function() {
+                // Voices loaded, can now use them
+            };
+        }
+        
+        // Try to start immediately and on multiple events
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', readAllText);
+        } else {
+            readAllText();
+        }
+        
+        window.addEventListener('load', readAllText);
+        
+        // Also try after a very short delay
+        setTimeout(readAllText, 50);
+        
+        // Make each line centered differently
+        function applyDifferentAlignments() {
+            const p = document.querySelector('p');
+            if (p) {
+                const text = p.textContent;
+                const sentences = text.split(/[.!?]\s+/).filter(s => s.trim());
+                const alignments = ['line-left', 'line-center', 'line-right', 'line-justify'];
+                
+                p.innerHTML = sentences.map((sentence, index) => {
+                    const alignment = alignments[index % alignments.length];
+                    return `<span class="${alignment}">${sentence.trim()}${index < sentences.length - 1 ? '.' : ''}</span>`;
+                }).join(' ');
+            }
+            
+            const h1 = document.querySelector('h1');
+            if (h1) {
+                const words = h1.textContent.split(' ');
+                const alignments = ['line-left', 'line-center', 'line-right'];
+                h1.innerHTML = words.map((word, index) => {
+                    const alignment = alignments[index % alignments.length];
+                    return `<span class="${alignment}">${word}</span>`;
+                }).join(' ');
+            }
+        }
+        
+        // Apply alignments when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', applyDifferentAlignments);
+        } else {
+            applyDifferentAlignments();
+        }
+        
+        // Fake video advertisement popups
+        const fakeAds = [
+            "CLICK HERE FOR FREE MONEY!",
+            "YOU'VE WON A PRIZE!",
+            "DOWNLOAD NOW - 100% FREE!",
+            "LIMITED TIME OFFER!",
+            "CLICK TO CLAIM YOUR REWARD!",
+            "SPECIAL DEAL JUST FOR YOU!",
+            "URGENT: ACTION REQUIRED!",
+            "CONGRATULATIONS! YOU WON!"
+        ];
+        
+        function createVideoPopup() {
+            const popup = document.createElement('div');
+            popup.className = 'video-popup';
+            
+            // Random position
+            const x = Math.random() * (window.innerWidth - 400);
+            const y = Math.random() * (window.innerHeight - 300);
+            popup.style.left = x + 'px';
+            popup.style.top = y + 'px';
+            
+            const adText = fakeAds[Math.floor(Math.random() * fakeAds.length)];
+            
+            popup.innerHTML = `
+                <div class="video-header">
+                    <span>ADVERTISEMENT</span>
+                    <button class="close-btn" onclick="this.parentElement.parentElement.remove()">X</button>
+                </div>
+                <div class="video-content">
+                    <div class="ad-text">${adText}</div>
+                </div>
+            `;
+            
+            document.body.appendChild(popup);
+            
+            // Auto-remove after 10 seconds
+            setTimeout(() => {
+                if (popup.parentElement) {
+                    popup.remove();
+                }
+            }, 10000);
+        }
+        
+        // Create popup every 3 seconds
+        setInterval(createVideoPopup, 3000);
+        
+        // Create first popup after 1 second
+        setTimeout(createVideoPopup, 1000);
+    </script>
 </body>
 </html>

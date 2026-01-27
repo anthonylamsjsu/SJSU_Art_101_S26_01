@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Really Good Web Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            cursor: none;
+            overflow: hidden;
+            background: #1e974c;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .custom-cursor {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #ff00ff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff;
+            transition: transform 0.1s ease-out;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-dot {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #00ffff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            box-shadow: 0 0 10px #00ffff;
+            transition: transform 0.1s ease-out;
+            transform: translate(-50%, -50%);
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            color: #00ff7b;
+            font-size: 48px;
+            text-align: center;
+            padding-top: 50vh;
+            text-shadow: 0 0 20px #1f691c, 0 0 40px #d98bd9;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    <div class="custom-cursor"></div>
+    <div class="cursor-dot"></div>
+    <div class="content">
+        <h1>Really Good Web Page</h1>
+        <p>Really Good Web Page</p>
+    </div>
+
+    <script>
+        const customCursor = document.querySelector('.custom-cursor');
+        const cursorDot = document.querySelector('.cursor-dot');
+
+        document.addEventListener('mousemove', (e) => {
+            // Calculate opposite position
+            // If mouse is at (x, y), cursor goes to (windowWidth - x, windowHeight - y)
+            const oppositeX = window.innerWidth - e.clientX;
+            const oppositeY = window.innerHeight - e.clientY;
+
+            // Update cursor positions
+            customCursor.style.left = oppositeX + 'px';
+            customCursor.style.top = oppositeY + 'px';
+            cursorDot.style.left = oppositeX + 'px';
+            cursorDot.style.top = oppositeY + 'px';
+        });
+    </script>
+</body>
+</html>

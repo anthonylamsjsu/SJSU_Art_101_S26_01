@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sheep Collection Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #FFD700 0%, #8B4513 50%, #ADFF2F 100%);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .score-board {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .score-label {
+            font-size: 16px;
+            margin-bottom: 5px;
+            background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: rainbow 3s linear infinite;
+            letter-spacing: 0.3em;
+        }
+
+        .score-value {
+            font-size: 32px;
+            background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: rainbow 3s linear infinite;
+            letter-spacing: 0.1em;
+        }
+
+        @keyframes rainbow {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 200% 50%;
+            }
+        }
+
+        .sheep {
+            position: absolute;
+            font-size: 60px;
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.3s ease;
+            user-select: none;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .sheep:hover {
+            transform: scale(1.2);
+        }
+
+        .sheep.collected {
+            opacity: 0;
+            transform: scale(0) rotate(360deg);
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: bold;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 2000;
+            transition: opacity 0.3s ease;
+            background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: rainbow 3s linear infinite;
+            letter-spacing: 0.2em;
+        }
+
+        .celebration.show {
+            opacity: 1;
+            animation: pop 0.5s ease;
+        }
+
+        @keyframes pop {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            padding: 20px;
+            margin-top: 80px;
+            background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: rainbow 3s linear infinite;
+            letter-spacing: 0.5em;
+            font-weight: bold;
+        }
+
+        h1 .char {
+            display: inline-block;
+            letter-spacing: normal;
+        }
+    </style>
+</head>
+<body>
+    <div class="score-board">
+        <div class="score-label">Sheep Collected</div>
+        <div class="score-value" id="score">0</div>
+    </div>
+
+    <h1 id="title">🐑 Collect the Sheep! 🐑</h1>
+
+    <div class="celebration" id="celebration">+1 🎉</div>
+
+    <script>
+        let score = 0;
+        const scoreElement = document.getElementById('score');
+        const celebrationElement = document.getElementById('celebration');
+        const body = document.body;
+
+        // Number of sheep to scatter
+        const numSheep = 15;
+
+        // Create and scatter sheep
+        function createSheep() {
+            for (let i = 0; i < numSheep; i++) {
+                const sheep = document.createElement('div');
+                sheep.className = 'sheep';
+                sheep.textContent = '🐑';
+                
+                // Random position
+                const x = Math.random() * (window.innerWidth - 100);
+                const y = Math.random() * (window.innerHeight - 100) + 100; // Start below header
+                
+                sheep.style.left = x + 'px';
+                sheep.style.top = y + 'px';
+                
+                // Random animation delay for variety
+                sheep.style.animationDelay = (Math.random() * 2) + 's';
+                
+                // Click handler
+                sheep.addEventListener('click', function() {
+                    collectSheep(sheep);
+                });
+                
+                body.appendChild(sheep);
+            }
+        }
+
+        function collectSheep(sheep) {
+            if (sheep.classList.contains('collected')) return;
+            
+            sheep.classList.add('collected');
+            score++;
+            scoreElement.textContent = score;
+            
+            // Show celebration
+            celebrationElement.classList.add('show');
+            setTimeout(() => {
+                celebrationElement.classList.remove('show');
+            }, 500);
+            
+            // Remove sheep from DOM after animation
+            setTimeout(() => {
+                sheep.remove();
+            }, 300);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            // Reposition sheep if needed
+            const sheepElements = document.querySelectorAll('.sheep:not(.collected)');
+            sheepElements.forEach(sheep => {
+                const x = Math.random() * (window.innerWidth - 100);
+                const y = Math.random() * (window.innerHeight - 100) + 100;
+                sheep.style.left = x + 'px';
+                sheep.style.top = y + 'px';
+            });
+        });
+
+        // Make title text have uneven spacing
+        function makeUnevenSpacing() {
+            const title = document.getElementById('title');
+            const text = title.textContent;
+            title.innerHTML = '';
+            
+            for (let i = 0; i < text.length; i++) {
+                const span = document.createElement('span');
+                span.className = 'char';
+                span.textContent = text[i];
+                // Random letter spacing for uneven effect
+                const spacing = (Math.random() * 0.3 + 0.1) + 'em';
+                span.style.letterSpacing = spacing;
+                title.appendChild(span);
+            }
+        }
+
+        // Initialize game
+        createSheep();
+        makeUnevenSpacing();
+    </script>
+</body>
+</html>
