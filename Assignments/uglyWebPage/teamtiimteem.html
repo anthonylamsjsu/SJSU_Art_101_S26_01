@@ -133,7 +133,7 @@
         <!-- Or use an online source -->
         <source src="" type="audio/mpeg">
     </audio>
-    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=600&fit=crop" alt="Scary old man following you" class="zooming-man" id="zoomingMan">
+    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=600&fit=crop&q=80" alt="Elderly Filipino man" class="zooming-man" id="zoomingMan">
     <h1>Team Tiim Teem</h1>
     <p>The FitnessGram™ Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues. The 20 meter pacer test will begin in 30 seconds. Line up at the start. The running speed starts slowly, but gets faster each minute after you hear this signal. [beep] A single lap should be completed each time you hear this sound. [ding] Remember to run in a straight line, and run as long as possible. The second time you fail to complete a lap before the sound, your test is over. The test will begin on the word start. On your mark, get ready, start.</p>
     
@@ -164,59 +164,60 @@
         function readAllText() {
             const allText = document.body.innerText || document.body.textContent;
             const utterance = new SpeechSynthesisUtterance(allText);
-            utterance.volume = 1.0; // Max volume
+            utterance.volume = 1.0; // Max volume (1.0 is the maximum allowed)
             utterance.rate = 0.9; // Slower, more relaxed like Jennifer Coolidge
-            utterance.pitch = 0.7; // Lower pitch - more husky/raspy like Jennifer Coolidge
+            utterance.pitch = 0.7; // Slightly higher pitch
             
-            // Try to select a female voice similar to Jennifer Coolidge
+            // Use the default TTS voice
             const voices = window.speechSynthesis.getVoices();
-            // Look for female voices - prefer lower-pitched female voices
-            const femaleVoices = voices.filter(v => {
-                const name = v.name.toLowerCase();
-                return (v.lang.startsWith('en') && 
-                       (name.includes('female') || 
-                        name.includes('karen') || 
-                        name.includes('samantha') ||
-                        name.includes('susan') ||
-                        name.includes('victoria') ||
-                        name.includes('zira') ||
-                        v.default === true));
-            });
-            
-            // Prefer lower-pitched female voices or default to first English female voice
-            if (femaleVoices.length > 0) {
-                utterance.voice = femaleVoices[0];
-            } else {
-                // Fallback to any English voice
-                const englishVoices = voices.filter(v => v.lang.startsWith('en'));
-                if (englishVoices.length > 0) {
-                    utterance.voice = englishVoices[0];
-                }
+            const defaultVoice = voices.find(v => v.default) || voices[0];
+            if (defaultVoice) {
+                utterance.voice = defaultVoice;
             }
             
             // Cancel any existing speech
             window.speechSynthesis.cancel();
+            
+            // Loop the narration when it ends
+            utterance.onend = function() {
+                readAllText();
+            };
+            
             window.speechSynthesis.speak(utterance);
         }
         
-        // Load voices when available
+        // Function to start TTS when ready
+        function startTTS() {
+            const voices = window.speechSynthesis.getVoices();
+            if (voices.length > 0) {
+                readAllText();
+            } else {
+                // If voices not loaded yet, try again shortly
+                setTimeout(startTTS, 100);
+            }
+        }
+        
+        // Load voices when available and start TTS
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = function() {
-                // Voices loaded, can now use them
+                startTTS();
             };
         }
         
         // Try to start immediately and on multiple events
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', readAllText);
+            document.addEventListener('DOMContentLoaded', startTTS);
         } else {
-            readAllText();
+            startTTS();
         }
         
-        window.addEventListener('load', readAllText);
+        window.addEventListener('load', startTTS);
         
-        // Also try after a very short delay
-        setTimeout(readAllText, 50);
+        // Try multiple times with increasing delays to ensure it starts
+        setTimeout(startTTS, 50);
+        setTimeout(startTTS, 200);
+        setTimeout(startTTS, 500);
+        setTimeout(startTTS, 1000);
         
         // Make each line centered differently
         function applyDifferentAlignments() {
@@ -363,15 +364,23 @@
         // Play explosion sound on every click anywhere on the page
         document.addEventListener('click', playExplosionSound);
         
-        // Make the scary man follow the mouse cursor
-        const scaryMan = document.getElementById('zoomingMan');
+        // Make the pointing person follow the mouse cursor and slowly zoom in
+        const pointingPerson = document.getElementById('zoomingMan');
         let mouseX = window.innerWidth / 2;
         let mouseY = window.innerHeight / 2;
+        let currentScale = 0.5; // Start small
+        const zoomSpeed = 0.005; // How fast to zoom in per frame (increased from 0.001 to 0.005 for 5x faster)
+        const maxScale = 3; // Maximum zoom level
         
-        function updateScaryManPosition() {
-            if (scaryMan) {
-                scaryMan.style.left = mouseX + 'px';
-                scaryMan.style.top = mouseY + 'px';
+        function updatePointingPersonPosition() {
+            if (pointingPerson) {
+                // Continuously increase scale to make it slowly get closer
+                currentScale = Math.min(currentScale + zoomSpeed, maxScale);
+                
+                // Update position and scale
+                pointingPerson.style.left = mouseX + 'px';
+                pointingPerson.style.top = mouseY + 'px';
+                pointingPerson.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
             }
         }
         
@@ -379,7 +388,6 @@
         document.addEventListener('mousemove', function(e) {
             mouseX = e.clientX;
             mouseY = e.clientY;
-            updateScaryManPosition();
         });
         
         // Also follow on touch devices
@@ -387,12 +395,17 @@
             if (e.touches.length > 0) {
                 mouseX = e.touches[0].clientX;
                 mouseY = e.touches[0].clientY;
-                updateScaryManPosition();
             }
         });
         
-        // Initialize position
-        updateScaryManPosition();
+        // Continuously update position and zoom
+        function animatePointingPerson() {
+            updatePointingPersonPosition();
+            requestAnimationFrame(animatePointingPerson);
+        }
+        
+        // Start animation
+        animatePointingPerson();
     </script>
 </body>
 </html>
