@@ -44,6 +44,23 @@
             0%, 50%   { opacity: 1; }
             50.01%, 100% { opacity: 0; }
         }
+        .spin-gif-wrapper {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            opacity: 0.3;
+            animation: spinClockwise 0.6s linear infinite;
+        }
+        .spin-gif-wrapper .tenor-gif-embed {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        @keyframes spinClockwise {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
