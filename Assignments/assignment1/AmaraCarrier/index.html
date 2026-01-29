@@ -5,19 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Amara Carrier</title>
     <style>
-        body { background-color: black; color: white; margin: 0; min-height: 100vh; position: relative; cursor: none; }
-
-        .custom-cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            border-left: 2px solid #fff;
-            border-top: 2px solid #fff;
-            box-sizing: border-box;
-        }
+        body { background-color: black; color: white; margin: 0; min-height: 100vh; position: relative; }
 
         .center-text {
             position: fixed;
@@ -25,17 +13,22 @@
             left: 50%;
             transform: translate(-50%, -50%);
             font-family: 'Courier New', monospace;
-            font-size: 300pt;
+            font-size: clamp(14px, 2.8vw, 26px);
+            max-width: 85vw;
+            padding: 0 1em;
+            box-sizing: border-box;
             font-weight: bold;
             color: #ff0000;
             text-align: center;
             z-index: 10;
             text-shadow: 
-                2px 2px 0px #000,
-                -2px -2px 0px #000,
-                2px -2px 0px #000,
-                -2px 2px 0px #000,
-                0 0 8px rgba(255, 0, 0, 0.8);
+                1px 1px 0px #000,
+                -1px -1px 0px #000,
+                1px -1px 0px #000,
+                -1px 1px 0px #000,
+                0 0 10px rgba(255, 60, 60, 0.9),
+                0 0 20px rgba(255, 0, 0, 0.5),
+                0 0 30px rgba(255, 0, 0, 0.3);
             image-rendering: pixelated;
             image-rendering: -moz-crisp-edges;
             image-rendering: crisp-edges;
@@ -48,10 +41,21 @@
             position: fixed;
             border-radius: 50% 50% 48% 48% / 60% 60% 40% 40%;
             background: linear-gradient(180deg, #f8f6f0 0%, #ebe8e0 50%, #e0ddd5 100%);
+            background-size: cover;
+            background-position: center;
             box-shadow: inset 0 2px 8px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.3);
             overflow: hidden;
             z-index: 0;
         }
+
+        /* Eyes using real photos */
+        .eye.eye--photo {
+            background-repeat: no-repeat;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        }
+        .eye.eye--photo::before { display: none; }
+        .eye.eye--photo .iris { display: none; }
+        .eye.eye--photo .pupil { display: none; }
 
         .eye::before {
             content: '';
@@ -371,7 +375,6 @@
     </style>
 </head>
 <body>
-    <div class="custom-cursor" id="customCursor"></div>
     <div class="center-text">Don't Look At Me</div>
     <!-- Top border -->
     <div class="eye eye--sm eye--tl design--slit">
@@ -469,45 +472,16 @@
     <script>
         const centerText = document.querySelector('.center-text');
         let mouseX = 0, mouseY = 0;
-        let textOffsetX = 0, textOffsetY = 0;
 
-        const FLEE_RADIUS = 320;
-        const FLEE_STRENGTH = 18;
-        const MAX_OFFSET = 0.42;
-
-        function updateTextPosition() {
-            if (!centerText) return;
-            const rect = centerText.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            const dist = Math.hypot(mouseX - centerX, mouseY - centerY);
-
-            if (dist < FLEE_RADIUS && dist > 2) {
-                const intensity = 1 - dist / FLEE_RADIUS;
-                const push = FLEE_STRENGTH * intensity;
-                const dx = (centerX - mouseX) / dist;
-                const dy = (centerY - mouseY) / dist;
-                textOffsetX += dx * push;
-                textOffsetY += dy * push;
-            } else if (dist >= FLEE_RADIUS) {
-                textOffsetX *= 0.97;
-                textOffsetY *= 0.97;
-            }
-
-            const maxX = window.innerWidth * MAX_OFFSET;
-            const maxY = window.innerHeight * MAX_OFFSET;
-            textOffsetX = Math.max(-maxX, Math.min(maxX, textOffsetX));
-            textOffsetY = Math.max(-maxY, Math.min(maxY, textOffsetY));
-
-            centerText.style.transform = `translate(calc(-50% + ${textOffsetX}px), calc(-50% + ${textOffsetY}px))`;
+        function getTextCenter() {
+            const rect = centerText ? centerText.getBoundingClientRect() : null;
+            if (!rect) return { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+            return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
         }
 
         function getShakeIntensity() {
-            if (!centerText) return 0;
-            const rect = centerText.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            const dist = Math.hypot(mouseX - centerX, mouseY - centerY);
+            const center = getTextCenter();
+            const dist = Math.hypot(mouseX - center.x, mouseY - center.y);
             const triggerRadius = 280;
             if (dist >= triggerRadius) return 0;
             return 1 - dist / triggerRadius;
@@ -516,7 +490,6 @@
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
-            updateTextPosition();
 
             document.querySelectorAll('.eye').forEach((eye) => {
                 const pupil = eye.querySelector('.pupil');
@@ -542,7 +515,6 @@
         const needsTranslateY = (el) => /eye--(ml|mr|l2|l3|r2|r3)\b/.test(el.className);
 
         function shakeEyes() {
-            updateTextPosition();
             const intensity = getShakeIntensity();
             document.querySelectorAll('.eye').forEach((eye) => {
                 if (intensity <= 0) {
