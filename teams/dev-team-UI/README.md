@@ -1,4 +1,11 @@
 # Dev Team 2
-
-Andrew Blanton
-John Camacho
+: Cole Louie
+---
+: John Camacho
+---
+: Yisi Ai
+---
+: Audrey Wai
+---
+: Swadhistha Koneti
+---
