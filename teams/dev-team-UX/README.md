@@ -1,8 +1,12 @@
 # Dev Team 3
 
-Andre Duong
 Sam Leavitt
+Olivia Florence
 Dwayne Moraes
 
-Andrew Tarin
 
+
+
+
+
+Andre Duong
