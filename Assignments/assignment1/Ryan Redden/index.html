@@ -85,9 +85,38 @@
             animation: blink 1s step-end infinite;
             vertical-align: text-bottom;
         }
+        .terminal-box #terminal-input {
+            flex: 1;
+            min-width: 0;
+            background: transparent;
+            border: none;
+            color: #00ff88;
+            font: inherit;
+            font-size: inherit;
+            outline: none;
+        }
+        .terminal-box .input-line {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        .terminal-box .prompt-line {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
         @keyframes blink {
             50% { opacity: 0; }
         }
+        /* Initial state: hide experience until Enter */
+        body.waiting #ocean,
+        body.waiting #canvas-container,
+        body.waiting #ascii-container {
+            opacity: 0;
+            pointer-events: none;
+        }
+        body.waiting #ocean { transition: opacity 1.2s ease; }
+        body.waiting #canvas-container,
+        body.waiting #ascii-container { transition: opacity 1s ease; }
         /* Ocean: protoplasmic ASCII noise */
         #ocean {
             position: fixed;
@@ -122,7 +151,16 @@
     <div id="canvas-container"></div>
     <div id="ascii-container"></div>
     <div class="terminal-box" id="terminal">
-        <span id="terminal-text"></span><span class="cursor"></span>
+        <div id="terminal-prompt">
+            <span class="prompt-line">tell me what you are thinking</span>
+            <div class="input-line">
+                <input type="text" id="terminal-input" autocomplete="off" spellcheck="false" maxlength="200" placeholder=" " />
+                <span class="cursor"></span>
+            </div>
+        </div>
+        <div id="terminal-messages" style="display: none;">
+            <span id="terminal-text"></span><span class="cursor"></span>
+        </div>
     </div>
 
     <script type="importmap">
@@ -138,10 +176,34 @@
         import { AsciiEffect } from 'three/addons/effects/AsciiEffect.js';
 
         const terminalEl = document.getElementById('terminal-text');
+        const terminalPrompt = document.getElementById('terminal-prompt');
+        const terminalMessages = document.getElementById('terminal-messages');
+        const terminalInput = document.getElementById('terminal-input');
         const asciiContainer = document.getElementById('ascii-container');
         const oceanEl = document.getElementById('ocean');
 
-        // ----- The Ocean: generative ASCII noise -----
+        let processStarted = false;
+        document.body.classList.add('waiting');
+        setTimeout(() => terminalInput.focus(), 100);
+
+        function beginProcess() {
+            if (processStarted) return;
+            processStarted = true;
+            document.body.classList.remove('waiting');
+            terminalPrompt.style.display = 'none';
+            terminalMessages.style.display = 'block';
+            setTerminalMessage('idle');
+        }
+
+        terminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                beginProcess();
+            }
+        });
+        window.addEventListener('click', () => terminalInput.focus(), { once: false });
+
+        // ----- The Ocean: generative ASCII noise (runs always; visible only after Enter) -----
         const oceanChars = ' .\'`^",:;Il!i><~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$';
         const oceanCols = 120;
         const oceanRows = 60;
@@ -288,9 +350,6 @@
             effect.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // ----- Message rotation -----
-        setTerminalMessage('idle');
-
         // ----- Animation loop -----
         const clock = new THREE.Clock();
         function animate() {
@@ -344,7 +403,7 @@
                 geometry.computeVertexNormals();
             }
 
-            if (t - lastMessageTime > MESSAGE_INTERVAL) {
+            if (processStarted && t - lastMessageTime > MESSAGE_INTERVAL) {
                 if (hoverSphereTime >= 3) setTerminalMessage('hover');
                 else if (velocity > 0.25) setTerminalMessage('active');
                 else setTerminalMessage('idle');
