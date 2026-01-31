@@ -42,15 +42,15 @@
             text-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
         }
 
-        /* Realistic eye – human almond shape (wider than tall, asymmetric lids) */
+        /* Eye – green and black only, no whites */
         .eye {
             position: fixed;
             /* Sharp pixelated edges - less rounded for analog horror look */
             border-radius: 45% 40% 40% 45% / 32% 32% 68% 68%;
-            background: linear-gradient(180deg, #f8f6f0 0%, #ebe8e0 50%, #e0ddd5 100%);
+            background: #000;
             background-size: cover;
             background-position: center;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
             overflow: hidden;
             z-index: 0;
             /* Force sharp pixelated rendering on edges */
@@ -84,15 +84,7 @@
         }
 
         .eye::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 35%;
-            background: linear-gradient(180deg, rgba(0,0,0,0.08) 0%, transparent 100%);
-            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-            pointer-events: none;
+            display: none;
         }
 
         .lid {
@@ -101,7 +93,7 @@
             top: 0;
             width: 100%;
             height: 0;
-            background: linear-gradient(180deg, #1a1512 0%, #0d0b09 100%);
+            background: #000;
             z-index: 3;
             animation: lid-blink 4s ease-in-out infinite;
         }
@@ -243,30 +235,30 @@
         .eye--xl .iris { width: 60px; height: 60px; }
         .eye--xl .pupil { width: 22px; height: 22px; }
 
-        /* Detailed iris colors with multiple layers and patterns */
-        .iris--brown {
+        /* Green and black only – all irises green shades, no whites */
+        .iris--brown, .iris--blue, .iris--hazel, .iris--green {
             background: 
-                radial-gradient(ellipse 100% 80% at 50% 50%, rgba(139, 90, 70, 0.4) 0%, transparent 30%),
-                radial-gradient(ellipse 80% 100% at 50% 50%, rgba(120, 75, 60, 0.5) 0%, transparent 40%),
-                radial-gradient(circle at 35% 35%, #9d6b55 0%, #7d5a50 25%, #6b4a3a 45%, #4a3728 65%, #3d2a1f 80%, #2e2219 100%);
+                radial-gradient(ellipse 100% 80% at 50% 50%, rgba(80, 180, 80, 0.35) 0%, transparent 30%),
+                radial-gradient(ellipse 80% 100% at 50% 50%, rgba(60, 140, 60, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 35% 35%, #5a9a5a 0%, #3d7a3d 25%, #2d5a2d 50%, #1a3d1a 75%, #0d260d 100%);
         }
         .iris--blue {
             background: 
-                radial-gradient(ellipse 100% 80% at 50% 50%, rgba(120, 160, 200, 0.3) 0%, transparent 30%),
-                radial-gradient(ellipse 80% 100% at 50% 50%, rgba(100, 140, 180, 0.4) 0%, transparent 40%),
-                radial-gradient(circle at 35% 35%, #7a9fc0 0%, #6b8cae 20%, #5a7a9a 40%, #4a6a8a 55%, #3d5a7a 70%, #2a3d52 90%, #1e2a3a 100%);
+                radial-gradient(ellipse 100% 80% at 50% 50%, rgba(100, 200, 100, 0.3) 0%, transparent 30%),
+                radial-gradient(ellipse 80% 100% at 50% 50%, rgba(70, 160, 70, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 35% 35%, #6aaa6a 0%, #4a8a4a 30%, #2d6a2d 60%, #154015 100%);
         }
         .iris--hazel {
             background: 
-                radial-gradient(ellipse 100% 80% at 50% 50%, rgba(180, 140, 80, 0.35) 0%, transparent 30%),
-                radial-gradient(ellipse 80% 100% at 50% 50%, rgba(160, 120, 70, 0.4) 0%, transparent 40%),
-                radial-gradient(circle at 35% 35%, #b89a6f 0%, #9a7b4f 20%, #8a6b3f 35%, #7a5b2f 50%, #6b5320 65%, #5a4320 75%, #3d2f14 90%, #2d1f0f 100%);
+                radial-gradient(ellipse 100% 80% at 50% 50%, rgba(70, 160, 70, 0.35) 0%, transparent 30%),
+                radial-gradient(ellipse 80% 100% at 50% 50%, rgba(50, 120, 50, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 35% 35%, #3d6a3d 0%, #2a4a2a 40%, #1a301a 80%, #0d180d 100%);
         }
         .iris--green {
             background: 
-                radial-gradient(ellipse 100% 80% at 50% 50%, rgba(120, 150, 100, 0.3) 0%, transparent 30%),
-                radial-gradient(ellipse 80% 100% at 50% 50%, rgba(100, 130, 85, 0.4) 0%, transparent 40%),
-                radial-gradient(circle at 35% 35%, #7a9a6a 0%, #6b7c5a 20%, #5a6c4a 40%, #4a5c3a 55%, #3d4d2e 70%, #2d3d1e 85%, #252d1a 100%);
+                radial-gradient(ellipse 100% 80% at 50% 50%, rgba(90, 170, 90, 0.3) 0%, transparent 30%),
+                radial-gradient(ellipse 80% 100% at 50% 50%, rgba(65, 130, 65, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 35% 35%, #4a8a4a 0%, #3d6a3d 25%, #2d4a2d 55%, #1a2d1a 85%, #0d150d 100%);
         }
 
         /* Eye design variants */
@@ -552,17 +544,17 @@
     </div>
 
     <script>
-        const centerText = document.querySelector('.center-text');
         let mouseX = 0, mouseY = 0;
 
-        function getTextCenter() {
-            const rect = centerText ? centerText.getBoundingClientRect() : null;
+        function getLinkCenter() {
+            const link = document.querySelector('a.center-text');
+            const rect = link ? link.getBoundingClientRect() : null;
             if (!rect) return { x: window.innerWidth / 2, y: window.innerHeight / 2 };
             return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
         }
 
         function getShakeIntensity() {
-            const center = getTextCenter();
+            const center = getLinkCenter();
             const dist = Math.hypot(mouseX - center.x, mouseY - center.y);
             const triggerRadius = 320;
             if (dist >= triggerRadius) return 0;
