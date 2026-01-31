@@ -7,13 +7,17 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const material = new THREE.ShaderMaterial({
-	uniforms: { uTime: { value: 0 } },
+	uniforms: {
+		uTime: { value: 0 },
+		uRes: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+	},
 	vertexShader: `void main() { gl_Position = vec4(position, 1.0); }`,
 	fragmentShader: `
 		precision mediump float;
 		uniform float uTime;
+		uniform vec2 uRes;
 		void main() {
-			vec2 uv = gl_FragCoord.xy / vec2(1920.0, 1080.0);
+			vec2 uv = gl_FragCoord.xy / uRes;
 			float t = uTime * 0.3;
 			vec3 c1 = vec3(1.0, 0.2, 0.8);
 			vec3 c2 = vec3(0.2, 0.8, 1.0);
@@ -30,10 +34,12 @@ scene.add(quad);
 function animate() {
 	requestAnimationFrame(animate);
 	material.uniforms.uTime.value = performance.now() * 0.001;
+	material.uniforms.uRes.value.set(window.innerWidth, window.innerHeight);
 	renderer.render(scene, camera);
 }
 animate();
 
 window.addEventListener('resize', () => {
 	renderer.setSize(window.innerWidth, window.innerHeight);
+	material.uniforms.uRes.value.set(window.innerWidth, window.innerHeight);
 });

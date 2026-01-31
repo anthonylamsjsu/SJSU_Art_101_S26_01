@@ -6,7 +6,7 @@ camera.position.z = 300;
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0, 0, 0);
 
-const light = new THREE.PointLight(0xffffff, 2, 0, 0);
+const light = new THREE.PointLight(0xffffff, 4, 0, 0);
 light.position.set(200, 200, 200);
 scene.add(light);
 
@@ -19,7 +19,7 @@ scene.add(mesh);
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 
-const effect = new AsciiEffect(renderer, ' .:-+*=%@#', { invert: true });
+const effect = new AsciiEffect(renderer, ' .:-+*=%@#', { invert: false });
 effect.setSize(window.innerWidth, window.innerHeight);
 effect.domElement.style.color = '#fff';
 effect.domElement.style.backgroundColor = '#000';

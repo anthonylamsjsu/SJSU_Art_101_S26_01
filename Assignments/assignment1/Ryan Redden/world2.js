@@ -49,4 +49,5 @@ animate();
 
 window.addEventListener('resize', () => {
 	renderer.setSize(window.innerWidth, window.innerHeight);
+	material.uniforms.uRes.value.set(window.innerWidth, window.innerHeight);
 });
