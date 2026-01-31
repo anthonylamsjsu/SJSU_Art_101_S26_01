@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Don't Feed Me</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2em;
+            font-family: 'Courier New', monospace;
+        }
+        .page-text {
+            font-size: clamp(18px, 4vw, 36px);
+            font-weight: bold;
+            color: #ff0000;
+            text-align: center;
+            text-shadow:
+                1px 1px 0px #000,
+                -1px -1px 0px #000,
+                0 0 10px rgba(255, 60, 60, 0.9),
+                0 0 20px rgba(255, 0, 0, 0.5);
+            image-rendering: pixelated;
+            letter-spacing: 2px;
+        }
+        .page-text a {
+            color: #ff0000;
+            text-decoration: none;
+        }
+        .page-text a:hover {
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.9);
+        }
+        .back-link { font-size: 0.6em; }
+    </style>
+</head>
+<body>
+    <p class="page-text">don't feed me</p>
+    <p class="page-text back-link"><a href="index.html">← back</a></p>
+</body>
+</html>

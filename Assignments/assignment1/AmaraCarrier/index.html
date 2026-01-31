@@ -34,6 +34,12 @@
             image-rendering: crisp-edges;
             letter-spacing: 2px;
             line-height: 1.2;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .center-text:hover {
+            color: #ff3333;
+            text-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
         }
 
         /* Realistic eye – human almond shape (wider than tall, asymmetric lids) */
@@ -396,10 +402,29 @@
         .eye--mr { top: 50%; right: 3%; left: auto; transform: translateY(-50%); }
         .eye--r2 { top: 32%; right: 3%; left: auto; transform: translateY(-50%); }
         .eye--r3 { top: 68%; right: 3%; left: auto; transform: translateY(-50%); }
+
+        /* Pop-up eyes – appear in different locations with pop-in animation */
+        .eye--pop {
+            opacity: 0;
+            transform: scale(0);
+            animation: eye-pop-in 0.4s ease-out forwards;
+        }
+        .eye--pop.eye--pop1 { top: 18%; left: 22%; animation-delay: 1.2s; }
+        .eye--pop.eye--pop2 { top: 35%; right: 18%; left: auto; animation-delay: 2.4s; }
+        .eye--pop.eye--pop3 { bottom: 25%; left: 30%; top: auto; animation-delay: 0.8s; }
+        .eye--pop.eye--pop4 { top: 22%; right: 35%; left: auto; animation-delay: 1.8s; }
+        .eye--pop.eye--pop5 { bottom: 35%; right: 28%; left: auto; top: auto; animation-delay: 2.8s; }
+        .eye--pop.eye--pop6 { top: 55%; left: 18%; animation-delay: 0.4s; }
+        .eye--pop.eye--pop7 { top: 28%; left: 55%; animation-delay: 3s; }
+        .eye--pop.eye--pop8 { bottom: 18%; left: 55%; top: auto; animation-delay: 1.5s; }
+        @keyframes eye-pop-in {
+            from { opacity: 0; transform: scale(0); }
+            to { opacity: 1; transform: scale(1); }
+        }
     </style>
 </head>
 <body>
-    <div class="center-text">Don't Look At Me</div>
+    <a href="dont-feed-me.html" class="center-text">Don't Look At Me</a>
     <!-- Top border -->
     <div class="eye eye--sm eye--tl">
         <div class="lid"></div>
@@ -492,6 +517,39 @@
         <div class="lid"></div>
         <div class="iris iris--blue"><div class="pupil"></div></div>
     </div>
+    <!-- Pop-up eyes in different locations -->
+    <div class="eye eye--pop eye--md eye--pop1">
+        <div class="lid"></div>
+        <div class="iris iris--brown"><div class="pupil"></div></div>
+    </div>
+    <div class="eye eye--pop eye--sm eye--pop2">
+        <div class="lid"></div>
+        <div class="iris iris--blue"><div class="pupil"></div></div>
+    </div>
+    <div class="eye eye--pop eye--lg eye--pop3">
+        <div class="lid"></div>
+        <div class="iris iris--hazel"><div class="pupil"></div></div>
+    </div>
+    <div class="eye eye--pop eye--sm eye--pop4">
+        <div class="lid"></div>
+        <div class="iris iris--green"><div class="pupil"></div></div>
+    </div>
+    <div class="eye eye--pop eye--md eye--pop5">
+        <div class="lid"></div>
+        <div class="iris iris--brown"><div class="pupil"></div></div>
+    </div>
+    <div class="eye eye--pop eye--sm eye--pop6">
+        <div class="lid"></div>
+        <div class="iris iris--blue"><div class="pupil"></div></div>
+    </div>
+    <div class="eye eye--pop eye--md eye--pop7">
+        <div class="lid"></div>
+        <div class="iris iris--hazel"><div class="pupil"></div></div>
+    </div>
+    <div class="eye eye--pop eye--sm eye--pop8">
+        <div class="lid"></div>
+        <div class="iris iris--green"><div class="pupil"></div></div>
+    </div>
 
     <script>
         const centerText = document.querySelector('.center-text');
@@ -538,18 +596,20 @@
 
         const maxShake = 8;
         const needsTranslateY = (el) => /eye--(ml|mr|l2|l3|r2|r3)\b/.test(el.className);
+        const isPopEye = (el) => el.classList.contains('eye--pop');
 
         function shakeEyes() {
             const intensity = getShakeIntensity();
             document.querySelectorAll('.eye').forEach((eye) => {
                 if (intensity <= 0) {
-                    eye.style.transform = needsTranslateY(eye) ? 'translateY(-50%)' : '';
+                    if (isPopEye(eye)) eye.style.transform = 'scale(1)';
+                    else eye.style.transform = needsTranslateY(eye) ? 'translateY(-50%)' : '';
                     return;
                 }
                 const amount = maxShake * intensity;
                 const shakeX = (Math.random() - 0.5) * 2 * amount;
                 const shakeY = (Math.random() - 0.5) * 2 * amount;
-                const base = needsTranslateY(eye) ? ' translateY(-50%)' : '';
+                const base = needsTranslateY(eye) ? ' translateY(-50%)' : (isPopEye(eye) ? ' scale(1)' : '');
                 eye.style.transform = `translate(${shakeX}px, ${shakeY}px)${base}`;
             });
             requestAnimationFrame(shakeEyes);
