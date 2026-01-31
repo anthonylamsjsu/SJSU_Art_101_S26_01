@@ -49,16 +49,27 @@
             z-index: 0;
         }
 
-        /* Eyes using real human eye photos – same realistic shape */
-        .eye.eye--photo {
-            background-repeat: no-repeat;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
-            /* Slightly more pronounced almond for photo crop */
-            border-radius: 54% 46% 46% 54% / 36% 36% 64% 64%;
+        /* Analog horror: pixelated, crunchy rendering */
+        .eye {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            filter: contrast(1.12) brightness(0.97);
         }
-        .eye.eye--photo::before { display: none; }
-        .eye.eye--photo .iris { display: none; }
-        .eye.eye--photo .pupil { display: none; }
+        .eye::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0px,
+                transparent 2px,
+                rgba(0,0,0,0.03) 2px,
+                rgba(0,0,0,0.03) 3px
+            );
+            pointer-events: none;
+            z-index: 4;
+        }
 
         .eye::before {
             content: '';
@@ -121,6 +132,8 @@
             z-index: 1;
             box-shadow: inset 0 -4px 12px rgba(0,0,0,0.35), inset 0 2px 4px rgba(255,255,255,0.15);
             overflow: hidden;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
         }
 
         .iris::before {
@@ -185,6 +198,8 @@
             transition: transform 0.12s ease-out;
             z-index: 2;
             box-shadow: inset 0 0 0 1px rgba(0,0,0,0.5);
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
         }
 
         .pupil::after {
@@ -379,95 +394,95 @@
 </head>
 <body>
     <div class="center-text">Don't Look At Me</div>
-    <!-- Top border - real eye photos from Unsplash -->
-    <div class="eye eye--photo eye--sm eye--tl" style="background-image: url('https://images.unsplash.com/photo-1534627425233-f7d6335ca734?w=400&amp;q=85')">
+    <!-- Top border -->
+    <div class="eye eye--sm eye--tl">
         <div class="lid"></div>
         <div class="iris iris--brown"><div class="pupil"></div></div>
     </div>
-    <div class="eye eye--photo eye--lg eye--t2" style="background-image: url('https://images.unsplash.com/photo-1718801832872-8d72f0c5d3aa?w=400&amp;q=85')">
+    <div class="eye eye--lg eye--t2">
         <div class="lid"></div>
         <div class="iris iris--blue"><div class="pupil"></div></div>
     </div>
-    <div class="eye eye--photo eye--md eye--t3" style="background-image: url('https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&amp;q=85')">
+    <div class="eye eye--md eye--t3">
         <div class="lid"></div>
         <div class="iris iris--hazel"><div class="pupil"></div></div>
     </div>
-    <div class="eye eye--photo eye--xl eye--t4" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&amp;q=85')">
+    <div class="eye eye--xl eye--t4">
         <div class="lid"></div>
         <div class="iris iris--green"><div class="pupil"></div></div>
     </div>
-    <div class="eye eye--photo eye--sm eye--t5" style="background-image: url('https://images.unsplash.com/photo-1519689680058-324335c77eba?w=400&amp;q=80')">
+    <div class="eye eye--sm eye--t5">
         <div class="lid"></div>
         <div class="iris iris--brown"><div class="pupil"></div></div>
     </div>
-    <div class="eye eye--photo eye--md eye--t6" style="background-image: url('https://images.unsplash.com/photo-1534627425233-f7d6335ca734?w=400&amp;q=85')">
+    <div class="eye eye--md eye--t6">
         <div class="lid"></div>
         <div class="iris iris--blue"><div class="pupil"></div></div>
     </div>
-    <div class="eye eye--photo eye--lg eye--t7" style="background-image: url('https://images.unsplash.com/photo-1718801832872-8d72f0c5d3aa?w=400&amp;q=85')">
+    <div class="eye eye--lg eye--t7">
         <div class="lid"></div>
         <div class="iris iris--hazel"><div class="pupil"></div></div>
     </div>
-    <div class="eye eye--photo eye--sm eye--tr" style="background-image: url('https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&amp;q=85')">
+    <div class="eye eye--sm eye--tr">
         <div class="lid"></div>
         <div class="iris iris--green"><div class="pupil"></div></div>
     </div>
     <!-- Bottom border -->
-    <div class="eye eye--photo eye--md eye--bl" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&amp;q=85')">
+    <div class="eye eye--md eye--bl">
         <div class="lid"></div>
         <div class="iris iris--brown"><div class="pupil"></div></div>
     </div>
-    <div class="eye eye--photo eye--sm eye--b2" style="background-image: url('https://images.unsplash.com/photo-1519689680058-324335c77eba?w=400&amp;q=80')">
+    <div class="eye eye--sm eye--b2">
         <div class="lid"></div>
         <div class="iris iris--blue"><div class="pupil"></div></div>
     </div>
-    <div class="eye eye--photo eye--xl eye--b3" style="background-image: url('https://images.unsplash.com/photo-1534627425233-f7d6335ca734?w=400&amp;q=85')">
+    <div class="eye eye--xl eye--b3">
         <div class="lid"></div>
         <div class="iris iris--hazel"><div class="pupil"></div></div>
     </div>
-    <div class="eye eye--photo eye--lg eye--b4" style="background-image: url('https://images.unsplash.com/photo-1718801832872-8d72f0c5d3aa?w=400&amp;q=85')">
+    <div class="eye eye--lg eye--b4">
         <div class="lid"></div>
         <div class="iris iris--green"><div class="pupil"></div></div>
     </div>
-    <div class="eye eye--photo eye--sm eye--b5" style="background-image: url('https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&amp;q=85')">
+    <div class="eye eye--sm eye--b5">
         <div class="lid"></div>
         <div class="iris iris--brown"><div class="pupil"></div></div>
     </div>
-    <div class="eye eye--photo eye--md eye--b6" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&amp;q=85')">
+    <div class="eye eye--md eye--b6">
         <div class="lid"></div>
         <div class="iris iris--blue"><div class="pupil"></div></div>
     </div>
-    <div class="eye eye--photo eye--lg eye--b7" style="background-image: url('https://images.unsplash.com/photo-1519689680058-324335c77eba?w=400&amp;q=80')">
+    <div class="eye eye--lg eye--b7">
         <div class="lid"></div>
         <div class="iris iris--green"><div class="pupil"></div></div>
     </div>
-    <div class="eye eye--photo eye--sm eye--br" style="background-image: url('https://images.unsplash.com/photo-1534627425233-f7d6335ca734?w=400&amp;q=85')">
+    <div class="eye eye--sm eye--br">
         <div class="lid"></div>
         <div class="iris iris--hazel"><div class="pupil"></div></div>
     </div>
     <!-- Left border -->
-    <div class="eye eye--photo eye--lg eye--ml" style="background-image: url('https://images.unsplash.com/photo-1718801832872-8d72f0c5d3aa?w=400&amp;q=85')">
+    <div class="eye eye--lg eye--ml">
         <div class="lid"></div>
         <div class="iris iris--brown"><div class="pupil"></div></div>
     </div>
-    <div class="eye eye--photo eye--sm eye--l2" style="background-image: url('https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&amp;q=85')">
+    <div class="eye eye--sm eye--l2">
         <div class="lid"></div>
         <div class="iris iris--blue"><div class="pupil"></div></div>
     </div>
-    <div class="eye eye--photo eye--md eye--l3" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&amp;q=85')">
+    <div class="eye eye--md eye--l3">
         <div class="lid"></div>
         <div class="iris iris--green"><div class="pupil"></div></div>
     </div>
     <!-- Right border -->
-    <div class="eye eye--photo eye--md eye--mr" style="background-image: url('https://images.unsplash.com/photo-1519689680058-324335c77eba?w=400&amp;q=80')">
+    <div class="eye eye--md eye--mr">
         <div class="lid"></div>
         <div class="iris iris--hazel"><div class="pupil"></div></div>
     </div>
-    <div class="eye eye--photo eye--xl eye--r2" style="background-image: url('https://images.unsplash.com/photo-1534627425233-f7d6335ca734?w=400&amp;q=85')">
+    <div class="eye eye--xl eye--r2">
         <div class="lid"></div>
         <div class="iris iris--brown"><div class="pupil"></div></div>
     </div>
-    <div class="eye eye--photo eye--sm eye--r3" style="background-image: url('https://images.unsplash.com/photo-1718801832872-8d72f0c5d3aa?w=400&amp;q=85')">
+    <div class="eye eye--sm eye--r3">
         <div class="lid"></div>
         <div class="iris iris--blue"><div class="pupil"></div></div>
     </div>
