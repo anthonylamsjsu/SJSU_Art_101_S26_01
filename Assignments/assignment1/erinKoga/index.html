@@ -32,6 +32,28 @@
             max-width: 100%;
             height: auto;
         }
+        .button-group {
+            text-align: center;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .choice-btn {
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+            font-size: 1.25rem;
+            color: #3b2a2a;
+            background-color: #ff7b0f;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .choice-btn:hover {
+            background-color: #e66d08;
+        }
         .fire-bar {
             position: fixed;
             bottom: 0;
@@ -74,6 +96,11 @@
     <p class="subheader">you are going to decide your own ETERNAL PUNISHMENT with whatever you answer</p>
 
     <img class="trolley-image" src="trolley problem.jpg" alt="Trolley problem">
+
+    <div class="button-group">
+        <a class="choice-btn" href="pull-lever.html">pull the lever</a>
+        <a class="choice-btn" href="dont-pull-lever.html">dont pull the lever</a>
+    </div>
 
     <div class="fire-bar" aria-hidden="true">
         <div class="gif-tile"><div class="tenor-gif-embed" data-postid="27608574" data-share-method="host" data-aspect-ratio="1.76796" data-width="100%"><a href="https://tenor.com/view/animated-fire-low-res-gif-27608574">Animated Fire Sticker</a> from <a href="https://tenor.com/search/animated-stickers">Animated Stickers</a></div></div>
