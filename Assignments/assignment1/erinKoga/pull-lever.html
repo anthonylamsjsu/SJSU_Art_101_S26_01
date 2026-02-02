@@ -33,6 +33,26 @@
             color: #ff0000;
             margin: 1rem 0 0;
         }
+        .button-group {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .choice-btn {
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+            font-size: 1.25rem;
+            color: #3b2a2a;
+            background-color: #ff7b0f;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .choice-btn:hover {
+            background-color: #e66d08;
+        }
     </style>
 </head>
 <body>
@@ -40,5 +60,9 @@
     <p class="subheader">pulling the lever made the trolley go faster and run over the 5 people instead. sucks!</p>
     <img class="page-image" src="pineapple pizza.jpg" alt="Pineapple pizza">
     <p class="image-caption">pineapple on pizza?</p>
+    <div class="button-group">
+        <button class="choice-btn" type="button">yes</button>
+        <button class="choice-btn" type="button">no</button>
+    </div>
 </body>
 </html>
