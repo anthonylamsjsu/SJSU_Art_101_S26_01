@@ -22,6 +22,10 @@
             font-size: 1.5rem;
             margin-top: 0.5rem;
         }
+        .tenor-gif-embed {
+            max-width: 60%;
+            margin: 2rem auto 0;
+        }
     </style>
 </head>
 <body>
@@ -33,9 +37,15 @@
     <audio id="hitsound" src="hitsound-1.mp3" autoplay loop></audio>
     <h1>WELCOME TO YOUR ETERNAL SENTENCING</h1>
     <p class="subheader">your choices lead you to being put in a room with your new friend Jeremy! he will forever sit here and do this thing at you for eternity now while the beautiful sounds of hell play outside</p>
+    <div class="tenor-gif-embed" data-postid="24490029" data-share-method="host" data-aspect-ratio="1" data-width="100%"><a href="https://tenor.com/view/jeremy-smiling-friends-psychicpebbles-charlie-gif-24490029">Jeremy Smiling Friends GIF</a>from <a href="https://tenor.com/search/jeremy-gifs">Jeremy GIFs</a></div>
+    <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
     <script>
         window.addEventListener('DOMContentLoaded', function () {
-            ['uaaghh', 'best-noise', 'jeremy'].forEach(function (id) {
+            var uaaghh = document.getElementById('uaaghh');
+            if (uaaghh) {
+                uaaghh.volume = 0.3;
+            }
+            ['best-noise', 'jeremy'].forEach(function (id) {
                 var el = document.getElementById(id);
                 if (el) {
                     el.volume = 0.5;
