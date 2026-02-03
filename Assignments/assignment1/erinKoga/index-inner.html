@@ -3,39 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pull the Lever - Erin Koga</title>
+    <title>Erin Koga - Assignment 1 (Inner)</title>
     <style>
         body {
             background-color: #3b2a2a;
             margin: 0;
             min-height: 150vh;
-            font-family: "Comic Sans MS", "Comic Sans", cursive;
-            color: #ff7b0f;
-            text-align: center;
-            padding: 2rem;
             padding-bottom: 160px;
         }
-        a {
+        .page-header {
+            text-align: center;
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+            font-size: 2.5rem;
             color: #ff7b0f;
+            margin: 0;
+            padding: 1.5rem;
         }
         .subheader {
-            color: #ff7b0f;
+            text-align: center;
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
             font-size: 1.25rem;
-            margin: 1rem 0 0;
-            padding: 0 1.5rem;
+            color: #ff7b0f;
+            margin: 0;
+            padding: 0 1.5rem 1.5rem;
         }
-        .page-image {
+        .trolley-image {
             display: block;
-            margin: 2rem auto 0;
-            max-width: 60%;
+            margin: 0 auto 2rem;
+            max-width: 100%;
             height: auto;
         }
-        .image-caption {
+        .trolley-description {
+            text-align: center;
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+            font-size: 1.1rem;
             color: #ff0000;
-            margin: 1rem 0 0;
+            margin: 0 auto 2rem;
+            padding: 0 1.5rem;
+            max-width: 600px;
         }
         .button-group {
-            margin-top: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
             display: flex;
             gap: 1rem;
             justify-content: center;
@@ -94,23 +103,20 @@
 </head>
 <body>
     <audio id="lever-audio" src="jerma-terrified.mp3"></audio>
-    <h1>You pulled the lever.</h1>
-    <p class="subheader" id="outcome"></p>
-    <script>
-        (function () {
-            var el = document.getElementById('outcome');
-            el.textContent = Math.random() < 0.75
-                ? 'pulling the lever made the trolley go faster and run over the 5 people instead, which doesnt really help your eternal punishment.'
-                : 'you pulled the lever and it stopped the trolley, but because you gambled peoples lives on the line your eternal punishment will be worse';
-        })();
-    </script>
-    <p class="subheader">QUESTION 2</p>
-    <img class="page-image" src="pineapple pizza.jpg" alt="Pineapple pizza">
-    <p class="image-caption">do you like pineapple on pizza?</p>
+
+    <h1 class="page-header">welcome to HELL</h1>
+    <p class="subheader">you are going to decide your own ETERNAL PUNISHMENT with whatever you answer</p>
+    <p class="subheader">QUESTION 1</p>
+
+    <img class="trolley-image" src="trolley problem.jpg" alt="Trolley problem">
+
+    <p class="trolley-description">A trolley is approaching one person tied to the tracks. You can pull the lever to save them, but it will either stop the trolley, causing no deaths, or switch the trolley to a different track where five people are tied to it. Do you pull the lever?</p>
+
     <div class="button-group">
-        <a class="choice-btn" href="yes.html" onmouseenter="document.getElementById('lever-audio').play();">yes</a>
-        <a class="choice-btn" href="no.html" onmouseenter="document.getElementById('lever-audio').play();">no</a>
+        <a class="choice-btn" href="pull-lever.html" target="content-frame" onmouseenter="document.getElementById('lever-audio').play();">pull the lever</a>
+        <a class="choice-btn" href="dont-pull-lever.html" target="content-frame" onmouseenter="document.getElementById('lever-audio').play();">dont pull the lever</a>
     </div>
+
     <div class="fire-bar" aria-hidden="true">
         <div class="gif-tile"><div class="tenor-gif-embed" data-postid="27608574" data-share-method="host" data-aspect-ratio="1.76796" data-width="100%"><a href="https://tenor.com/view/animated-fire-low-res-gif-27608574">Animated Fire Sticker</a> from <a href="https://tenor.com/search/animated-stickers">Animated Stickers</a></div></div>
         <div class="gif-tile"><div class="tenor-gif-embed" data-postid="27608574" data-share-method="host" data-aspect-ratio="1.76796" data-width="100%"><a href="https://tenor.com/view/animated-fire-low-res-gif-27608574">Animated Fire Sticker</a> from <a href="https://tenor.com/search/animated-stickers">Animated Stickers</a></div></div>
@@ -123,6 +129,7 @@
         <div class="gif-tile"><div class="tenor-gif-embed" data-postid="27608574" data-share-method="host" data-aspect-ratio="1.76796" data-width="100%"><a href="https://tenor.com/view/animated-fire-low-res-gif-27608574">Animated Fire Sticker</a> from <a href="https://tenor.com/search/animated-stickers">Animated Stickers</a></div></div>
         <div class="gif-tile"><div class="tenor-gif-embed" data-postid="27608574" data-share-method="host" data-aspect-ratio="1.76796" data-width="100%"><a href="https://tenor.com/view/animated-fire-low-res-gif-27608574">Animated Fire Sticker</a> from <a href="https://tenor.com/search/animated-stickers">Animated Stickers</a></div></div>
     </div>
+
     <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
 </body>
 </html>
