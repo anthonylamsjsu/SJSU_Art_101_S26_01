@@ -89,8 +89,8 @@
       left: 43%;
       top: 76%;
       display: inline-block;
-      background: #c00;
-      color: #fff;
+      background: #fff;
+      color: #000;
       padding: 0.75rem 2rem;
       font-family: 'Courier New', Courier, monospace;
       font-size: 1.25rem;
@@ -103,8 +103,8 @@
       animation: fadeInImage 0.8s ease-out 25s forwards;
     }
     .next-btn:hover {
-      background: #e00;
-      color: #fff;
+      background: #eee;
+      color: #000;
     }
     .letter-image,
     .dear-carol,
@@ -125,6 +125,7 @@
   </style>
 </head>
 <body>
+  <audio id="dramaticBoom" src="super-dramatic-boom.mp3" preload="auto"></audio>
   <img class="letter-image" src="letter.png" alt="Vintage handwritten letter">
   <p class="dear-carol">Dear Carol,</p>
   <p class="letter-body">As I am writing to you my dear-Carol, it is September 16 and I have finally made it from that shining port of New York to France! Sorry to say but our summer expeditures to Paris will have to be on hold for a while.</p>
@@ -135,11 +136,21 @@
   </main>
   <script>
     (function() {
+      var boom = document.getElementById('dramaticBoom');
       var configs = [
         { sel: '.dear-carol', baseDelay: 9.7, charDelay: 0.12 },
         { sel: '.letter-body', baseDelay: 11.5, charDelay: 0.04 },
         { sel: '.letter-body-2', baseDelay: 19, charDelay: 0.04 }
       ];
+      setTimeout(function() {
+        if (!boom) return;
+        boom.volume = 1.0;
+        boom.currentTime = 0;
+        var playPromise = boom.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+          playPromise.catch(function() {});
+        }
+      }, 2000);
       configs.forEach(function(cfg) {
         var el = document.querySelector(cfg.sel);
         if (!el) return;
