@@ -1,33 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>The Night Before</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js"></script>
-</head>
-<body class="night" onload="addDoomScroll()">
-  <div class="container">
-    <p>
-      Fuck it.<br><br>
-      I’m not going to study anymore.<br>
-      I can’t finish in time anyways.<br>
-      I’ll just retake the class.
-    </p>
+<body class="night" onload="startCountdown(); startDoomScroll();">
+<div id="timer"></div>
 
-    <p><em>It’s not the end of the world.</em></p>
+<div class="container">
+  <p>
+    Fuck it.<br><br>
+    I’m not going to study anymore.<br>
+    I can’t finish in time anyways.<br>
+    I’ll just retake the class.
+  </p>
 
-    <div id="scroll" class="scroll-box"></div>
+  <p><em>It’s not the end of the world.</em></p>
 
-    <button onclick="tooLate()">Study</button>
-    <button onclick="alert('I’ll deal with tomorrow when it gets here.')">
-      Set an alarm anyway
-    </button>
+  <div id="scroll" class="scroll-box"></div>
 
-    <p style="margin-top:30px; opacity:0.7;">
-      One exam doesn’t define me.
-    </p>
-  </div>
+  <a href="after.html"><button>Go to exam</button></a>
+  <a href="index.html"><button>Go back to the start</button></a>
+
+  <p style="margin-top:30px; opacity:0.6;">
+    One exam doesn’t define me.
+  </p>
+</div>
+
+<script src="script.js"></script>
 </body>
-</html>
-
