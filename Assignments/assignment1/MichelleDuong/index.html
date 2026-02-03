@@ -29,7 +29,7 @@
       overflow:hidden;
     }
 
-    /* Subtle screen flicker / jitter */
+    /* Subtle screen flicker / glow */
     body::before{
       content:"";
       position:fixed; inset:0;
@@ -92,8 +92,8 @@
       width:min(980px, 95vw);
       height:min(560px, 80vh);
       background: linear-gradient(180deg, rgba(10,18,12,0.45), rgba(5,8,6,0.6));
-      border:1px solid var(--border);
-      box-shadow: 0 0 0 1px rgba(25,255,90,0.06), 0 0 40px var(--shadow);
+      border:1px solid rgba(25,255,90,0.35);
+      box-shadow: 0 0 0 1px rgba(25,255,90,0.06), 0 0 40px rgba(25,255,90,0.12);
       border-radius:12px;
       padding:22px 18px;
       position:relative;
@@ -112,11 +112,9 @@
       background: rgba(0,0,0,0.25);
       margin-bottom:14px;
       font-size:12px;
-      color: var(--green-dim);
+      color: rgba(25,255,90,0.55);
     }
-    .dots{
-      display:flex; gap:8px; align-items:center;
-    }
+    .dots{ display:flex; gap:8px; align-items:center; }
     .dot{
       width:10px; height:10px; border-radius:50%;
       background: rgba(25,255,90,0.25);
@@ -145,14 +143,13 @@
       appearance:none;
       background: rgba(0,0,0,0.35);
       border:1px solid rgba(25,255,90,0.35);
-      color: var(--green);
+      color: rgba(25,255,90,1);
       padding:12px 14px;
       border-radius:10px;
       font-family: inherit;
       font-size:12px;
       cursor:pointer;
       transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
-      position:relative;
       outline:none;
     }
     .btn:hover{
@@ -161,6 +158,7 @@
       box-shadow: 0 0 0 2px rgba(25,255,90,0.10), 0 0 18px rgba(25,255,90,0.12);
     }
     .btn:active{ transform: translateY(0px); }
+    .btn:disabled{ opacity:0.55; cursor:not-allowed; }
 
     .btn.danger{
       border-color: rgba(255,43,43,0.35);
@@ -201,14 +199,12 @@
       100%{ transform: translate(0,0); filter:none; }
     }
 
-    /* Small footer hint */
     .hint{
       margin-top:10px;
       font-size:10px;
       color: rgba(25,255,90,0.45);
     }
 
-    /* Responsive pixel font readability */
     @media (max-width: 520px){
       .content{ font-size:11px; }
       .btn{ width: 100%; }
@@ -252,7 +248,6 @@
     const connectBtn = document.getElementById("connectBtn");
     const ignoreBtn = document.getElementById("ignoreBtn");
 
-    // Lines to "type" (keep them short + punchy for vibe)
     const lines = [
       "BOOT SEQUENCE INITIATED...",
       "LOADING CORE MODULES........OK",
@@ -274,55 +269,49 @@
     let charIndex = 0;
     let isTyping = true;
 
-    // Creates a dedicated line element for typing
-    const currentLineEl = document.createElement("div");
-    output.appendChild(currentLineEl);
+    // Start with one line container
+    const firstLine = document.createElement("div");
+    output.appendChild(firstLine);
 
+    // Cursor element
     const cursor = document.createElement("span");
     cursor.className = "cursor";
+    firstLine.appendChild(cursor);
+
+    function rand(min, max){
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 
     function typeNextChar(){
       if (!isTyping) return;
 
       const currentLine = lines[lineIndex] ?? "";
-      // ensure cursor stays at end
+      const currentLineEl = output.lastElementChild;
+
+      // Ensure cursor is at the end of the current line
       if (!currentLineEl.contains(cursor)) currentLineEl.appendChild(cursor);
 
       if (charIndex < currentLine.length){
-        // insert character before cursor
         cursor.insertAdjacentText("beforebegin", currentLine[charIndex]);
         charIndex++;
         setTimeout(typeNextChar, rand(14, 40));
       } else {
-        // finish line
-        if (currentLine.length === 0) {
-          // empty line spacer
-          currentLineEl.textContent = "";
-        } else {
-          // remove cursor temporarily while moving lines
-          if (currentLineEl.contains(cursor)) currentLineEl.removeChild(cursor);
-        }
+        // Line done: move to a new line
+        if (currentLineEl.contains(cursor)) currentLineEl.removeChild(cursor);
 
-        // add next line element
-        output.appendChild(document.createElement("div"));
+        const nextLineEl = document.createElement("div");
+        output.appendChild(nextLineEl);
+        nextLineEl.appendChild(cursor);
 
         lineIndex++;
         charIndex = 0;
 
-        // Move typing to newest div
-        const last = output.lastElementChild;
-        last.appendChild(cursor);
-
-        // Scroll to bottom for long screens
         output.scrollTop = output.scrollHeight;
 
-        // End typing => show actions
         if (lineIndex >= lines.length){
           isTyping = false;
           actions.style.display = "flex";
           hint.style.display = "block";
-          // ensure cursor stays visible at end of final prompt
-          last.appendChild(cursor);
           return;
         }
 
@@ -330,37 +319,15 @@
       }
     }
 
-    function rand(min, max){
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    // Start typing
-    // Put cursor in the very first line
-    currentLineEl.appendChild(cursor);
     typeNextChar();
 
-    // Button behaviors
+    // ✅ CONNECT NOW REDIRECTS TO PAGE 2 (contact.html)
     connectBtn.addEventListener("click", () => {
-      // Replace with your Page 2 navigation later:
-      // window.location.href = "contact.html";
-      appendSystemLine("");
-      appendSystemLine(">> CONNECTION REQUEST ACCEPTED.");
-      appendSystemLine(">> ROUTING SIGNAL...");
-      appendSystemLine(">> TRANSFERRING TO /CONTACT ...");
-      status.innerHTML = 'STATUS: <span style="color:rgba(25,255,90,0.9)">CONNECTED</span>';
-      actions.querySelectorAll("button").forEach(b => b.disabled = true);
-
-      // Fake delay then navigate (optional)
-      setTimeout(() => {
-        // For now, just show a placeholder message.
-        appendSystemLine("");
-        appendSystemLine("window.location.href = "contact.html";
-");
-      }, 650);
+      window.location.href = "contact.html";
     });
 
+    // IGNORE = screen fights back
     ignoreBtn.addEventListener("click", () => {
-      // Make the screen "fight back"
       terminal.classList.remove("glitch");
       void terminal.offsetWidth; // restart animation
       terminal.classList.add("glitch");
