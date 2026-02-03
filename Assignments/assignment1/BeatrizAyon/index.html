@@ -64,9 +64,13 @@
             position: absolute;
             bottom: 10px;
             right: 12px;
-            font-size: 0.7rem;
-            color: #555555;
-            opacity: 0.7;
+            font-size: 0.8rem;
+            color: #333333;
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 4px;
+            padding: 2px 8px;
+            border: 1px solid #bcbcbc;
+            opacity: 0.9;
             pointer-events: none;
         }
 
@@ -1330,6 +1334,7 @@
                             <div class="office-clock-hand-minute" id="clock-minute"></div>
                         </div>
                     </div>
+                    <div class="tip">click mouse</div>
                 </div>
                 <div class="scene-text"></div>
             </div>
@@ -1359,6 +1364,7 @@
                             </div>
                         </div>
                     </div>
+                    <div class="tip">press button</div>
                 </div>
                 <div class="scene-text"></div>
             </div>
@@ -1378,10 +1384,40 @@
                                 <div class="bathroom-boy-mouth"></div>
                             </div>
                         </div>
-                        <div class="bathroom-toothbrush">
+                        <div class="bathroom-toothbrush" id="bathroom-toothbrush">
                             <div class="bathroom-toothbrush-head"></div>
                         </div>
                     </div>
+                    <div class="tip">click toothbrush</div>
+                </div>
+                <div class="scene-text"></div>
+            </div>
+
+            <!-- Scene 6: Back in bed -->
+            <div class="scene scene-bedend" id="scene-bedend">
+                <div class="scene-visual">
+                    <div class="bed">
+                        <div class="window">
+                            <div class="window-sun"></div>
+                            <div class="window-cloud left"></div>
+                            <div class="window-cloud right"></div>
+                        </div>
+
+                        <div class="bed-frame"></div>
+                        <div class="mattress"></div>
+                        <div class="pillow"></div>
+                        <div class="blanket"></div>
+
+                        <div class="boy-head">
+                            <div class="hair"></div>
+                            <div class="eye left"></div>
+                            <div class="eye right"></div>
+                            <div class="mouth"></div>
+                        </div>
+
+                        <div id="bed-reset-area" style="position:absolute; inset:0; cursor:pointer;"></div>
+                    </div>
+                    <div class="tip">click bed</div>
                 </div>
                 <div class="scene-text"></div>
             </div>
@@ -1396,11 +1432,14 @@
         const officeScene = document.getElementById("scene-office");
         const microwaveScene = document.getElementById("scene-microwave");
         const bathroomScene = document.getElementById("scene-bathroom");
+        const bedendScene = document.getElementById("scene-bedend");
         const officeRoom = document.getElementById("office-room");
         const officeMouse = document.getElementById("office-mouse");
         const clockHour = document.getElementById("clock-hour");
         const clockMinute = document.getElementById("clock-minute");
         const microwaveButton = document.getElementById("microwave-button");
+        const bathroomToothbrush = document.getElementById("bathroom-toothbrush");
+        const bedResetArea = document.getElementById("bed-reset-area");
 
         const officePhases = [
             { roomClass: "office-morning", hourDeg: 30, minuteDeg: 0 },   // ~1:00
@@ -1450,10 +1489,28 @@
             bathroomScene.classList.add("active");
         }
 
+        function showBedendScene() {
+            bathroomScene.classList.remove("active");
+            bedendScene.classList.add("active");
+        }
+
+        function resetToStart() {
+            bedendScene.classList.remove("active");
+            wakeupScene.classList.add("active");
+            breakfastScene.classList.remove("active");
+            officeScene.classList.remove("active");
+            microwaveScene.classList.remove("active");
+            bathroomScene.classList.remove("active");
+            officePhaseIndex = 0;
+            applyOfficePhase();
+        }
+
         alarmButton.addEventListener("click", showBreakfastScene);
         plateButton.addEventListener("click", showOfficeScene);
         officeMouse.addEventListener("click", advanceOfficeTime);
         microwaveButton.addEventListener("click", showBathroomScene);
+        bathroomToothbrush.addEventListener("click", showBedendScene);
+        bedResetArea.addEventListener("click", resetToStart);
     </script>
 </body>
 </html>
