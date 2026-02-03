@@ -1,27 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Two Days Before</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Two Days Before</title>
+<link rel="stylesheet" href="style.css">
 </head>
-
-<body class="day2" onload="startCountdown()">
-  <div id="timer"></div>
-
+<body class="day2">
+  <canvas id="particles"></canvas>
   <div class="container">
-    <p>I should probably study.</p>
-
-    <button onclick="showVideo()">Check phone</button>
+    <p class="remaining-time">48 hours til exam</p>
+    <p class="main-text">I should probably study.</p>
+    <button onclick="document.getElementById('videoOverlay').style.display='flex'">Check phone</button>
     <a href="day1.html"><button>Study (later)</button></a>
   </div>
-
-  <!-- Video overlay -->
   <div id="videoOverlay">
-    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" 
-            allow="autoplay"></iframe>
+    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" allow="autoplay" 
+            style="width:560px;height:315px;border-radius:12px;"></iframe>
   </div>
-
-  <script src="script.js"></script>
+  <script src="particles.js"></script>
 </body>
 </html>
