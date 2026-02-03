@@ -142,6 +142,17 @@
         { sel: '.letter-body', baseDelay: 11.5, charDelay: 0.04 },
         { sel: '.letter-body-2', baseDelay: 19, charDelay: 0.04 }
       ];
+      var letter = document.querySelector('.letter-text');
+      var duration = 8;
+      var delay = 0;
+      if (letter) {
+        var styles = window.getComputedStyle(letter);
+        var d = parseFloat(styles.animationDuration) || 0;
+        var dl = parseFloat(styles.animationDelay) || 0;
+        if (d > 0) duration = d;
+        if (dl > 0) delay = dl;
+      }
+      var boomDelayMs = (delay + (duration * 0.25)) * 1000;
       setTimeout(function() {
         if (!boom) return;
         boom.volume = 1.0;
@@ -150,7 +161,7 @@
         if (playPromise && typeof playPromise.catch === 'function') {
           playPromise.catch(function() {});
         }
-      }, 2000);
+      }, boomDelayMs);
       configs.forEach(function(cfg) {
         var el = document.querySelector(cfg.sel);
         if (!el) return;
