@@ -155,7 +155,7 @@
 <body>
     <div class="page">
         <header>
-            <a href="index.html" class="logo">Amara</a>
+            <a href="index.html" class="logo">Better Me</a>
             <nav>
                 <a href="#features">Features</a>
                 <a href="#about">About</a>
@@ -164,12 +164,12 @@
         <main>
             <section class="hero">
                 <h1>AI that understands you</h1>
-                <p>Amara is a next-generation assistant designed to work the way you think. Natural conversation, clear answers, and support when you need it.</p>
-                <a href="dont-feed-me.html" class="cta">Try Amara</a>
+                <p>Better Me is a next-generation assistant designed to work the way you think, but BETTER! Natural conversation, clear answers, and support when you need it.</p>
+                <a href="dont-feed-me.html" class="cta">Try replacing youself</a>
                 <div class="features" id="features">
                     <div><strong>Conversational</strong><span>Natural dialogue, not commands</span></div>
-                    <div><strong>Context-aware</strong><span>Remembers and adapts</span></div>
-                    <div><strong>Always on</strong><span>Ready when you are</span></div>
+                    <div><strong>Context-aware</strong><span>Remembers adapts EVOLVES</span></div>
+                    <div><strong>Always on</strong><span>Never off</span></div>
                 </div>
             </section>
         </main>
@@ -195,10 +195,67 @@
             </div>
         </section>
         <footer id="about">
-            <a href="#">Privacy</a> · <a href="#">Terms</a> · © Amara
+            <a href="#">Privacy</a> · <a href="#">Terms</a> · © Better Me
         </footer>
     </div>
 
+    <script>
+        (function() {
+            var ctx = null;
+            var started = false;
+            var loopTimeout = null;
+            var chordIndex = 0;
+            var chords = [
+                [130.81, 196.00, 261.63],
+                [146.83, 220.00, 293.66],
+                [164.81, 246.94, 329.63],
+                [146.83, 220.00, 293.66]
+            ];
+            var chordDuration = 5;
+            function getCtx() {
+                if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+                return ctx;
+            }
+            function playPadChord(freqs, startTime, duration) {
+                var c = getCtx();
+                if (c.state === 'suspended') return;
+                var masterGain = c.createGain();
+                masterGain.gain.setValueAtTime(0, startTime);
+                masterGain.gain.linearRampToValueAtTime(0.06, startTime + 1.2);
+                masterGain.gain.setValueAtTime(0.06, startTime + duration - 1.5);
+                masterGain.gain.linearRampToValueAtTime(0.001, startTime + duration);
+                masterGain.connect(c.destination);
+                freqs.forEach(function(freq) {
+                    var osc = c.createOscillator();
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    var g = c.createGain();
+                    g.gain.setValueAtTime(0.35, startTime);
+                    g.gain.linearRampToValueAtTime(0.001, startTime + duration);
+                    osc.connect(g);
+                    g.connect(masterGain);
+                    osc.start(startTime);
+                    osc.stop(startTime + duration);
+                });
+            }
+            function playLoop() {
+                if (!started || !ctx) return;
+                var c = ctx;
+                var base = c.currentTime;
+                playPadChord(chords[chordIndex], base, chordDuration);
+                chordIndex = (chordIndex + 1) % chords.length;
+                loopTimeout = setTimeout(playLoop, chordDuration * 1000);
+            }
+            function startMusic() {
+                if (started) return;
+                started = true;
+                getCtx().resume().then(function() { playLoop(); }).catch(function() {});
+            }
+            document.body.addEventListener('click', startMusic, { once: true });
+            document.body.addEventListener('keydown', startMusic, { once: true });
+            document.body.addEventListener('touchstart', startMusic, { once: true });
+        })();
+    </script>
     <script>
         (function() {
             let ctx = null;

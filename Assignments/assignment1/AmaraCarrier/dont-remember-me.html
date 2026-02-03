@@ -224,6 +224,59 @@
             }, 5800);
         })();
         (function() {
+            var bgCtx = null;
+            var bgStarted = false;
+            var chordIndex = 0;
+            var chords = [
+                [130.81, 196.00, 261.63],
+                [146.83, 220.00, 293.66],
+                [164.81, 246.94, 329.63],
+                [146.83, 220.00, 293.66]
+            ];
+            var chordDuration = 5;
+            function getBgCtx() {
+                if (!bgCtx) bgCtx = new (window.AudioContext || window.webkitAudioContext)();
+                return bgCtx;
+            }
+            function playPadChord(freqs, startTime, duration) {
+                var c = getBgCtx();
+                if (c.state === 'suspended') return;
+                var masterGain = c.createGain();
+                masterGain.gain.setValueAtTime(0, startTime);
+                masterGain.gain.linearRampToValueAtTime(0.06, startTime + 1.2);
+                masterGain.gain.setValueAtTime(0.06, startTime + duration - 1.5);
+                masterGain.gain.linearRampToValueAtTime(0.001, startTime + duration);
+                masterGain.connect(c.destination);
+                freqs.forEach(function(freq) {
+                    var osc = c.createOscillator();
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    var g = c.createGain();
+                    g.gain.setValueAtTime(0.35, startTime);
+                    g.gain.linearRampToValueAtTime(0.001, startTime + duration);
+                    osc.connect(g);
+                    g.connect(masterGain);
+                    osc.start(startTime);
+                    osc.stop(startTime + duration);
+                });
+            }
+            function playLoop() {
+                if (!bgStarted || !bgCtx) return;
+                var base = bgCtx.currentTime;
+                playPadChord(chords[chordIndex], base, chordDuration);
+                chordIndex = (chordIndex + 1) % chords.length;
+                setTimeout(playLoop, chordDuration * 1000);
+            }
+            function startBgMusic() {
+                if (bgStarted) return;
+                bgStarted = true;
+                getBgCtx().resume().then(function() { playLoop(); }).catch(function() {});
+            }
+            document.body.addEventListener('click', startBgMusic, { once: true });
+            document.body.addEventListener('keydown', startBgMusic, { once: true });
+            document.body.addEventListener('touchstart', startBgMusic, { once: true });
+        })();
+        (function() {
             let ctx = null;
             function startHum() {
                 if (ctx) return;
