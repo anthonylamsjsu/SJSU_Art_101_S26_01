@@ -95,6 +95,49 @@
             color: #64748b;
         }
         .features strong { color: #334155; }
+        .ads-section {
+            padding: 2rem 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .ads-label {
+            font-size: 0.6875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+        .ads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .ad-card {
+            display: block;
+            padding: 1rem 1.25rem;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .ad-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+        .ad-card .ad-name {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            color: #0f172a;
+            margin-bottom: 0.25rem;
+        }
+        .ad-card .ad-tagline {
+            font-size: 0.8125rem;
+            color: #64748b;
+            line-height: 1.35;
+        }
         footer {
             padding: 1.5rem;
             text-align: center;
@@ -130,6 +173,27 @@
                 </div>
             </section>
         </main>
+        <section class="ads-section">
+            <p class="ads-label">Sponsored · AI assistants you might like</p>
+            <div class="ads-grid">
+                <a href="#" class="ad-card">
+                    <span class="ad-name">Nexus AI</span>
+                    <span class="ad-tagline">Enterprise-grade reasoning. Start free.</span>
+                </a>
+                <a href="#" class="ad-card">
+                    <span class="ad-name">SynthMind</span>
+                    <span class="ad-tagline">Write, code, and create with AI. Try now.</span>
+                </a>
+                <a href="#" class="ad-card">
+                    <span class="ad-name">LogicFlow</span>
+                    <span class="ad-tagline">Smarter workflows. Fewer steps. See how.</span>
+                </a>
+                <a href="#" class="ad-card">
+                    <span class="ad-name">Cortex Chat</span>
+                    <span class="ad-tagline">Conversational AI for teams. Get started.</span>
+                </a>
+            </div>
+        </section>
         <footer id="about">
             <a href="#">Privacy</a> · <a href="#">Terms</a> · © Amara
         </footer>
