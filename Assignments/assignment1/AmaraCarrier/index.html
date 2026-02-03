@@ -4,65 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Amara Carrier</title>
+    <link href="https://fonts.cdnfonts.com/css/perfect-dos-vga-437" rel="stylesheet">
     <style>
-        body { background-color: black; color: white; margin: 0; min-height: 100vh; position: relative; cursor: pointer; }
+        body {
+            background-color: #000;
+            color: #00ff00;
+            margin: 0;
+            min-height: 100vh;
+            position: relative;
+            cursor: pointer;
+            font-family: 'Perfect DOS VGA 437', monospace;
+            box-shadow: inset 0 0 0 3px #003300;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
 
         .center-text {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-family: 'Courier New', monospace;
+            font-family: 'Perfect DOS VGA 437', monospace;
             font-size: clamp(14px, 2.8vw, 26px);
             max-width: 85vw;
             padding: 0 1em;
             box-sizing: border-box;
             font-weight: bold;
-            color: #ff0000;
+            color: #00ff00;
             text-align: center;
             z-index: 10;
-            text-shadow: 
-                1px 1px 0px #000,
-                -1px -1px 0px #000,
-                1px -1px 0px #000,
-                -1px 1px 0px #000,
-                0 0 10px rgba(255, 60, 60, 0.9),
-                0 0 20px rgba(255, 0, 0, 0.5),
-                0 0 30px rgba(255, 0, 0, 0.3);
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
-            letter-spacing: 2px;
+            text-shadow: 0 0 1px #00ff00;
+            letter-spacing: 1px;
             line-height: 1.2;
             text-decoration: none;
             display: inline-block;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
         }
         .center-text:hover {
-            color: #ff3333;
-            text-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
+            color: #55ff55;
         }
 
-        /* CRT TV screen filter */
+        /* DOS CRT – scanlines only */
         .crt-overlay {
             position: fixed;
             inset: 0;
             pointer-events: none;
             z-index: 100;
-            background:
-                repeating-linear-gradient(
-                    0deg,
-                    transparent 0px,
-                    transparent 2px,
-                    rgba(0, 0, 0, 0.12) 2px,
-                    rgba(0, 0, 0, 0.12) 3px
-                ),
-                radial-gradient(ellipse 80% 80% at 50% 50%, transparent 0%, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0px,
+                transparent 2px,
+                rgba(0, 0, 0, 0.15) 2px,
+                rgba(0, 0, 0, 0.15) 3px
+            );
         }
         .crt-overlay::after {
             content: '';
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.02);
+            background: rgba(0, 0, 0, 0.03);
             animation: crt-flicker 8s infinite;
         }
         @keyframes crt-flicker {
@@ -72,31 +74,45 @@
             98% { opacity: 1; }
         }
 
-        /* Eyes – ovoid shape, above shadow mask, larger irises, pupils follow mouse, progressive shake near link */
+        /* Eyes – detailed pixel art (multi-shade sclera, iris, pupil), above shadow mask, pupils follow mouse */
         .eye {
             position: fixed;
-            border-radius: 50%;
-            background: linear-gradient(180deg, #fffef8 0%, #fffaf0 40%, #f5f0e8 100%);
+            border-radius: 0;
             overflow: hidden;
             z-index: 9;
-            box-shadow: 0 0 0 2px #000, 0 0 20px rgba(255,255,255,0.15), 0 4px 16px rgba(0,0,0,0.35);
+            box-shadow: 0 0 0 2px #000;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            background-color: #b8b8b8;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 12'%3E%3Crect x='0' y='0' width='20' height='12' fill='%23b0b0b0'/%3E%3Crect x='2' y='1' width='16' height='10' fill='%23d0d0d0'/%3E%3Crect x='4' y='2' width='12' height='8' fill='%23e8e8e8'/%3E%3Crect x='6' y='3' width='8' height='6' fill='%23f0f0f0'/%3E%3C/svg%3E");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
         }
         .eye .iris {
             position: absolute;
             left: 50%;
             top: 50%;
-            border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, #4a8a4a 0%, #2d5a2d 50%, #1a3d1a 100%);
-            box-shadow: inset 0 -2px 8px rgba(0,0,0,0.35);
+            border-radius: 0;
+            box-shadow: none;
             transition: transform 0.08s ease-out;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            background-color: #2d5a2d;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='0' y='0' width='16' height='16' fill='%231a3d1a'/%3E%3Crect x='2' y='2' width='12' height='12' fill='%232d5a2d'/%3E%3Crect x='4' y='4' width='8' height='8' fill='%233a6b3a'/%3E%3Crect x='5' y='5' width='4' height='4' fill='%234a8a4a'/%3E%3Crect x='6' y='6' width='2' height='2' fill='%2360a060'/%3E%3C/svg%3E");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
         }
         .eye .pupil {
             position: absolute;
             left: 50%;
             top: 50%;
-            background: #000;
-            border-radius: 50%;
+            border-radius: 0;
             transition: transform 0.08s ease-out;
+            background-color: #000;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Crect x='0' y='0' width='8' height='8' fill='%23000'/%3E%3Crect x='2' y='2' width='2' height='2' fill='%23444'/%3E%3Crect x='2' y='2' width='1' height='1' fill='%23fff'/%3E%3C/svg%3E");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
         }
         .eye::after {
             content: '';
@@ -105,8 +121,8 @@
             right: 0;
             top: 0;
             height: 0;
-            background: linear-gradient(180deg, #fffef8 0%, #f5f0e8 100%);
-            border-radius: 50%;
+            background: #c0c0c0;
+            border-radius: 0;
             pointer-events: none;
         }
         .eye.eye-blink::after {
@@ -119,15 +135,15 @@
         .eye--sm { width: 40px; height: 24px; }
         .eye--sm .iris { width: 24px; height: 24px; margin: -12px 0 0 -12px; }
         .eye--sm .pupil { width: 12px; height: 12px; margin: -6px 0 0 -6px; }
-        .eye--md { width: 58px; height: 34px; }
-        .eye--md .iris { width: 36px; height: 36px; margin: -18px 0 0 -18px; }
-        .eye--md .pupil { width: 16px; height: 16px; margin: -8px 0 0 -8px; }
-        .eye--lg { width: 78px; height: 46px; }
-        .eye--lg .iris { width: 48px; height: 48px; margin: -24px 0 0 -24px; }
-        .eye--lg .pupil { width: 20px; height: 20px; margin: -10px 0 0 -10px; }
-        .eye--xl { width: 100px; height: 58px; }
-        .eye--xl .iris { width: 60px; height: 60px; margin: -30px 0 0 -30px; }
-        .eye--xl .pupil { width: 24px; height: 24px; margin: -12px 0 0 -12px; }
+        .eye--md { width: 56px; height: 32px; }
+        .eye--md .iris { width: 32px; height: 32px; margin: -16px 0 0 -16px; }
+        .eye--md .pupil { width: 14px; height: 14px; margin: -7px 0 0 -7px; }
+        .eye--lg { width: 72px; height: 40px; }
+        .eye--lg .iris { width: 44px; height: 44px; margin: -22px 0 0 -22px; }
+        .eye--lg .pupil { width: 18px; height: 18px; margin: -9px 0 0 -9px; }
+        .eye--xl { width: 88px; height: 48px; }
+        .eye--xl .iris { width: 52px; height: 52px; margin: -26px 0 0 -26px; }
+        .eye--xl .pupil { width: 22px; height: 22px; margin: -11px 0 0 -11px; }
         .eye--tl { top: 6%; left: 8%; }
         .eye--tr { top: 6%; right: 8%; left: auto; }
         .eye--t2 { top: 5%; left: 22%; }
@@ -284,9 +300,25 @@
     <script>
         (function() {
             let ctx = null;
+            function playBootSound(c) {
+                const gain = c.createGain();
+                gain.gain.value = 0.2;
+                gain.connect(c.destination);
+                function beep(freq, start, duration) {
+                    const osc = c.createOscillator();
+                    osc.type = 'square';
+                    osc.frequency.value = freq;
+                    osc.connect(gain);
+                    osc.start(start);
+                    osc.stop(start + duration);
+                }
+                beep(320, 0, 0.12);
+                beep(480, 0.2, 0.12);
+            }
             function startHum() {
                 if (ctx) return;
                 ctx = new (window.AudioContext || window.webkitAudioContext)();
+                try { playBootSound(ctx); } catch (e) {}
                 const osc = ctx.createOscillator();
                 osc.type = 'sine';
                 osc.frequency.value = 55;
@@ -294,11 +326,34 @@
                 gain.gain.value = 0.06;
                 osc.connect(gain);
                 gain.connect(ctx.destination);
-                osc.start(0);
+                osc.start(0.5);
             }
             document.body.addEventListener('click', startHum, { once: true });
             document.body.addEventListener('keydown', startHum, { once: true });
             document.body.addEventListener('touchstart', startHum, { once: true });
+        })();
+    </script>
+    <script>
+        (function() {
+            function playClickSound() {
+                try {
+                    var c = new (window.AudioContext || window.webkitAudioContext)();
+                    var osc = c.createOscillator();
+                    osc.type = 'sine';
+                    osc.frequency.value = 1200;
+                    var g = c.createGain();
+                    g.gain.setValueAtTime(0.15, c.currentTime);
+                    g.gain.exponentialRampToValueAtTime(0.01, c.currentTime + 0.04);
+                    osc.connect(g);
+                    g.connect(c.destination);
+                    osc.start(c.currentTime);
+                    osc.stop(c.currentTime + 0.04);
+                } catch (e) {}
+            }
+            document.body.addEventListener('click', function(e) {
+                var a = e.target.closest('a[href]');
+                if (a && a.getAttribute('href') && a.getAttribute('href') !== '#') playClickSound();
+            });
         })();
     </script>
 </body>
