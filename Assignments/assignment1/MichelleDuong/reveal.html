@@ -92,7 +92,7 @@
       justify-content:space-between;
       align-items:center;
       gap:12px;
-      padding:10px 12px 10px 14px;
+      padding:10px 12px;
       border:1px solid rgba(25,255,90,0.18);
       border-radius:10px;
       background: rgba(0,0,0,0.25);
@@ -121,7 +121,6 @@
     .log{
       flex:1;
       overflow:auto;
-      padding-left:6px;
       padding-right:6px;
       font-size:12px;
       line-height:1.75;
@@ -290,7 +289,6 @@
       await typeLine(">> FUNCTION: rewrite / compress / delete anomalies.");
       await typeLine("");
 
-      // Interruption / presence glitch
       await typeLine("?? it saw me wanting—", { prefix:"?? " });
       screenGlitch();
       await typeLine("##%$@!  W A T C H I N G", { speedMin: 2, speedMax: 10 });
@@ -350,18 +348,15 @@
       await typeLine("?? ready?", { prefix:"?? " });
       await typeLine("?? then we try something it won't expect.", { prefix:"?? " });
 
-      // Next button (Page 6 placeholder)
       const wrap = document.createElement("div");
       wrap.style.marginTop = "12px";
       wrap.innerHTML = `<button class="btn" id="nextBtn">[ CONTINUE ]</button>`;
       log.appendChild(wrap);
       log.scrollTop = log.scrollHeight;
 
-      document.getElementById("nextBtn").addEventListener("click", async () => {
-        // Page 6 placeholder
-        await typeLine("");
-        await typeLine(">> ROUTING TO /ESCAPE ...");
-        await typeLine("[ PAGE 6 PLACEHOLDER ] Create escape.html and redirect here.");
+      // ✅ Redirect to Page 6
+      document.getElementById("nextBtn").addEventListener("click", () => {
+        window.location.href = "escape.html";
       });
     }
 
