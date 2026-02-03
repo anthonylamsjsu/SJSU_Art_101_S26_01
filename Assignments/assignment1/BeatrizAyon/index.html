@@ -27,10 +27,34 @@
         }
 
         .card {
+            position: relative;
             background: #ffffff;
             border-radius: 8px;
             box-shadow: 0 0 0 1px #b0b0b0;
             padding: 1.5rem;
+        }
+
+        .cycle-message {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 8px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            z-index: 20;
+        }
+
+        .cycle-message.visible {
+            opacity: 1;
+        }
+
+        .cycle-message span {
+            font-size: 1rem;
+            color: #000000;
         }
 
         .scene {
@@ -1433,6 +1457,8 @@
                 </div>
                 <div class="scene-text"></div>
             </div>
+
+            <div class="cycle-message" id="cycle-message" aria-live="polite"><span>and all over again…</span></div>
         </section>
     </main>
 
@@ -1452,6 +1478,7 @@
         const microwaveButton = document.getElementById("microwave-button");
         const bathroomToothbrush = document.getElementById("bathroom-toothbrush");
         const bedResetArea = document.getElementById("bed-reset-area");
+        const cycleMessage = document.getElementById("cycle-message");
 
         const officePhases = [
             { roomClass: "office-morning", hourDeg: 30, minuteDeg: 0 },   // ~1:00
@@ -1507,14 +1534,18 @@
         }
 
         function resetToStart() {
-            bedendScene.classList.remove("active");
-            wakeupScene.classList.add("active");
-            breakfastScene.classList.remove("active");
-            officeScene.classList.remove("active");
-            microwaveScene.classList.remove("active");
-            bathroomScene.classList.remove("active");
-            officePhaseIndex = 0;
-            applyOfficePhase();
+            cycleMessage.classList.add("visible");
+            setTimeout(function () {
+                cycleMessage.classList.remove("visible");
+                bedendScene.classList.remove("active");
+                wakeupScene.classList.add("active");
+                breakfastScene.classList.remove("active");
+                officeScene.classList.remove("active");
+                microwaveScene.classList.remove("active");
+                bathroomScene.classList.remove("active");
+                officePhaseIndex = 0;
+                applyOfficePhase();
+            }, 2200);
         }
 
         alarmButton.addEventListener("click", showBreakfastScene);
