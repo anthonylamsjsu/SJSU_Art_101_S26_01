@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>CONTACT // SIGNAL</title>
 
-  <!-- Optional pixel font (remove if you want zero external assets) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -20,15 +19,12 @@
       --shadow: rgba(25, 255, 90, 0.12);
       --warn:#ffcc00;
     }
-
     *{ box-sizing:border-box; }
     html,body{ height:100%; margin:0; background:var(--bg); color:var(--green); }
     body{
       font-family: "Press Start 2P", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       overflow:hidden;
     }
-
-    /* Glow pulse */
     body::before{
       content:"";
       position:fixed; inset:0;
@@ -38,12 +34,8 @@
       animation: glowPulse 4.8s ease-in-out infinite;
       opacity:0.7;
     }
-    @keyframes glowPulse{
-      0%,100%{ opacity:0.55; }
-      50%{ opacity:0.85; }
-    }
+    @keyframes glowPulse{ 0%,100%{opacity:0.55} 50%{opacity:0.85} }
 
-    /* Scanlines */
     .scanlines{
       position:fixed; inset:0;
       pointer-events:none;
@@ -55,8 +47,6 @@
       );
       opacity:0.55;
     }
-
-    /* Noise overlay */
     .noise{
       position:fixed; inset:-30%;
       pointer-events:none;
@@ -74,7 +64,6 @@
       100%{ transform: translate(0,0); }
     }
 
-    /* Layout */
     .wrap{
       position:relative;
       height:100%;
@@ -83,22 +72,19 @@
       justify-content:center;
       padding:24px;
     }
-
     .grid{
       width:min(1100px, 96vw);
       display:grid;
       grid-template-columns: 1fr 360px;
       gap:16px;
     }
-    @media (max-width: 900px){
-      .grid{ grid-template-columns: 1fr; }
-    }
+    @media (max-width: 900px){ .grid{ grid-template-columns: 1fr; } }
 
     .terminal{
       height:min(620px, 82vh);
       background: linear-gradient(180deg, rgba(10,18,12,0.45), rgba(5,8,6,0.65));
-      border:1px solid var(--border);
-      box-shadow: 0 0 0 1px rgba(25,255,90,0.06), 0 0 40px var(--shadow);
+      border:1px solid rgba(25,255,90,0.35);
+      box-shadow: 0 0 0 1px rgba(25,255,90,0.06), 0 0 40px rgba(25,255,90,0.12);
       border-radius:12px;
       padding:18px;
       overflow:hidden;
@@ -116,7 +102,7 @@
       background: rgba(0,0,0,0.25);
       margin-bottom:12px;
       font-size:12px;
-      color: var(--green-dim);
+      color: rgba(25,255,90,0.55);
     }
 
     .dots{ display:flex; gap:8px; align-items:center; }
@@ -145,8 +131,6 @@
       letter-spacing:0.02em;
       text-shadow: 0 0 12px rgba(25,255,90,0.20);
     }
-
-    /* Scrollbar (subtle) */
     .log::-webkit-scrollbar{ width:10px; }
     .log::-webkit-scrollbar-thumb{
       background: rgba(25,255,90,0.18);
@@ -162,16 +146,13 @@
       transform: translateY(6px);
       transition: opacity 260ms ease, transform 260ms ease;
     }
-    .choices.show{
-      opacity:1;
-      transform: translateY(0);
-    }
+    .choices.show{ opacity:1; transform: translateY(0); }
 
     .btn{
       appearance:none;
       background: rgba(0,0,0,0.35);
       border:1px solid rgba(25,255,90,0.35);
-      color: var(--green);
+      color: rgba(25,255,90,1);
       padding:12px 14px;
       border-radius:10px;
       font-family: inherit;
@@ -193,7 +174,6 @@
       color: rgba(25,255,90,0.45);
     }
 
-    /* Cursor */
     .cursor{
       display:inline-block;
       width:10px; height:14px;
@@ -205,7 +185,6 @@
     }
     @keyframes blink{ 0%,49%{opacity:1} 50%,100%{opacity:0} }
 
-    /* Side panel: Glitch Girl silhouette */
     .panel{
       height:min(620px, 82vh);
       border:1px solid rgba(25,255,90,0.25);
@@ -225,16 +204,13 @@
       justify-content:space-between;
       align-items:center;
       font-size:10px;
-      color: var(--green-dim);
+      color: rgba(25,255,90,0.55);
       padding:10px 10px;
       border:1px solid rgba(25,255,90,0.18);
       border-radius:10px;
       background: rgba(0,0,0,0.2);
     }
-    .sig{
-      color: var(--warn);
-      text-shadow: 0 0 12px rgba(255,204,0,0.18);
-    }
+    .sig{ color: var(--warn); text-shadow: 0 0 12px rgba(255,204,0,0.18); }
 
     .frame{
       flex:1;
@@ -247,7 +223,6 @@
       overflow:hidden;
     }
 
-    /* The silhouette is made from gradients; no image needed */
     .girl{
       position:absolute;
       left:50%;
@@ -259,26 +234,18 @@
       filter: blur(0.2px);
       animation: appear 1200ms ease forwards 700ms;
     }
-
-    /* Body + hair shape (stylized) */
     .girl::before{
       content:"";
       position:absolute; inset:0;
       background:
         radial-gradient(110px 160px at 50% 26%, rgba(25,255,90,0.35), transparent 62%),
         radial-gradient(140px 210px at 50% 38%, rgba(25,255,90,0.18), transparent 60%),
-        /* head */
         radial-gradient(60px 64px at 50% 16%, rgba(25,255,90,0.55), transparent 62%),
-        /* shoulders */
         radial-gradient(120px 90px at 50% 30%, rgba(25,255,90,0.35), transparent 62%),
-        /* torso */
         radial-gradient(90px 170px at 50% 54%, rgba(25,255,90,0.28), transparent 65%),
-        /* skirt/legs hint */
         radial-gradient(120px 160px at 50% 80%, rgba(25,255,90,0.20), transparent 68%);
       mix-blend-mode: screen;
     }
-
-    /* Scan bands over silhouette */
     .girl::after{
       content:"";
       position:absolute; inset:-20% -30%;
@@ -291,21 +258,12 @@
       opacity:0.45;
       animation: bandDrift 2.2s linear infinite;
     }
-
-    @keyframes bandDrift{
-      0%{ transform: translateY(-6%); }
-      100%{ transform: translateY(6%); }
-    }
-
+    @keyframes bandDrift{ 0%{transform:translateY(-6%)} 100%{transform:translateY(6%)} }
     @keyframes appear{
       from{ opacity:0; transform: translate(-50%,-50%) scale(0.98); }
       to{ opacity:1; transform: translate(-50%,-50%) scale(1); }
     }
-
-    /* Random “glitch” pulses */
-    .glitchPulse{
-      animation: glitchPulse 260ms steps(2) 0s 1;
-    }
+    .glitchPulse{ animation: glitchPulse 260ms steps(2) 0s 1; }
     @keyframes glitchPulse{
       0%{ transform: translate(-50%,-50%); filter:none; }
       25%{ transform: translate(calc(-50% - 2px), calc(-50% + 1px)); filter:hue-rotate(12deg); }
@@ -319,11 +277,7 @@
       color: rgba(25,255,90,0.5);
       line-height:1.6;
     }
-
-    /* Little signal dots */
-    .blips{
-      display:flex; gap:6px; align-items:center;
-    }
+    .blips{ display:flex; gap:6px; align-items:center; }
     .blip{
       width:8px; height:8px; border-radius:50%;
       background: rgba(255,204,0,0.35);
@@ -345,7 +299,6 @@
 
   <main class="wrap">
     <div class="grid">
-      <!-- TERMINAL -->
       <section class="terminal" aria-label="Signal Terminal">
         <div class="bar">
           <div class="dots" aria-hidden="true">
@@ -368,7 +321,6 @@
         </div>
       </section>
 
-      <!-- VISUAL PANEL -->
       <aside class="panel" aria-label="Signal Visualization">
         <div class="sigHeader">
           <div>VISUAL://RENDER</div>
@@ -395,29 +347,20 @@
     const status = document.getElementById("status");
     const girl = document.getElementById("girl");
 
-    // Utility
     const wait = (ms) => new Promise(r => setTimeout(r, ms));
     const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-    // Typing into the log
     async function typeLine(text, opts = {}) {
-      const {
-        prefix = "",
-        speedMin = 10,
-        speedMax = 36,
-        newBlock = true
-      } = opts;
+      const { prefix = "", speedMin = 10, speedMax = 36, newBlock = true } = opts;
 
       const line = document.createElement("div");
       log.appendChild(line);
 
-      // cursor
       const cursor = document.createElement("span");
       cursor.className = "cursor";
 
-      let full = prefix ? `${prefix}${text}` : text;
+      const full = prefix ? `${prefix}${text}` : text;
 
-      // Type characters
       for (let i = 0; i < full.length; i++) {
         cursor.insertAdjacentText("beforebegin", full[i]);
         if (!line.contains(cursor)) line.appendChild(cursor);
@@ -425,32 +368,22 @@
         await wait(rand(speedMin, speedMax));
       }
 
-      // Keep cursor on last line
       if (!line.contains(cursor)) line.appendChild(cursor);
-
-      if (newBlock) {
-        await wait(rand(90, 240));
-      }
+      if (newBlock) await wait(rand(90, 240));
       return line;
     }
 
-    // Make the silhouette glitch occasionally
     function scheduleGlitchPulses(){
       const pulse = () => {
         girl.classList.remove("glitchPulse");
         void girl.offsetWidth;
         girl.classList.add("glitchPulse");
-        setTimeout(() => {
-          // schedule next pulse
-          setTimeout(pulse, rand(900, 2200));
-        }, 30);
+        setTimeout(() => setTimeout(pulse, rand(900, 2200)), 30);
       };
       setTimeout(pulse, rand(800, 1500));
     }
 
-    // Initial story lines (page 2 intro)
     async function runIntro(){
-      // If user came here without page 1, still works
       await typeLine("CHANNEL OPEN.");
       await typeLine("SOURCE: external user // verified.", { prefix: ">> " });
       await typeLine("RECEIVING SIGNAL...", { prefix: ">> " });
@@ -471,7 +404,6 @@
       scheduleGlitchPulses();
     }
 
-    // Choice responses
     const responseMap = {
       who: {
         user: "WHO ARE YOU?",
@@ -506,16 +438,12 @@
       const data = responseMap[key];
       if (!data) return;
 
-      // disable buttons
       [...choices.querySelectorAll("button")].forEach(b => b.disabled = true);
-
-      // Store for later pages (optional)
       localStorage.setItem(data.flag.key, data.flag.value);
 
       await typeLine("");
       await typeLine(data.user, { prefix: "YOU> ", speedMin: 6, speedMax: 18 });
 
-      // Slight “signal wobble”
       girl.classList.remove("glitchPulse");
       void girl.offsetWidth;
       girl.classList.add("glitchPulse");
@@ -533,29 +461,22 @@
       await typeLine("");
       status.innerHTML = 'STATUS: <span class="sig">DEGRADING</span>';
 
-      // Show a "continue" option (wire to Page 3 later)
       const nextWrap = document.createElement("div");
       nextWrap.style.marginTop = "10px";
-      nextWrap.innerHTML = `
-        <button class="btn" id="nextBtn">[ CONTINUE ]</button>
-      `;
+      nextWrap.innerHTML = `<button class="btn" id="nextBtn">[ CONTINUE ]</button>`;
       log.appendChild(nextWrap);
       log.scrollTop = log.scrollHeight;
 
-      document.getElementById("nextBtn").addEventListener("click", async () => {
-        // Replace with your Page 3:
-        // window.location.href = "corruption.html";
-        await typeLine("");
-        await typeLine(">> ROUTING TO /CORRUPTION ...", { prefix: "" });
-        await typeLine("[ NEXT PAGE PLACEHOLDER ] Create corruption.html and redirect here.");
+      // ✅ Redirect to Page 3
+      document.getElementById("nextBtn").addEventListener("click", () => {
+        window.location.href = "corruption.html";
       });
     }
 
     choices.addEventListener("click", (e) => {
       const btn = e.target.closest("button");
       if (!btn) return;
-      const key = btn.getAttribute("data-choice");
-      handleChoice(key);
+      handleChoice(btn.getAttribute("data-choice"));
     });
 
     runIntro();
