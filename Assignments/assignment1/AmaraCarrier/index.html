@@ -3,207 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amara – AI Assistant</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Don't Look At Me</title>
+    <link href="https://fonts.cdnfonts.com/css/perfect-dos-vga-437" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
         body {
             margin: 0;
             min-height: 100vh;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #fafbfc;
-            color: #1a1d21;
-            line-height: 1.5;
+            background: #0a0a0f;
+            color: #00ff00;
+            font-family: 'Perfect DOS VGA 437', monospace;
+            overflow: hidden;
+            position: relative;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
         }
-        .page {
-            min-height: 100vh;
+        .eyes-wrap {
+            position: fixed;
+            inset: 0;
             display: flex;
-            flex-direction: column;
-        }
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem 1.5rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
-        .logo {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #0f172a;
-            text-decoration: none;
-            letter-spacing: -0.02em;
-        }
-        .logo:hover { color: #2563eb; }
-        nav a {
-            font-size: 0.875rem;
-            color: #64748b;
-            text-decoration: none;
-            margin-left: 1.5rem;
-        }
-        nav a:hover { color: #0f172a; }
-        main {
-            flex: 1;
-            display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: center;
-            padding: 2rem 1.5rem;
+            gap: 20px;
+            padding: 20px;
+            pointer-events: none;
         }
-        .hero {
+        .eye {
+            width: 48px;
+            height: 32px;
+            background: #1a1a2e;
+            border: 2px solid #00ff00;
+            position: relative;
+            overflow: hidden;
+            pointer-events: auto;
+            flex-shrink: 0;
+        }
+        .eye.pixel {
+            border-radius: 0;
+        }
+        .pupil {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #00ff00;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: left 0.08s ease-out, top 0.08s ease-out;
+        }
+        .eye.blink .pupil { opacity: 0; }
+        .eye.blink {
+            animation: eye-blink 0.15s steps(1);
+        }
+        @keyframes eye-blink {
+            0% { transform: scaleY(1); }
+            50% { transform: scaleY(0.05); }
+            100% { transform: scaleY(1); }
+        }
+        .page-text {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: clamp(18px, 3vw, 28px);
+            font-weight: bold;
+            color: #00ff00;
             text-align: center;
-            max-width: 640px;
+            text-shadow: 0 0 1px #00ff00;
+            letter-spacing: 2px;
+            z-index: 10;
+            pointer-events: auto;
         }
-        .hero h1 {
-            font-size: clamp(2rem, 5vw, 3rem);
-            font-weight: 700;
-            letter-spacing: -0.03em;
-            margin: 0 0 1rem;
-            color: #0f172a;
-            line-height: 1.15;
-        }
-        .hero p {
-            font-size: 1.125rem;
-            color: #475569;
-            margin: 0 0 2rem;
-        }
-        .cta {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background: #2563eb;
-            color: #fff;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            border-radius: 8px;
-            transition: background 0.2s;
-        }
-        .cta:hover { background: #1d4ed8; }
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 1.5rem;
-            margin-top: 3rem;
-            text-align: center;
-        }
-        .features span {
-            display: block;
-            font-size: 0.875rem;
-            color: #64748b;
-        }
-        .features strong { color: #334155; }
-        .ads-section {
-            padding: 2rem 1.5rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
-        .ads-label {
-            font-size: 0.6875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: #94a3b8;
-            margin-bottom: 1rem;
-        }
-        .ads-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-        .ad-card {
-            display: block;
-            padding: 1rem 1.25rem;
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            text-decoration: none;
-            color: inherit;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .ad-card:hover {
-            border-color: #cbd5e1;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-        }
-        .ad-card .ad-name {
-            font-weight: 600;
-            font-size: 0.9375rem;
-            color: #0f172a;
-            margin-bottom: 0.25rem;
-        }
-        .ad-card .ad-tagline {
-            font-size: 0.8125rem;
-            color: #64748b;
-            line-height: 1.35;
-        }
-        footer {
-            padding: 1.5rem;
-            text-align: center;
-            font-size: 0.8125rem;
-            color: #94a3b8;
-            border-top: 1px solid #e2e8f0;
-        }
-        footer a {
-            color: #64748b;
+        .page-text a {
+            color: #00ff00;
             text-decoration: none;
         }
-        footer a:hover { color: #0f172a; }
+        .page-text a:hover {
+            color: #55ff55;
+        }
+        body.shake .eyes-wrap {
+            animation: page-shake 0.4s ease-out;
+        }
+        @keyframes page-shake {
+            0%, 100% { transform: translate(0, 0); }
+            20% { transform: translate(-4px, 2px); }
+            40% { transform: translate(4px, -2px); }
+            60% { transform: translate(-2px, -4px); }
+            80% { transform: translate(2px, 4px); }
+        }
     </style>
 </head>
 <body>
-    <div class="page">
-        <header>
-            <a href="index.html" class="logo">Better Me</a>
-            <nav>
-                <a href="#features">Features</a>
-                <a href="#about">About</a>
-            </nav>
-        </header>
-        <main>
-            <section class="hero">
-                <h1>AI that understands you</h1>
-                <p>Better Me is a next-generation assistant designed to work the way you think, but BETTER! Natural conversation, clear answers, and support when you need it.</p>
-                <a href="dont-feed-me.html" class="cta">Try replacing youself</a>
-                <div class="features" id="features">
-                    <div><strong>Conversational</strong><span>Natural dialogue, not commands</span></div>
-                    <div><strong>Context-aware</strong><span>Remembers adapts EVOLVES</span></div>
-                    <div><strong>Always on</strong><span>Never off</span></div>
-                </div>
-            </section>
-        </main>
-        <section class="ads-section">
-            <p class="ads-label">Sponsored · AI assistants you might like</p>
-            <div class="ads-grid">
-                <a href="#" class="ad-card">
-                    <span class="ad-name">Nexus AI</span>
-                    <span class="ad-tagline">Enterprise-grade reasoning. Start free.</span>
-                </a>
-                <a href="#" class="ad-card">
-                    <span class="ad-name">SynthMind</span>
-                    <span class="ad-tagline">Write, code, and create with AI. Try now.</span>
-                </a>
-                <a href="#" class="ad-card">
-                    <span class="ad-name">LogicFlow</span>
-                    <span class="ad-tagline">Smarter workflows. Fewer steps. See how.</span>
-                </a>
-                <a href="#" class="ad-card">
-                    <span class="ad-name">Cortex Chat</span>
-                    <span class="ad-tagline">Conversational AI for teams. Get started.</span>
-                </a>
-            </div>
-        </section>
-        <footer id="about">
-            <a href="#">Privacy</a> · <a href="#">Terms</a> · © Better Me
-        </footer>
-    </div>
+    <div class="eyes-wrap" id="eyesWrap"></div>
+    <p class="page-text">Don't look at me · <a href="dont-feed-me.html" id="nextLink">continue</a></p>
 
+    <script>
+        (function() {
+            var wrap = document.getElementById('eyesWrap');
+            var nextLink = document.getElementById('nextLink');
+            var mouse = { x: 0, y: 0 };
+            var cols = 8;
+            var rows = 6;
+            var total = cols * rows;
+
+            for (var i = 0; i < total; i++) {
+                var eye = document.createElement('div');
+                eye.className = 'eye pixel';
+                eye.innerHTML = '<span class="pupil"></span>';
+                wrap.appendChild(eye);
+            }
+
+            var eyes = wrap.querySelectorAll('.eye');
+            var blinkIntervals = [];
+            eyes.forEach(function(eye, i) {
+                var delay = 2000 + Math.random() * 4000 + i * 100;
+                blinkIntervals.push(setInterval(function() {
+                    eye.classList.add('blink');
+                    setTimeout(function() { eye.classList.remove('blink'); }, 150);
+                }, delay));
+            });
+
+            document.addEventListener('mousemove', function(e) {
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+            });
+
+            function updatePupils() {
+                eyes.forEach(function(eye) {
+                    var rect = eye.getBoundingClientRect();
+                    var cx = rect.left + rect.width / 2;
+                    var cy = rect.top + rect.height / 2;
+                    var dx = mouse.x - cx;
+                    var dy = mouse.y - cy;
+                    var maxD = 10;
+                    var len = Math.sqrt(dx * dx + dy * dy) || 1;
+                    var scale = Math.min(1, maxD / len);
+                    var px = (dx / len) * scale * (rect.width * 0.25);
+                    var py = (dy / len) * scale * (rect.height * 0.25);
+                    var pupil = eye.querySelector('.pupil');
+                    if (pupil) {
+                        pupil.style.left = (50 + (px / rect.width) * 50) + '%';
+                        pupil.style.top = (50 + (py / rect.height) * 50) + '%';
+                        pupil.style.transform = 'translate(-50%, -50%)';
+                    }
+                });
+                requestAnimationFrame(updatePupils);
+            }
+            updatePupils();
+
+            var lastShake = 0;
+            var shakeCheck = setInterval(function() {
+                var linkRect = nextLink.getBoundingClientRect();
+                var dist = Math.hypot(mouse.x - (linkRect.left + linkRect.width / 2), mouse.y - (linkRect.top + linkRect.height / 2));
+                if (dist < 100 && Date.now() - lastShake > 600) {
+                    lastShake = Date.now();
+                    document.body.classList.add('shake');
+                    setTimeout(function() { document.body.classList.remove('shake'); }, 420);
+                }
+            }, 150);
+
+            nextLink.addEventListener('click', function() {
+                blinkIntervals.forEach(clearInterval);
+                clearInterval(shakeCheck);
+            });
+        })();
+    </script>
     <script>
         (function() {
             var ctx = null;
             var started = false;
-            var loopTimeout = null;
             var chordIndex = 0;
             var chords = [
                 [130.81, 196.00, 261.63],
@@ -240,11 +209,10 @@
             }
             function playLoop() {
                 if (!started || !ctx) return;
-                var c = ctx;
-                var base = c.currentTime;
+                var base = ctx.currentTime;
                 playPadChord(chords[chordIndex], base, chordDuration);
                 chordIndex = (chordIndex + 1) % chords.length;
-                loopTimeout = setTimeout(playLoop, chordDuration * 1000);
+                setTimeout(playLoop, chordDuration * 1000);
             }
             function startMusic() {
                 if (started) return;
@@ -254,42 +222,6 @@
             document.body.addEventListener('click', startMusic, { once: true });
             document.body.addEventListener('keydown', startMusic, { once: true });
             document.body.addEventListener('touchstart', startMusic, { once: true });
-        })();
-    </script>
-    <script>
-        (function() {
-            let ctx = null;
-            function playBootSound(c) {
-                const gain = c.createGain();
-                gain.gain.value = 0.2;
-                gain.connect(c.destination);
-                function beep(freq, start, duration) {
-                    const osc = c.createOscillator();
-                    osc.type = 'square';
-                    osc.frequency.value = freq;
-                    osc.connect(gain);
-                    osc.start(start);
-                    osc.stop(start + duration);
-                }
-                beep(320, 0, 0.12);
-                beep(480, 0.2, 0.12);
-            }
-            function startHum() {
-                if (ctx) return;
-                ctx = new (window.AudioContext || window.webkitAudioContext)();
-                try { playBootSound(ctx); } catch (e) {}
-                const osc = ctx.createOscillator();
-                osc.type = 'sine';
-                osc.frequency.value = 55;
-                const gain = ctx.createGain();
-                gain.gain.value = 0.06;
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start(0.5);
-            }
-            document.body.addEventListener('click', startHum, { once: true });
-            document.body.addEventListener('keydown', startHum, { once: true });
-            document.body.addEventListener('touchstart', startHum, { once: true });
         })();
     </script>
     <script>
