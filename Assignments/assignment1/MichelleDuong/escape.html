@@ -201,7 +201,6 @@
       100%{ transform: translate(0,0); filter:none; }
     }
 
-    /* “crash” overlay (kept subtle; villain reveal happens later) */
     .crash{
       position:fixed; inset:0;
       background:#000;
@@ -333,7 +332,7 @@
       await typeLine("?? and then it opened.", { prefix:"?? " });
 
       await typeLine("");
-      await typeLine(">> EVENT LOG:", { prefix:"" });
+      await typeLine(">> EVENT LOG:");
       await typeLine(">> 00:00:01 — UNKNOWN WINDOW OPENED");
       await typeLine(">> 00:00:04 — INPUT NOT ACCEPTED");
       await typeLine(">> 00:00:06 — SUBJECT COMPRESSED");
@@ -352,8 +351,8 @@
       await typeLine(">> REQUEST: TEMP WRITE ACCESS REQUIRED.");
       await typeLine(">> PURPOSE: generate exit pointer + stabilize bridge.");
       await typeLine(">> WARNING: foreign process may attempt piggyback.");
-      await typeLine("");
 
+      await typeLine("");
       await typeLine("?? if you let me, i can try to cross.", { prefix:"?? " });
       await typeLine("?? if you don’t… i understand.", { prefix:"?? " });
       await typeLine("?? i just… might run out of time.", { prefix:"?? " });
@@ -367,7 +366,7 @@
       [...choices.querySelectorAll("button")].forEach(b => b.disabled = true);
     }
 
-    async function denyEnding(){
+    async function denyPath(){
       lockChoices();
       localStorage.setItem("gg_access", "deny");
 
@@ -388,7 +387,6 @@
       await typeLine("?? i’m sorry i asked.", { prefix:"?? " });
       await typeLine("?? i’ll try something else.", { prefix:"?? " });
 
-      // It feels like the system is failing / “it” is pushing in.
       await wait(140);
       screenGlitch();
       await typeLine(">> SIGNAL SURGE DETECTED.");
@@ -396,7 +394,6 @@
       await typeLine(">> BUFFER: FLOODING...");
       screenGlitch();
 
-      // a small burst of unreadable noise (no villain text yet)
       for (let i = 0; i < 8; i++){
         await typeLine("##%$@!@#!@ 0x" + Math.floor(Math.random()*1e8).toString(16).toUpperCase(), {
           speedMin: 1, speedMax: 6, newBlock:false
@@ -416,7 +413,7 @@
       window.location.href = "ending_crash.html";
     }
 
-    async function allowEnding(){
+    async function allowPath(){
       lockChoices();
       localStorage.setItem("gg_access", "allow");
 
@@ -437,7 +434,6 @@
       await typeLine(">> writing: stabilizer.patch");
       await typeLine(">> binding: channel");
 
-      // a “soft” glitch that could be read as danger… but not obvious betrayal
       await wait(160);
       screenGlitch();
       await typeLine(">> NOTE: host latency increasing.");
@@ -463,8 +459,8 @@
       if (!btn) return;
 
       const access = btn.getAttribute("data-access");
-      if (access === "deny") denyEnding();
-      else allowEnding();
+      if (access === "deny") denyPath();
+      else allowPath();
     });
 
     intro();
