@@ -12,6 +12,18 @@
             flex-direction: column;
             min-height: 100vh;
         }
+        .music-button {
+            margin: 0.5rem;
+            align-self: flex-start;
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+            font-size: 1rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            background-color: #ff7b0f;
+            color: #000;
+        }
         .content-frame {
             flex: 1;
             border: none;
@@ -25,11 +37,12 @@
     </style>
 </head>
 <body>
+    <button class="music-button" onclick="startMusic()">click here for music</button>
     <!-- Background YouTube music player -->
     <iframe
         id="music-player"
         class="music-frame"
-        src="https://www.youtube.com/embed/7S3s_60QKVU?autoplay=1&loop=1&playlist=7S3s_60QKVU&enablejsapi=1"
+        src="https://www.youtube.com/embed/7S3s_60QKVU?loop=1&playlist=7S3s_60QKVU&enablejsapi=1"
         title="YouTube video player"
         frameborder="0"
         allow="autoplay; encrypted-media; picture-in-picture"
@@ -51,6 +64,11 @@
                     }
                 }
             });
+        }
+        function startMusic() {
+            if (musicPlayer && typeof musicPlayer.playVideo === 'function') {
+                musicPlayer.playVideo();
+            }
         }
     </script>
 </body>
