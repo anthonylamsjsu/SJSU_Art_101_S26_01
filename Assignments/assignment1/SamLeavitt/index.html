@@ -83,6 +83,8 @@
             position: absolute;
             bottom: 20px;
             right: 20px;
+            text-decoration: none;
+            color: inherit;
         }
         .mouth-image {
             width: 150px;
@@ -124,10 +126,10 @@
 </head>
 <body>
     <div id="blood-trail"></div>
-    <div class="mouth-wrapper">
+    <a href="mouth-fed.html" class="mouth-wrapper">
         <span class="tooltip">feed the mouth?</span>
         <img src="mouth.png" alt="Mouth" class="mouth-image" />
-    </div>
+    </a>
     <script>
         (function () {
             var trail = document.getElementById('blood-trail');
