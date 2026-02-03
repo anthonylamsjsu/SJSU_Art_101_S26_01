@@ -79,7 +79,7 @@
             background: linear-gradient(180deg, #fffef8 0%, #fffaf0 40%, #f5f0e8 100%);
             overflow: hidden;
             z-index: 9;
-            box-shadow: 0 0 0 2px rgba(255,255,255,0.6), 0 0 20px rgba(255,255,255,0.15), 0 4px 16px rgba(0,0,0,0.35);
+            box-shadow: 0 0 0 2px #000, 0 0 20px rgba(255,255,255,0.15), 0 4px 16px rgba(0,0,0,0.35);
         }
         .eye .iris {
             position: absolute;
@@ -97,6 +97,24 @@
             background: #000;
             border-radius: 50%;
             transition: transform 0.08s ease-out;
+        }
+        .eye::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 0;
+            background: linear-gradient(180deg, #fffef8 0%, #f5f0e8 100%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .eye.eye-blink::after {
+            animation: eye-lid 0.18s ease-out forwards;
+        }
+        @keyframes eye-lid {
+            0%, 100% { height: 0; top: 0; }
+            50% { height: 100%; top: 0; }
         }
         .eye--sm { width: 40px; height: 24px; }
         .eye--sm .iris { width: 24px; height: 24px; margin: -12px 0 0 -12px; }
@@ -190,7 +208,7 @@
         (function() {
             const link = document.querySelector('a.center-text');
             let mouseX = 0, mouseY = 0;
-            const TRIGGER_RADIUS = 280;
+            const TRIGGER_RADIUS = 420;
             const MAX_SHAKE = 6;
             const needsTranslateY = (el) => /eye--(ml|mr)\b/.test(el.className);
             const needsTranslateX = (el) => /eye--(x1|x2)\b/.test(el.className);
@@ -242,6 +260,25 @@
                 requestAnimationFrame(shakeLoop);
             }
             requestAnimationFrame(shakeLoop);
+        })();
+    </script>
+    <script>
+        (function() {
+            document.querySelectorAll('.eye').forEach(function(eye) {
+                const minMs = 2200, maxMs = 4800;
+                const scheduleBlink = () => {
+                    const delay = minMs + Math.random() * (maxMs - minMs);
+                    setTimeout(() => {
+                        eye.classList.add('eye-blink');
+                        eye.addEventListener('animationend', function done() {
+                            eye.removeEventListener('animationend', done);
+                            eye.classList.remove('eye-blink');
+                            scheduleBlink();
+                        }, { once: true });
+                    }, delay);
+                };
+                scheduleBlink();
+            });
         })();
     </script>
     <script>
