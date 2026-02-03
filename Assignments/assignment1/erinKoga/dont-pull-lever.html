@@ -57,13 +57,15 @@
     </style>
 </head>
 <body>
+    <audio id="lever-audio" src="jerma-terrified.mp3"></audio>
     <h1>You didn't pull the lever.</h1>
     <p class="subheader">you didnt pull the lever and killed the one lone guy. the lever probably would have stopped the trolley so thats kinda messed up dude</p>
+    <p class="subheader">QUESTION 2</p>
     <img class="page-image" src="pineapple pizza.jpg" alt="Pineapple pizza">
-    <p class="image-caption">pinapple on pizza?</p>
+    <p class="image-caption">do you likepinapple on pizza?</p>
     <div class="button-group">
-        <a class="choice-btn" href="yes.html">yes</a>
-        <a class="choice-btn" href="no.html">no</a>
+        <a class="choice-btn" href="yes.html" onmouseenter="document.getElementById('lever-audio').play();">yes</a>
+        <a class="choice-btn" href="no.html" onmouseenter="document.getElementById('lever-audio').play();">no</a>
     </div>
 </body>
 </html>
