@@ -18,7 +18,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #222;
+            color: #000000;
         }
 
         .scene-wrapper {
@@ -27,10 +27,34 @@
         }
 
         .card {
+            position: relative;
             background: #ffffff;
             border-radius: 8px;
             box-shadow: 0 0 0 1px #b0b0b0;
             padding: 1.5rem;
+        }
+
+        .cycle-message {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 8px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            z-index: 20;
+        }
+
+        .cycle-message.visible {
+            opacity: 1;
+        }
+
+        .cycle-message span {
+            font-size: 1rem;
+            color: #000000;
         }
 
         .scene {
@@ -64,9 +88,13 @@
             position: absolute;
             bottom: 10px;
             right: 12px;
-            font-size: 0.7rem;
-            color: #555555;
-            opacity: 0.7;
+            font-size: 0.8rem;
+            color: #333333;
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 4px;
+            padding: 2px 8px;
+            border: 1px solid #bcbcbc;
+            opacity: 0.9;
             pointer-events: none;
         }
 
@@ -153,10 +181,12 @@
 
         .eye.left {
             left: 26%;
+            transform: rotate(-2deg);
         }
 
         .eye.right {
             right: 26%;
+            transform: rotate(2deg);
         }
 
         .mouth {
@@ -165,8 +195,8 @@
             left: 50%;
             width: 22px;
             height: 10px;
-            border-radius: 0 0 999px 999px;
-            border-bottom: 3px solid #111827;
+            border-radius: 999px 999px 0 0;
+            border-top: 3px solid #111827;
             transform: translateX(-50%);
         }
 
@@ -461,20 +491,22 @@
 
         .boy-eye.left {
             left: 26%;
+            transform: rotate(-2deg);
         }
 
         .boy-eye.right {
             right: 26%;
+            transform: rotate(2deg);
         }
 
         .boy-mouth-smile {
             position: absolute;
-            top: 70%;
+            top: 72%;
             left: 50%;
-            width: 28px;
-            height: 2px;
-            background: #111827;
-            border-radius: 999px;
+            width: 26px;
+            height: 10px;
+            border-radius: 999px 999px 0 0;
+            border-top: 3px solid #111827;
             transform: translateX(-50%);
         }
 
@@ -761,10 +793,12 @@
 
         .office-boy-eye.left {
             left: 26%;
+            transform: rotate(-2deg);
         }
 
         .office-boy-eye.right {
             right: 26%;
+            transform: rotate(2deg);
         }
 
         .office-boy-mouth {
@@ -773,9 +807,9 @@
             left: 50%;
             width: 24px;
             height: 10px;
-            border-radius: 0 0 999px 999px;
-            border-bottom: 3px solid #262626;
-            transform: translateX(-50%) rotate(10deg);
+            border-radius: 999px 999px 0 0;
+            border-top: 3px solid #262626;
+            transform: translateX(-50%);
         }
 
         .office-monitor {
@@ -991,20 +1025,22 @@
 
         .microwave-boy-eye.left {
             left: 26%;
+            transform: rotate(-2deg);
         }
 
         .microwave-boy-eye.right {
             right: 26%;
+            transform: rotate(2deg);
         }
 
         .microwave-boy-mouth {
             position: absolute;
             top: 73%;
             left: 50%;
-            width: 26px;
-            height: 2px;
-            background: #262626;
-            border-radius: 999px;
+            width: 24px;
+            height: 10px;
+            border-radius: 999px 999px 0 0;
+            border-top: 3px solid #262626;
             transform: translateX(-50%);
         }
 
@@ -1087,6 +1123,7 @@
             height: 4px;
             border-radius: 999px;
             background: #111111;
+            transform: rotate(-3deg);
         }
 
         .bathroom-boy-eye.left {
@@ -1095,6 +1132,7 @@
 
         .bathroom-boy-eye.right {
             right: 24%;
+            transform: rotate(3deg);
         }
 
         .bathroom-boy-mouth {
@@ -1110,22 +1148,24 @@
 
         .bathroom-toothbrush {
             position: absolute;
-            bottom: 8%;
-            right: 26%;
-            width: 42px;
-            height: 8px;
+            bottom: 22%;
+            right: 22%;
+            width: 48px;
+            height: 10px;
             background: #7b9ac5;
             border-radius: 4px;
+            z-index: 10;
+            cursor: pointer;
         }
 
         .bathroom-toothbrush-head {
             position: absolute;
-            right: -6px;
-            top: -2px;
-            width: 12px;
-            height: 10px;
+            right: -8px;
+            top: -3px;
+            width: 14px;
+            height: 12px;
             background: #e5e5e5;
-            border-radius: 2px;
+            border-radius: 3px;
         }
 
         @keyframes shake {
@@ -1330,6 +1370,7 @@
                             <div class="office-clock-hand-minute" id="clock-minute"></div>
                         </div>
                     </div>
+                    <div class="tip">click mouse</div>
                 </div>
                 <div class="scene-text"></div>
             </div>
@@ -1359,6 +1400,7 @@
                             </div>
                         </div>
                     </div>
+                    <div class="tip">press button</div>
                 </div>
                 <div class="scene-text"></div>
             </div>
@@ -1378,13 +1420,45 @@
                                 <div class="bathroom-boy-mouth"></div>
                             </div>
                         </div>
-                        <div class="bathroom-toothbrush">
+                        <div class="bathroom-toothbrush" id="bathroom-toothbrush">
                             <div class="bathroom-toothbrush-head"></div>
                         </div>
                     </div>
+                    <div class="tip">click toothbrush</div>
                 </div>
                 <div class="scene-text"></div>
             </div>
+
+            <!-- Scene 6: Back in bed -->
+            <div class="scene scene-bedend" id="scene-bedend">
+                <div class="scene-visual">
+                    <div class="bed">
+                        <div class="window">
+                            <div class="window-sun"></div>
+                            <div class="window-cloud left"></div>
+                            <div class="window-cloud right"></div>
+                        </div>
+
+                        <div class="bed-frame"></div>
+                        <div class="mattress"></div>
+                        <div class="pillow"></div>
+                        <div class="blanket"></div>
+
+                        <div class="boy-head">
+                            <div class="hair"></div>
+                            <div class="eye left"></div>
+                            <div class="eye right"></div>
+                            <div class="mouth"></div>
+                        </div>
+
+                        <div id="bed-reset-area" style="position:absolute; inset:0; cursor:pointer;"></div>
+                    </div>
+                    <div class="tip">click bed</div>
+                </div>
+                <div class="scene-text"></div>
+            </div>
+
+            <div class="cycle-message" id="cycle-message" aria-live="polite"><span>and all over again…</span></div>
         </section>
     </main>
 
@@ -1396,11 +1470,15 @@
         const officeScene = document.getElementById("scene-office");
         const microwaveScene = document.getElementById("scene-microwave");
         const bathroomScene = document.getElementById("scene-bathroom");
+        const bedendScene = document.getElementById("scene-bedend");
         const officeRoom = document.getElementById("office-room");
         const officeMouse = document.getElementById("office-mouse");
         const clockHour = document.getElementById("clock-hour");
         const clockMinute = document.getElementById("clock-minute");
         const microwaveButton = document.getElementById("microwave-button");
+        const bathroomToothbrush = document.getElementById("bathroom-toothbrush");
+        const bedResetArea = document.getElementById("bed-reset-area");
+        const cycleMessage = document.getElementById("cycle-message");
 
         const officePhases = [
             { roomClass: "office-morning", hourDeg: 30, minuteDeg: 0 },   // ~1:00
@@ -1450,10 +1528,32 @@
             bathroomScene.classList.add("active");
         }
 
+        function showBedendScene() {
+            bathroomScene.classList.remove("active");
+            bedendScene.classList.add("active");
+        }
+
+        function resetToStart() {
+            cycleMessage.classList.add("visible");
+            setTimeout(function () {
+                cycleMessage.classList.remove("visible");
+                bedendScene.classList.remove("active");
+                wakeupScene.classList.add("active");
+                breakfastScene.classList.remove("active");
+                officeScene.classList.remove("active");
+                microwaveScene.classList.remove("active");
+                bathroomScene.classList.remove("active");
+                officePhaseIndex = 0;
+                applyOfficePhase();
+            }, 2200);
+        }
+
         alarmButton.addEventListener("click", showBreakfastScene);
         plateButton.addEventListener("click", showOfficeScene);
         officeMouse.addEventListener("click", advanceOfficeTime);
         microwaveButton.addEventListener("click", showBathroomScene);
+        bathroomToothbrush.addEventListener("click", showBedendScene);
+        bedResetArea.addEventListener("click", resetToStart);
     </script>
 </body>
 </html>
