@@ -378,9 +378,11 @@
     .ad-popup .ad-drink-image {
       display: block;
       width: 100%;
-      max-width: 140px;
+      max-width: 160px;
       height: auto;
       margin: 0 auto 1.25rem;
+      border-radius: 4px;
+      object-fit: cover;
     }
 
     .ad-popup ul {
@@ -435,70 +437,11 @@
       <span class="ad-badge">New</span>
       <h2 class="ad-brand">24HR ENERGY</h2>
       <p class="ad-tagline">Stay awake. Stay ahead.</p>
-      <svg class="ad-drink-image" viewBox="0 0 90 220" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <defs>
-          <!-- Shadow -->
-          <filter id="canShadow" x="-20%" y="-10%" width="140%" height="120%">
-            <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#000" flood-opacity="0.45"/>
-          </filter>
-          <!-- Body: vertical gradient (light top, dark bottom) -->
-          <linearGradient id="canBody" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#e85555"/>
-            <stop offset="15%" stop-color="#dd3333"/>
-            <stop offset="50%" stop-color="#b30000"/>
-            <stop offset="85%" stop-color="#8c0000"/>
-            <stop offset="100%" stop-color="#660000"/>
-          </linearGradient>
-          <!-- Curved highlight (center of can) -->
-          <linearGradient id="canHighlight" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#000" stop-opacity="0.25"/>
-            <stop offset="35%" stop-color="#fff" stop-opacity="0.35"/>
-            <stop offset="50%" stop-color="#fff" stop-opacity="0.5"/>
-            <stop offset="65%" stop-color="#fff" stop-opacity="0.25"/>
-            <stop offset="100%" stop-color="#000" stop-opacity="0.15"/>
-          </linearGradient>
-          <!-- Rim top (bright edge) -->
-          <linearGradient id="rimTop" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#e8e8e8"/>
-            <stop offset="40%" stop-color="#c0c0c0"/>
-            <stop offset="100%" stop-color="#707070"/>
-          </linearGradient>
-          <!-- Rim underside -->
-          <linearGradient id="rimUnder" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#505050"/>
-            <stop offset="100%" stop-color="#202020"/>
-          </linearGradient>
-          <!-- Label base with slight gradient -->
-          <linearGradient id="labelBg" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#fff" stop-opacity="0.12"/>
-            <stop offset="50%" stop-color="#fff" stop-opacity="0.08"/>
-            <stop offset="100%" stop-color="#fff" stop-opacity="0.05"/>
-          </linearGradient>
-          <!-- Pull tab metal -->
-          <linearGradient id="tabMetal" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#9a9a9a"/>
-            <stop offset="50%" stop-color="#6a6a6a"/>
-            <stop offset="100%" stop-color="#3a3a3a"/>
-          </linearGradient>
-        </defs>
-        <!-- Ground shadow -->
-        <ellipse cx="45" cy="212" rx="28" ry="6" fill="#000" opacity="0.25"/>
-        <!-- Can body (rounded rectangle for front face of cylinder) -->
-        <path d="M22 38 L68 38 L70 42 L70 198 L20 198 L20 42 Z" fill="url(#canBody)" filter="url(#canShadow)"/>
-        <!-- Curved highlight overlay -->
-        <path d="M22 38 L68 38 L70 42 L70 198 L20 198 L20 42 Z" fill="url(#canHighlight)"/>
-        <!-- Top rim (beveled) - top ellipse -->
-        <ellipse cx="45" cy="40" rx="24" ry="6" fill="url(#rimTop)"/>
-        <!-- Rim thickness (dark band under lip) -->
-        <path d="M21 44 L69 44 L70 48 L20 48 Z" fill="url(#rimUnder)"/>
-        <!-- Label area (slightly inset) -->
-        <path d="M26 72 L64 72 L65 76 L65 168 L25 168 L25 76 Z" fill="url(#labelBg)" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
-        <text x="45" y="102" text-anchor="middle" fill="#fff" font-family="Arial Black, sans-serif" font-size="16" font-weight="bold" letter-spacing="0.5">24HR</text>
-        <text x="45" y="120" text-anchor="middle" fill="#fff" font-family="Arial Black, sans-serif" font-size="16" font-weight="bold" letter-spacing="0.5">ENERGY</text>
-        <!-- Pull tab (on lid) -->
-        <path d="M38 50 L52 50 L52 54 L55 54 L55 64 L35 64 L35 54 L38 54 Z" fill="url(#tabMetal)" stroke="#444" stroke-width="0.5"/>
-        <ellipse cx="45" cy="52" rx="4" ry="2" fill="#555" stroke="#333" stroke-width="0.5"/>
-      </svg>
+      <img
+        class="ad-drink-image"
+        src="https://cdn.pixabay.com/photo/2017/03/21/01/39/coca-cola-2160843_640.jpg"
+        alt="Energy drink can"
+      >
       <ul>
         <li><strong>24 hours of focus</strong> — No crash, no excuses.</li>
         <li><strong>No more getting yelled at by the boss</strong> — Show up sharp every shift.</li>
