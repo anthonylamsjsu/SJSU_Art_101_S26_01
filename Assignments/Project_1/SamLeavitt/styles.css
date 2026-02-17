@@ -7,7 +7,7 @@ body {
   min-height: 100vh;
 }
 .spacer {
-  height: 320vh;
+  height: 900vh;
   position: relative;
 }
 .stage {
@@ -19,27 +19,18 @@ body {
   pointer-events: none;
 }
 .stage-inner {
-  width: min(90vw, 420px);
-  height: min(85vh, 440px);
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-  background: radial-gradient(ellipse at 50% 50%, #1a1a20 0%, #0f0f12 100%);
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 24px 48px rgba(0,0,0,0.5);
+  position: absolute;
+  inset: 0;
 }
 .points-layer {
   position: absolute;
   inset: 0;
 }
-.point {
+.points-layer canvas {
+  display: block;
   position: absolute;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: #f8d2b5;
-  transform: translate(-50%, -50%);
-  will-change: left, top;
-  box-shadow: 0 0 6px rgba(248, 210, 181, 0.5);
+  left: 0;
+  top: 0;
 }
 .hint {
   position: fixed;
