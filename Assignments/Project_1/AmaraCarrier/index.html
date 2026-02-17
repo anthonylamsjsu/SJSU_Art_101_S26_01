@@ -18,9 +18,9 @@
       flex-direction: column;
       gap: 2rem;
       font-family: 'Press Start 2P', monospace;
-      background-color: #0d0d1a;
+      background-color: #87ceeb;
       background-image:
-        linear-gradient(180deg, #1a1a3e 0%, #0d0d1a 40%, #050510 100%),
+        linear-gradient(180deg, #4a90c4 0%, #6ba3d4 35%, #87ceeb 70%, #b8e0f5 100%),
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 128 128'%3E%3Cg fill='%23fff' fill-opacity='0.9'%3E%3Crect x='8' y='12' width='2' height='2'/%3E%3Crect x='24' y='6' width='2' height='2'/%3E%3Crect x='48' y='18' width='2' height='2'/%3E%3Crect x='72' y='4' width='2' height='2'/%3E%3Crect x='96' y='14' width='2' height='2'/%3E%3Crect x='16' y='32' width='2' height='2'/%3E%3Crect x='56' y='28' width='2' height='2'/%3E%3Crect x='88' y='36' width='2' height='2'/%3E%3Crect x='4' y='48' width='2' height='2'/%3E%3Crect x='40' y='52' width='2' height='2'/%3E%3Crect x='64' y='44' width='2' height='2'/%3E%3Crect x='112' y='50' width='2' height='2'/%3E%3Crect x='20' y='64' width='2' height='2'/%3E%3Crect x='80' y='70' width='2' height='2'/%3E%3Crect x='32' y='82' width='2' height='2'/%3E%3Crect x='100' y='78' width='2' height='2'/%3E%3Crect x='12' y='96' width='2' height='2'/%3E%3Crect x='52' y='102' width='2' height='2'/%3E%3Crect x='68' y='88' width='2' height='2'/%3E%3Crect x='116' y='94' width='2' height='2'/%3E%3Crect x='44' y='112' width='2' height='2'/%3E%3C/g%3E%3Cg fill='%23e8e8ff' fill-opacity='0.5'%3E%3Crect x='36' y='8' width='1' height='1'/%3E%3Crect x='60' y='22' width='1' height='1'/%3E%3Crect x='92' y='40' width='1' height='1'/%3E%3Crect x='18' y='56' width='1' height='1'/%3E%3Crect x='76' y='58' width='1' height='1'/%3E%3Crect x='6' y='72' width='1' height='1'/%3E%3Crect x='104' y='66' width='1' height='1'/%3E%3Crect x='28' y='92' width='1' height='1'/%3E%3Crect x='84' y='108' width='1' height='1'/%3E%3C/g%3E%3C/svg%3E");
       background-size: auto, 128px 128px;
       color: #eee;
@@ -70,6 +70,12 @@
         1px 1px 0 rgba(180,160,80,0.6),
         0 2px 4px rgba(0,0,0,0.4),
         0 0 24px rgba(242,232,168,0.2);
+      animation: titleIdle 4s ease-in-out infinite;
+    }
+
+    @keyframes titleIdle {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-8px) scale(1.02); }
     }
 
     .star-btn {
@@ -130,6 +136,32 @@
     @keyframes partRight {
       to { transform: translateX(100%); }
     }
+
+    /* Layered transparent background clouds – small pixel pattern */
+    .bg-clouds {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .bg-cloud {
+      position: absolute;
+      border-radius: 50%;
+      background-color: transparent;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='rgba(220,230,250,0.35)'%3E%3Crect x='0' y='0' width='2' height='2'/%3E%3Crect x='4' y='0' width='2' height='2'/%3E%3Crect x='2' y='2' width='2' height='2'/%3E%3Crect x='6' y='2' width='2' height='2'/%3E%3Crect x='0' y='4' width='2' height='2'/%3E%3Crect x='4' y='4' width='2' height='2'/%3E%3Crect x='2' y='6' width='2' height='2'/%3E%3Crect x='6' y='6' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 8px 8px;
+    }
+
+    .bg-cloud-1 { width: 40%; height: 25%; left: -5%; top: 10%; }
+    .bg-cloud-2 { width: 35%; height: 20%; right: -8%; top: 25%; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='rgba(200,218,245,0.3)'%3E%3Crect x='0' y='0' width='2' height='2'/%3E%3Crect x='4' y='0' width='2' height='2'/%3E%3Crect x='2' y='2' width='2' height='2'/%3E%3Crect x='6' y='2' width='2' height='2'/%3E%3Crect x='0' y='4' width='2' height='2'/%3E%3Crect x='4' y='4' width='2' height='2'/%3E%3Crect x='2' y='6' width='2' height='2'/%3E%3Crect x='6' y='6' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E"); }
+    .bg-cloud-3 { width: 50%; height: 22%; left: 25%; bottom: 15%; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='rgba(230,238,252,0.25)'%3E%3Crect x='0' y='0' width='2' height='2'/%3E%3Crect x='4' y='0' width='2' height='2'/%3E%3Crect x='2' y='2' width='2' height='2'/%3E%3Crect x='6' y='2' width='2' height='2'/%3E%3Crect x='0' y='4' width='2' height='2'/%3E%3Crect x='4' y='4' width='2' height='2'/%3E%3Crect x='2' y='6' width='2' height='2'/%3E%3Crect x='6' y='6' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E"); }
+    .bg-cloud-4 { width: 28%; height: 18%; right: 15%; bottom: 30%; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='rgba(210,225,248,0.3)'%3E%3Crect x='0' y='0' width='2' height='2'/%3E%3Crect x='4' y='0' width='2' height='2'/%3E%3Crect x='2' y='2' width='2' height='2'/%3E%3Crect x='6' y='2' width='2' height='2'/%3E%3Crect x='0' y='4' width='2' height='2'/%3E%3Crect x='4' y='4' width='2' height='2'/%3E%3Crect x='2' y='6' width='2' height='2'/%3E%3Crect x='6' y='6' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E"); }
+    .bg-cloud-5 { width: 22%; height: 14%; left: 10%; top: 45%; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='rgba(235,242,252,0.28)'%3E%3Crect x='0' y='0' width='2' height='2'/%3E%3Crect x='4' y='0' width='2' height='2'/%3E%3Crect x='2' y='2' width='2' height='2'/%3E%3Crect x='6' y='2' width='2' height='2'/%3E%3Crect x='0' y='4' width='2' height='2'/%3E%3Crect x='4' y='4' width='2' height='2'/%3E%3Crect x='2' y='6' width='2' height='2'/%3E%3Crect x='6' y='6' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E"); }
+    .bg-cloud-6 { width: 30%; height: 16%; right: 25%; top: 55%; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='rgba(205,220,242,0.22)'%3E%3Crect x='0' y='0' width='2' height='2'/%3E%3Crect x='4' y='0' width='2' height='2'/%3E%3Crect x='2' y='2' width='2' height='2'/%3E%3Crect x='6' y='2' width='2' height='2'/%3E%3Crect x='0' y='4' width='2' height='2'/%3E%3Crect x='4' y='4' width='2' height='2'/%3E%3Crect x='2' y='6' width='2' height='2'/%3E%3Crect x='6' y='6' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E"); }
+    .bg-cloud-7 { width: 38%; height: 20%; left: 40%; top: 5%; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='rgba(218,230,248,0.2)'%3E%3Crect x='0' y='0' width='2' height='2'/%3E%3Crect x='4' y='0' width='2' height='2'/%3E%3Crect x='2' y='2' width='2' height='2'/%3E%3Crect x='6' y='2' width='2' height='2'/%3E%3Crect x='0' y='4' width='2' height='2'/%3E%3Crect x='4' y='4' width='2' height='2'/%3E%3Crect x='2' y='6' width='2' height='2'/%3E%3Crect x='6' y='6' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E"); }
+    .bg-cloud-8 { width: 25%; height: 15%; left: 5%; bottom: 40%; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='rgba(225,235,250,0.25)'%3E%3Crect x='0' y='0' width='2' height='2'/%3E%3Crect x='4' y='0' width='2' height='2'/%3E%3Crect x='2' y='2' width='2' height='2'/%3E%3Crect x='6' y='2' width='2' height='2'/%3E%3Crect x='0' y='4' width='2' height='2'/%3E%3Crect x='4' y='4' width='2' height='2'/%3E%3Crect x='2' y='6' width='2' height='2'/%3E%3Crect x='6' y='6' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E"); }
   </style>
   <!-- Pixelate filter + scalloped cloud shapes -->
   <svg width="0" height="0" aria-hidden="true">
@@ -138,50 +170,89 @@
       <filter id="pixelate" x="-8%" y="-8%" width="116%" height="116%">
         <feMorphology in="SourceGraphic" operator="dilate" radius="0.9"/>
       </filter>
-      <!-- Pixelated Chinese-style cloud swirl (stepped inner edge) -->
+      <!-- Pixelated Chinese-style cloud swirl; rounded outer ends -->
       <clipPath id="leftCloudClip" clipPathUnits="objectBoundingBox">
-        <path d="M 0,0 L 1,0
+        <path d="M 0.02,0 L 1,0
                  L 1,0.06 L 0.94,0.06 L 0.94,0.14 L 1,0.14 L 1,0.22 L 0.92,0.22 L 0.92,0.3 L 1,0.3 L 1,0.38 L 0.94,0.38 L 0.94,0.46 L 1,0.46 L 1,0.54 L 0.92,0.54 L 0.92,0.62 L 1,0.62 L 1,0.7 L 0.94,0.7 L 0.94,0.78 L 1,0.78 L 1,0.86 L 0.92,0.86 L 0.92,0.94 L 1,0.94 L 1,1
-                 L 0,1 Z" />
+                 L 0.02,1 Q -0.06,0.5 0.02,0 Z" />
       </clipPath>
       <clipPath id="rightCloudClip" clipPathUnits="objectBoundingBox">
-        <path d="M 1,0 L 0,0
+        <path d="M 0.98,0 L 0,0
                  L 0,0.06 L 0.06,0.06 L 0.06,0.14 L 0,0.14 L 0,0.22 L 0.08,0.22 L 0.08,0.3 L 0,0.3 L 0,0.38 L 0.06,0.38 L 0.06,0.46 L 0,0.46 L 0,0.54 L 0.08,0.54 L 0.08,0.62 L 0,0.62 L 0,0.7 L 0.06,0.7 L 0.06,0.78 L 0,0.78 L 0,0.86 L 0.08,0.86 L 0.08,0.94 L 0,0.94 L 0,1
-                 L 1,1 Z" />
+                 L 0.98,1 Q 1.06,0.5 0.98,0 Z" />
       </clipPath>
     </defs>
   </svg>
 </head>
 <body>
+  <div class="bg-clouds" aria-hidden="true">
+    <div class="bg-cloud bg-cloud-1"></div>
+    <div class="bg-cloud bg-cloud-2"></div>
+    <div class="bg-cloud bg-cloud-3"></div>
+    <div class="bg-cloud bg-cloud-4"></div>
+    <div class="bg-cloud bg-cloud-5"></div>
+    <div class="bg-cloud bg-cloud-6"></div>
+    <div class="bg-cloud bg-cloud-7"></div>
+    <div class="bg-cloud bg-cloud-8"></div>
+  </div>
   <div class="cloud cloud-left" aria-hidden="true"></div>
   <div class="cloud cloud-right" aria-hidden="true"></div>
 
   <div class="content">
   <h1>Spirimal</h1>
   <a href="page2.html" class="star-btn" aria-label="Start – go to next page">
-    <svg viewBox="0 0 220 72" xmlns="http://www.w3.org/2000/svg" width="220" height="72">
+    <svg viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg" width="360" height="120">
       <defs>
         <linearGradient id="tailGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#e8b86d"/>
-          <stop offset="70%" stop-color="#e8b86d" stop-opacity="0.5"/>
-          <stop offset="100%" stop-color="#e8b86d" stop-opacity="0"/>
+          <stop offset="0%" stop-color="#ffd54f"/>
+          <stop offset="50%" stop-color="#ffb300"/>
+          <stop offset="100%" stop-color="#ffb300" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="tailGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#ffeb3b" stop-opacity="0.9"/>
+          <stop offset="60%" stop-color="#ffb300" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#ffb300" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="tailGrad3" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#ffc107" stop-opacity="0.8"/>
+          <stop offset="70%" stop-color="#ff9800" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#ff9800" stop-opacity="0"/>
         </linearGradient>
         <linearGradient id="starGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#f5e6a0"/>
-          <stop offset="100%" stop-color="#d4a84b"/>
+          <stop offset="0%" stop-color="#fff59d"/>
+          <stop offset="50%" stop-color="#ffd54f"/>
+          <stop offset="100%" stop-color="#ff8f00"/>
         </linearGradient>
       </defs>
-      <!-- Shooting star tail (streaming right) -->
-      <path d="M 48 36 L 218 36 L 218 40 L 48 40 Z" fill="url(#tailGrad)"/>
-      <!-- 5-point star at front -->
+      <!-- Tail 3 outline (top) -->
+      <path d="M 72 44 L 358 44 L 358 52 L 72 52 Z" fill="#000"/>
+      <!-- Tail 3 (top streak) -->
+      <path d="M 76 46 L 340 46 L 340 50 L 76 50 Z" fill="url(#tailGrad2)"/>
+      <!-- Tail 2 outline (upper mid) -->
+      <path d="M 72 50 L 358 50 L 358 58 L 72 58 Z" fill="#000"/>
+      <!-- Tail 2 (upper mid streak) -->
+      <path d="M 76 52 L 348 52 L 348 56 L 76 56 Z" fill="url(#tailGrad2)"/>
+      <!-- Main tail outline (center) -->
+      <path d="M 72 56 L 358 56 L 358 64 L 72 64 Z" fill="#000"/>
+      <!-- Main shooting star tail -->
+      <path d="M 76 58 L 354 58 L 354 62 L 76 62 Z" fill="url(#tailGrad)"/>
+      <!-- Tail 4 outline (lower mid) -->
+      <path d="M 72 62 L 358 62 L 358 70 L 72 70 Z" fill="#000"/>
+      <!-- Tail 4 (lower mid streak) -->
+      <path d="M 76 64 L 348 64 L 348 68 L 76 68 Z" fill="url(#tailGrad3)"/>
+      <!-- Tail 5 outline (bottom) -->
+      <path d="M 72 68 L 358 68 L 358 76 L 72 76 Z" fill="#000"/>
+      <!-- Tail 5 (bottom streak) -->
+      <path d="M 76 70 L 340 70 L 340 74 L 76 74 Z" fill="url(#tailGrad3)"/>
+      <!-- 5-point star at front (thick arcade outline) -->
       <polygon
-        points="36,22 40,32 55,32 43,41 52,57 36,46 20,57 29,41 17,32 32,32"
+        points="60,36 68,56 92,56 72,68 80,92 60,80 40,92 48,68 28,56 52,56"
         fill="url(#starGrad)"
-        stroke="#c9a04d"
-        stroke-width="1.2"
+        stroke="#1a1a1a"
+        stroke-width="4"
       />
-      <!-- "Start" text on the tail -->
-      <text x="130" y="42" text-anchor="middle" fill="#1a1a2e" font-family="'Press Start 2P', monospace" font-size="9">Start</text>
+      <!-- "Start" text – arcade style with black outline -->
+      <text x="210" y="72" text-anchor="middle" fill="#ffeb3b" font-family="'Press Start 2P', monospace" font-size="14" font-weight="bold" stroke="#1a1a1a" stroke-width="4" paint-order="stroke">Start</text>
     </svg>
   </a>
   </div>
