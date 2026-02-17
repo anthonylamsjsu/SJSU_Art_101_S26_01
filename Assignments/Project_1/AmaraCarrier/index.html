@@ -40,37 +40,40 @@
 
     h1 {
       font-family: 'Press Start 2P', monospace;
-      font-size: 1.75rem;
+      font-size: 2.5rem;
       font-weight: 400;
       text-align: center;
       text-transform: uppercase;
       font-style: italic;
       color: #f2e8a8;
+      letter-spacing: 0.1em;
       /* Black outline (multiple shadows) */
       text-shadow:
-        -2px -2px 0 #000,
-        -2px 0 0 #000,
-        -2px 2px 0 #000,
-        0 -2px 0 #000,
-        0 2px 0 #000,
-        2px -2px 0 #000,
-        2px 0 0 #000,
-        2px 2px 0 #000,
+        -3px -3px 0 #000,
+        -3px 0 0 #000,
+        -3px 3px 0 #000,
+        0 -3px 0 #000,
+        0 3px 0 #000,
+        3px -3px 0 #000,
+        3px 0 0 #000,
+        3px 3px 0 #000,
         /* Metallic shine: highlight top-left, shadow bottom */
         -1px -1px 0 rgba(255,255,230,0.9),
         1px 1px 0 rgba(180,160,80,0.6),
-        0 2px 4px rgba(0,0,0,0.4);
+        0 3px 6px rgba(0,0,0,0.5),
+        0 0 20px rgba(242,232,168,0.15);
     }
 
     .star-btn {
       display: block;
-      width: 80px;
-      height: 80px;
+      width: 220px;
+      height: 72px;
       transition: transform 0.2s;
+      text-decoration: none;
     }
 
     .star-btn:hover {
-      transform: scale(1.1);
+      transform: scale(1.05);
     }
 
     .star-btn:focus {
@@ -140,14 +143,30 @@
 
   <div class="content">
   <h1>Spirimal</h1>
-  <a href="page2.html" class="star-btn" aria-label="Go to next page">
-    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="80" height="80">
+  <a href="page2.html" class="star-btn" aria-label="Start – go to next page">
+    <svg viewBox="0 0 220 72" xmlns="http://www.w3.org/2000/svg" width="220" height="72">
+      <defs>
+        <linearGradient id="tailGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#e8b86d"/>
+          <stop offset="100%" stop-color="#e8b86d" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="starGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#f5e6a0"/>
+          <stop offset="100%" stop-color="#d4a84b"/>
+        </linearGradient>
+      </defs>
+      <!-- Shooting star tail -->
+      <path d="M 52 36 L 220 36 L 220 40 L 52 40 Z" fill="url(#tailGrad)"/>
+      <path d="M 52 36 Q 120 34 220 36 L 220 40 Q 120 38 52 40 Z" fill="url(#tailGrad)" opacity="0.7"/>
+      <!-- Star at front -->
       <polygon
-        points="50,5 61,40 98,40 68,62 79,97 50,75 21,97 32,62 2,40 39,40"
-        fill="#e8b86d"
+        points="36,36 42,28 52,36 42,44 36,36"
+        fill="url(#starGrad)"
         stroke="#c9a04d"
-        stroke-width="2"
+        stroke-width="1.5"
       />
+      <!-- "Start" text -->
+      <text x="110" y="42" text-anchor="middle" fill="#1a1a2e" font-family="'Press Start 2P', monospace" font-size="10" font-weight="700">Start</text>
     </svg>
   </a>
   </div>
