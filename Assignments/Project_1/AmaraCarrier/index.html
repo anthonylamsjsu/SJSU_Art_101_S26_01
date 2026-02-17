@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Make a Spirit Animal</title>
+  <title>Spirimal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -14,7 +17,7 @@
       align-items: center;
       flex-direction: column;
       gap: 2rem;
-      font-family: system-ui, sans-serif;
+      font-family: 'Press Start 2P', monospace;
       background: #1a1a2e;
       color: #eee;
       overflow-x: hidden;
@@ -36,9 +39,27 @@
     }
 
     h1 {
-      font-size: 2rem;
-      font-weight: 600;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 1.75rem;
+      font-weight: 400;
       text-align: center;
+      text-transform: uppercase;
+      font-style: italic;
+      color: #f2e8a8;
+      /* Black outline (multiple shadows) */
+      text-shadow:
+        -2px -2px 0 #000,
+        -2px 0 0 #000,
+        -2px 2px 0 #000,
+        0 -2px 0 #000,
+        0 2px 0 #000,
+        2px -2px 0 #000,
+        2px 0 0 #000,
+        2px 2px 0 #000,
+        /* Metallic shine: highlight top-left, shadow bottom */
+        -1px -1px 0 rgba(255,255,230,0.9),
+        1px 1px 0 rgba(180,160,80,0.6),
+        0 2px 4px rgba(0,0,0,0.4);
     }
 
     .star-btn {
@@ -57,7 +78,7 @@
       outline-offset: 4px;
     }
 
-    /* Cloud panels that part on load */
+    /* Cloud panels that part on load – rounded scalloped shape */
     .cloud {
       position: fixed;
       top: 0;
@@ -72,6 +93,8 @@
       background: linear-gradient(105deg, rgba(220, 230, 245, 0.98) 0%, rgba(200, 215, 235, 0.98) 50%, rgba(180, 200, 225, 0.95) 100%);
       box-shadow: 0 0 80px rgba(255, 255, 255, 0.3);
       animation: partLeft 1.4s ease-in-out forwards;
+      clip-path: url(#leftCloudClip);
+      -webkit-clip-path: url(#leftCloudClip);
     }
 
     .cloud-right {
@@ -79,6 +102,8 @@
       background: linear-gradient(75deg, rgba(220, 230, 245, 0.98) 0%, rgba(200, 215, 235, 0.98) 50%, rgba(180, 200, 225, 0.95) 100%);
       box-shadow: 0 0 80px rgba(255, 255, 255, 0.3);
       animation: partRight 1.4s ease-in-out forwards;
+      clip-path: url(#rightCloudClip);
+      -webkit-clip-path: url(#rightCloudClip);
     }
 
     @keyframes partLeft {
@@ -89,13 +114,32 @@
       to { transform: translateX(100%); }
     }
   </style>
+  <!-- Scalloped cloud shapes: inner edge uses rounded bumps (objectBoundingBox = 0–1) -->
+  <svg width="0" height="0" aria-hidden="true">
+    <defs>
+      <clipPath id="leftCloudClip" clipPathUnits="objectBoundingBox">
+        <path d="M 0,0 L 1,0
+                 Q 1.06 0.06 1 0.14 Q 0.94 0.22 1 0.3
+                 Q 1.06 0.38 1 0.46 Q 0.94 0.54 1 0.62
+                 Q 1.06 0.7 1 0.78 Q 0.94 0.86 1 0.94
+                 L 1,1 L 0,1 Z" />
+      </clipPath>
+      <clipPath id="rightCloudClip" clipPathUnits="objectBoundingBox">
+        <path d="M 1,0 L 0,0
+                 Q -0.06 0.06 0 0.14 Q 0.06 0.22 0 0.3
+                 Q -0.06 0.38 0 0.46 Q 0.06 0.54 0 0.62
+                 Q -0.06 0.7 0 0.78 Q 0.06 0.86 0 0.94
+                 L 0,1 L 1,1 Z" />
+      </clipPath>
+    </defs>
+  </svg>
 </head>
 <body>
   <div class="cloud cloud-left" aria-hidden="true"></div>
   <div class="cloud cloud-right" aria-hidden="true"></div>
 
   <div class="content">
-  <h1>Make a Spirit Animal</h1>
+  <h1>Spirimal</h1>
   <a href="page2.html" class="star-btn" aria-label="Go to next page">
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="80" height="80">
       <polygon
