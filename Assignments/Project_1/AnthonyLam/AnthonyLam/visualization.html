@@ -13,11 +13,10 @@
 <a class="back" href="./index.html">← BACK</a>
 
 <h1 class="viz-title">MY SCREEN TIME</h1>
-<p class="viz-sub">Hover a day. Click a blob.</p>
+<p class="viz-sub">Hover a day. Click a blob. test</p>
 
-<!-- THIS is where the floating blobs appear -->
-<div id="viz" class="viz-area"></div>
-
+<div id="blob-stage"></div>
+  
 <!-- tooltip -->
 <div id="tip" class="tip"></div>
 
@@ -25,5 +24,39 @@
 <script src="./data.js?v=999"></script>
 <script src="./script.js?v=999"></script>
 
+<script>
+const stage = document.getElementById("blob-stage");
+
+const DAYS = [
+  {day:"MON", hours:5},
+  {day:"TUE", hours:3},
+  {day:"WED", hours:7},
+  {day:"THU", hours:4},
+  {day:"FRI", hours:6},
+  {day:"SAT", hours:8},
+  {day:"SUN", hours:2}
+];
+
+DAYS.forEach(d => {
+  const blob = document.createElement("div");
+  blob.className = "blob";
+
+  const size = 60 + d.hours * 18;
+
+  blob.style.width = size + "px";
+  blob.style.height = size + "px";
+
+  blob.style.left = Math.random()*80 + "%";
+  blob.style.top = Math.random()*70 + "%";
+
+  blob.style.background =
+    `radial-gradient(circle,
+      hsla(${200 + d.hours*20},80%,70%,0.75),
+      transparent 70%)`;
+
+  stage.appendChild(blob);
+});
+</script>
+  
 </body>
 </html>
