@@ -32,12 +32,13 @@ if (!ITEMS.length) {
   const placed = [];
   const blobs = [];
 
+  // ---------- placement (keeps them initially apart) ----------
   function tryPlace(sizePx){
     const stageRect = stage.getBoundingClientRect();
     const maxX = stageRect.width - sizePx;
     const maxY = stageRect.height - sizePx;
 
-    for (let attempt = 0; attempt < 500; attempt++){
+    for (let attempt = 0; attempt < 700; attempt++){
       const x = Math.random() * Math.max(maxX,1);
       const y = Math.random() * Math.max(maxY,1);
 
@@ -47,7 +48,7 @@ if (!ITEMS.length) {
       let ok = true;
       for(const p of placed){
         const dist = Math.hypot(cx-p.cx, cy-p.cy);
-        const minDist = (sizePx/2)+(p.size/2)+70;
+        const minDist = (sizePx/2)+(p.size/2)+110; // bigger spacing so less merging
         if(dist < minDist){ ok=false; break; }
       }
 
@@ -57,12 +58,14 @@ if (!ITEMS.length) {
       }
     }
 
+    // fallback
     const stageRect2 = stage.getBoundingClientRect();
     const x = Math.random() * Math.max(stageRect2.width - sizePx, 1);
     const y = Math.random() * Math.max(stageRect2.height - sizePx, 1);
     return {x,y,cx:x+sizePx/2, cy:y+sizePx/2};
   }
 
+  // ---------- active “push aside” (your original behavior) ----------
   function setActive(activeBlob, labelText){
     if (labelText){
       tip.textContent = labelText;
@@ -80,20 +83,14 @@ if (!ITEMS.length) {
     const extraGap  = 90;
 
     blobs.forEach(o => {
-      if (o.el === activeBlob) {
-        o.el.style.transform = `translate(0px, 0px)`;
-        return;
-      }
+      if (o.el === activeBlob) return;
 
       const dx = o.cx - a.cx;
       const dy = o.cy - a.cy;
       const dist = Math.max(Math.hypot(dx, dy), 0.001);
 
       const radius = (a.size/2) + (o.size/2) + extraGap;
-      if (dist > radius) {
-        o.el.style.transform = `translate(0px, 0px)`;
-        return;
-      }
+      if (dist > radius) return;
 
       const t = 1 - (dist / radius);
       const push = strength * t;
@@ -101,10 +98,8 @@ if (!ITEMS.length) {
       const ux = dx / dist;
       const uy = dy / dist;
 
-      const tx = ux * push;
-      const ty = uy * push;
-
-      o.el.style.transform = `translate(${tx}px, ${ty}px)`;
+      o.vx += ux * push * 0.02;
+      o.vy += uy * push * 0.02;
     });
   }
 
@@ -112,12 +107,9 @@ if (!ITEMS.length) {
     tip.style.opacity = "0";
     document.querySelectorAll(".blob")
       .forEach(b => b.classList.remove("dim","active"));
-
-    blobs.forEach(o => {
-      o.el.style.transform = `translate(0px, 0px)`;
-    });
   }
 
+  // ---------- build blobs ----------
   ITEMS.forEach(item => {
 
     const blob = document.createElement("div");
@@ -130,26 +122,31 @@ if (!ITEMS.length) {
     blob.style.height = size+"px";
 
     const pos = tryPlace(size);
-    blob.style.left = pos.x+"px";
-    blob.style.top  = pos.y+"px";
+
+    blob.style.left = "0px";
+    blob.style.top  = "0px";
 
     blob.style.background =
       `radial-gradient(circle,
         ${item.color} 0%,
         rgba(255,255,255,0) 72%)`;
 
-    /* faster + bigger motion per blob */
-    blob.style.setProperty("--speed", (1.1 + Math.random()*1.0).toFixed(2) + "s");
-    blob.style.setProperty("--mx", (80 + Math.random()*160).toFixed(0) + "px");
-    blob.style.setProperty("--my", (-60 - Math.random()*160).toFixed(0) + "px");
-
     stage.appendChild(blob);
 
-    blobs.push({ el: blob, cx: pos.cx, cy: pos.cy, size });
+    // store physics state
+    blobs.push({
+      el: blob,
+      size,
+      x: pos.x,
+      y: pos.y,
+      cx: pos.cx,
+      cy: pos.cy,
+      vx: (Math.random()-0.5)*0.5,   // slow start
+      vy: (Math.random()-0.5)*0.5,
+      label: `${item.app} — ${h.toFixed(1)} HOURS`
+    });
 
-    const label = `${item.app} — ${h.toFixed(1)} HOURS`;
-
-    const show = () => setActive(blob, label);
+    const show = () => setActive(blob, `${item.app} — ${h.toFixed(1)} HOURS`);
 
     blob.addEventListener("mouseenter", show);
     blob.addEventListener("click", show);
@@ -158,6 +155,7 @@ if (!ITEMS.length) {
     blob.addEventListener("mouseleave", clearActive);
   });
 
+  // ---------- tooltip follows mouse ----------
   document.addEventListener("mousemove",(e)=>{
     tip.style.left=(e.clientX+14)+"px";
     tip.style.top =(e.clientY+14)+"px";
@@ -166,6 +164,81 @@ if (!ITEMS.length) {
   stage.addEventListener("click", (e)=>{
     if (e.target === stage) clearActive();
   });
+
+  // ---------- repel physics (prevents merging) ----------
+  const GAP = 90;        // increase = more spacing between blobs
+  const REPEL = 0.02;    // increase = stronger repel
+  const DAMP = 0.965;    // closer to 1 = slower float
+  const WANDER = 0.02;   // tiny randomness (no “sway”)
+
+  function animate(){
+    const rect = stage.getBoundingClientRect();
+
+    // repel all pairs
+    for (let i=0;i<blobs.length;i++){
+      for (let j=i+1;j<blobs.length;j++){
+        const a = blobs[i];
+        const b = blobs[j];
+
+        const ax = a.x + a.size/2;
+        const ay = a.y + a.size/2;
+        const bx = b.x + b.size/2;
+        const by = b.y + b.size/2;
+
+        const dx = bx - ax;
+        const dy = by - ay;
+        const dist = Math.max(Math.hypot(dx,dy), 0.001);
+
+        const minDist = (a.size/2) + (b.size/2) + GAP;
+
+        if (dist < minDist){
+          const overlap = (minDist - dist);
+          const force = overlap * REPEL;
+
+          const ux = dx / dist;
+          const uy = dy / dist;
+
+          a.vx -= ux * force;
+          a.vy -= uy * force;
+          b.vx += ux * force;
+          b.vy += uy * force;
+        }
+      }
+    }
+
+    // update motion
+    blobs.forEach(o => {
+      // tiny random drift (organic, not swaying)
+      o.vx += (Math.random()-0.5) * WANDER;
+      o.vy += (Math.random()-0.5) * WANDER;
+
+      // damping (slows down)
+      o.vx *= DAMP;
+      o.vy *= DAMP;
+
+      o.x += o.vx;
+      o.y += o.vy;
+
+      // keep inside stage
+      const maxX = Math.max(rect.width - o.size, 1);
+      const maxY = Math.max(rect.height - o.size, 1);
+
+      if (o.x < 0){ o.x = 0; o.vx *= -0.6; }
+      if (o.y < 0){ o.y = 0; o.vy *= -0.6; }
+      if (o.x > maxX){ o.x = maxX; o.vx *= -0.6; }
+      if (o.y > maxY){ o.y = maxY; o.vy *= -0.6; }
+
+      // keep stored centers updated (for active push)
+      o.cx = o.x + o.size/2;
+      o.cy = o.y + o.size/2;
+
+      o.el.style.transform = `translate(${o.x}px, ${o.y}px)`;
+    });
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
 }
 </script>
 
