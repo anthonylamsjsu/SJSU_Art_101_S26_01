@@ -3,61 +3,73 @@
 <head>
   <meta charset="utf-8" />
   <title>DIGITAL RESIDUE — Visualization</title>
-
-  <!-- your existing style -->
-  <link rel="stylesheet" href="./style.css?v=999">
+  <link rel="stylesheet" href="./style.css?v=1000">
 </head>
 
 <body data-page="viz">
 
-<a class="back" href="./index.html">← BACK</a>
+  <a class="back" href="./index.html">← BACK</a>
 
-<h1 class="viz-title">MY SCREEN TIME</h1>
-<p class="viz-sub">Hover a day. Click a blob. test</p>
+  <h1 class="viz-title">MY SCREEN TIME</h1>
+  <p class="viz-sub">Hover a blob to reveal the app + time.</p>
 
-<div id="blob-stage"></div>
-<div id="viz" class="viz-area"></div>  
-<!-- tooltip -->
-<div id="tip" class="tip"></div>
+  <div id="blob-stage"></div>
 
-<script src="./data.js?v=999"></script>
-<script src="./script.js?v=999"></script>
+  <div id="tip" class="tip"></div>
 
-<script>
-const stage = document.getElementById("blob-stage");
+  <script src="./data.js?v=1000"></script>
 
-// use DAYS from data.js if it exists, otherwise fallback demo data
-const BLOB_DAYS = (typeof DAYS !== "undefined") ? DAYS : [
-  {day:"MON", hours:5},
-  {day:"TUE", hours:3},
-  {day:"WED", hours:7},
-  {day:"THU", hours:4},
-  {day:"FRI", hours:6},
-  {day:"SAT", hours:8},
-  {day:"SUN", hours:2}
-];
+  <script>
+    const stage = document.getElementById("blob-stage");
+    const tip = document.getElementById("tip");
 
-BLOB_DAYS.forEach(d => {
-  const blob = document.createElement("div");
-  blob.className = "blob";
+    const ITEMS = (typeof APPS !== "undefined") ? APPS : [];
 
-  const h = Number(d.hours ?? d.hour ?? 0);   // uses d.hours if you have it
-  const size = 80 + h * 22;
+    if (!ITEMS.length) {
+      stage.innerHTML = `<p style="opacity:.7">No APPS data found in data.js.</p>`;
+    } else {
+      const maxH = Math.max(...ITEMS.map(x => Number(x.hours || 0)), 1);
 
-  blob.style.width = size + "px";
-  blob.style.height = size + "px";
+      ITEMS.forEach(item => {
+        const blob = document.createElement("div");
+        blob.className = "blob";
 
-  blob.style.left = (Math.random() * 85) + "%";
-  blob.style.top  = (Math.random() * 75) + "%";
+        const h = Number(item.hours || 0);
 
-  blob.style.background =
-    `radial-gradient(circle,
-      hsla(${200 + h*18}, 95%, 70%, 0.95),
-      transparent 68%)`;
+        // SIZE BY TIME (bigger time = bigger blob)
+        const size = 220 + (h / maxH) * 260;
+        blob.style.width = size + "px";
+        blob.style.height = size + "px";
 
-  stage.appendChild(blob);
-});
-</script>
-  
+        // POSITION (random but contained)
+        blob.style.left = (Math.random() * 85) + "%";
+        blob.style.top  = (Math.random() * 75) + "%";
+
+        // COLOR CODED PER APP
+        blob.style.background = `radial-gradient(circle,
+          ${item.color} 0%,
+          rgba(255,255,255,0) 70%)`;
+
+        // HOVER LABEL
+        blob.addEventListener("mouseenter", () => {
+          tip.textContent = `${item.app} — ${h.toFixed(1)} HOURS`;
+          tip.style.opacity = "1";
+        });
+
+        blob.addEventListener("mouseleave", () => {
+          tip.style.opacity = "0";
+        });
+
+        stage.appendChild(blob);
+      });
+
+      // TOOLTIP FOLLOWS MOUSE
+      document.addEventListener("mousemove", (e) => {
+        tip.style.left = (e.clientX + 14) + "px";
+        tip.style.top  = (e.clientY + 14) + "px";
+      });
+    }
+  </script>
+
 </body>
 </html>
