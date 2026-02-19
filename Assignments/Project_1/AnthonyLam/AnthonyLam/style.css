@@ -113,14 +113,16 @@ h1{
   text-align:center;
 
   font-size:54px;       
-  letter-spacing:5px;
+  letter-spacing:10px;
+  
+  opacity:0.65;
 
   color:#111;              
   text-decoration:none;    
 }
 
 .enter:hover{
-  opacity:.6;
+  opacity:.3;
 }
 
 .day{ display:flex; align-items:center; gap:10px; margin:10px 0; }
