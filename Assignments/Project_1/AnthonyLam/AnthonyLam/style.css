@@ -144,12 +144,11 @@ h1{margin:0;text-align:center;font-size:72px;opacity:0.80;}
   position:relative;
   width:100vw;
 
-  /* make it fill the rest of the screen so no “rectangle edge” */
   height: calc(100vh - 220px);
   min-height: 520px;
 
   margin: 0;
-  overflow: visible;     /* important: removes the clipped edge */
+  overflow: visible;
   isolation:isolate;
 }
 
@@ -160,12 +159,11 @@ h1{margin:0;text-align:center;font-size:72px;opacity:0.80;}
   filter:blur(10px) saturate(2.4);
   mix-blend-mode:normal;
 
-  /* FIX 1: slower motion */
-  animation:floaty var(--speed,7.5s) ease-in-out infinite alternate;
+  /* IMPORTANT: JS controls transform (movement). */
+  animation:none;
 
   will-change:transform;
   transition:
-    transform 180ms ease,
     filter 180ms ease,
     opacity 180ms ease;
 }
@@ -173,21 +171,13 @@ h1{margin:0;text-align:center;font-size:72px;opacity:0.80;}
 .blob:hover{
   opacity:1;
   filter:blur(9px) saturate(2.8);
-  transform:scale(1.22);
   z-index:10;
 }
 
 .blob.active{
   opacity:1;
   filter:blur(8px) saturate(3.0);
-  transform:scale(1.35);
   z-index:20;
-}
-
-/* FIX 2: smaller travel distance */
-@keyframes floaty{
-  0%{ transform:translate(0,0) scale(1); }
-  100%{ transform:translate(var(--mx,55px),var(--my,-45px)) scale(1.02); }
 }
 
 /* TOOLTIP */
