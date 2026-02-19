@@ -65,7 +65,7 @@ body::before{
     24% 30%, 60% 24%, 84% 28%, 12% 86%, 40% 88%, 96% 60%;
 
   filter: blur(26px) saturate(1.35);
-  animation: lavaMove 5s ease-in-out infinite alternate;
+  animation: lavaMove 2.5s ease-in-out infinite alternate;
 }
 
 @keyframes lavaMove{
