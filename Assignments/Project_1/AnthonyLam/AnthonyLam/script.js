@@ -1,52 +1,29 @@
-/* ---- GLOBAL STYLE ---- */
+const container = document.getElementById("viz");
 
-body {
-  background: #e6f2ff; /* light blue background */
-  font-family: Helvetica, Arial, sans-serif;
-  font-weight: bold;
-  text-transform: uppercase;
-  margin: 40px;
-  letter-spacing: 1px;
-}
+container.innerHTML = "";
 
-/* navigation spacing */
-nav a {
-  margin-right: 14px;
-  color: #002b66;
-  text-decoration: none;
-}
+DAYS.forEach((d) => {
+  const day = document.createElement("div");
+  day.className = "day";
 
-/* main container */
-#viz {
-  margin-top: 30px;
-}
+  const label = document.createElement("div");
+  label.className = "label";
+  label.textContent = d.day;
 
-/* each day row */
-.day {
-  display: flex;
-  align-items: center;
-  margin-bottom: 14px;
-}
+  day.appendChild(label);
 
-/* day label text */
-.label {
-  width: 80px;
-  color: #002b66;
-}
+  CATS.forEach((c) => {
+    const bar = document.createElement("div");
+    bar.className = "bar " + c.key;
 
-/* bars */
-.bar {
-  height: 18px;
-  background: #003a8c; /* dark blue bars */
-  margin-right: 8px;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-}
+    // minutes -> pixels
+    bar.style.width = (d[c.key] * 2) + "px";
 
-/* spacing between categories */
-.bar.social { opacity: 1; }
-.bar.entertainment { opacity: 0.85; }
-.bar.productivity { opacity: 0.7; }
-.bar.creativity { opacity: 0.55; }
-.bar.other { opacity: 0.4; }
+    // hover shows exact minutes
+    bar.title = c.label + ": " + d[c.key] + " min";
 
+    day.appendChild(bar);
+  });
+
+  container.appendChild(day);
+});
