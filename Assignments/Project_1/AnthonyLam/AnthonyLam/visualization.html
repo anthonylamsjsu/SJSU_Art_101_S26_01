@@ -41,9 +41,46 @@
         blob.style.width = size + "px";
         blob.style.height = size + "px";
 
-        // POSITION (random but contained)
-        blob.style.left = (Math.random() * 85) + "%";
-        blob.style.top  = (Math.random() * 75) + "%";
+// ---- place blobs without overlapping ----
+const stageRect = stage.getBoundingClientRect();
+
+const placed = window.__placedBlobs || (window.__placedBlobs = []);
+
+function tryPlace(sizePx){
+  const maxX = stageRect.width - sizePx;
+  const maxY = stageRect.height - sizePx;
+
+  for (let attempt = 0; attempt < 200; attempt++){
+    const x = Math.random() * Math.max(maxX, 1);
+    const y = Math.random() * Math.max(maxY, 1);
+
+    // center points
+    const cx = x + sizePx/2;
+    const cy = y + sizePx/2;
+
+    // require spacing so circles don't intersect
+    let ok = true;
+    for (const p of placed){
+      const dx = cx - p.cx;
+      const dy = cy - p.cy;
+      const dist = Math.hypot(dx, dy);
+      const minDist = (sizePx/2) + (p.size/2) + 18; // 18px gap
+      if (dist < minDist){ ok = false; break; }
+    }
+
+    if (ok){
+      placed.push({ cx, cy, size: sizePx });
+      return { x, y };
+    }
+  }
+
+  // fallback if crowded
+  return { x: Math.random() * Math.max(maxX, 1), y: Math.random() * Math.max(maxY, 1) };
+}
+
+const pos = tryPlace(size);
+blob.style.left = pos.x + "px";
+blob.style.top  = pos.y + "px";
 
         // COLOR CODED PER APP
         blob.style.background = `radial-gradient(circle,
