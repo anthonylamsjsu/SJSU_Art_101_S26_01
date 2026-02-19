@@ -3,100 +3,136 @@
 <head>
   <meta charset="utf-8" />
   <title>DIGITAL RESIDUE — Visualization</title>
-  <link rel="stylesheet" href="./style.css?v=1002">
+  <link rel="stylesheet" href="./style.css?v=1003">
 </head>
 
 <body data-page="viz">
 
-  <a class="back" href="./index.html">← BACK</a>
+<a class="back" href="./index.html">← BACK</a>
 
-  <h1 class="viz-title">MY SCREEN TIME</h1>
-  <p class="viz-sub">Hover a blob to reveal the app + time.</p>
+<h1 class="viz-title">MY SCREEN TIME</h1>
+<p class="viz-sub">HOVER OVER A COLOR BLOB OR LABEL TO REVEAL THE SCREENTIME.</p>
 
-  <div id="blob-stage"></div>
-  <div id="tip" class="tip"></div>
+<div id="legend" class="legend"></div>
+<div id="blob-stage"></div>
+<div id="tip" class="tip"></div>
 
-  <script src="./data.js?v=1002"></script>
+<script src="./data.js?v=1003"></script>
 
-  <script>
-    const stage = document.getElementById("blob-stage");
-    const tip = document.getElementById("tip");
+<script>
+const stage = document.getElementById("blob-stage");
+const tip = document.getElementById("tip");
+const legend = document.getElementById("legend");
 
-    const ITEMS = (typeof APPS !== "undefined") ? APPS : [];
+const ITEMS = (typeof APPS !== "undefined") ? APPS : [];
 
-    if (!ITEMS.length) {
-      stage.innerHTML = `<p style="opacity:.7">No APPS data found in data.js.</p>`;
-    } else {
-      const maxH = Math.max(...ITEMS.map(x => Number(x.hours || 0)), 1);
+if (!ITEMS.length) {
+  stage.innerHTML = `<p style="opacity:.7">No APPS data found in data.js.</p>`;
+} else {
 
-      const placed = [];
+  const maxH = Math.max(...ITEMS.map(x => Number(x.hours || 0)), 1);
+  const placed = [];
 
-      function tryPlace(sizePx){
-        const stageRect = stage.getBoundingClientRect();
-        const maxX = stageRect.width - sizePx;
-        const maxY = stageRect.height - sizePx;
+  function tryPlace(sizePx){
+    const stageRect = stage.getBoundingClientRect();
+    const maxX = stageRect.width - sizePx;
+    const maxY = stageRect.height - sizePx;
 
-        for (let attempt = 0; attempt < 400; attempt++){
-          const x = Math.random() * Math.max(maxX, 1);
-          const y = Math.random() * Math.max(maxY, 1);
+    for (let attempt = 0; attempt < 400; attempt++){
+      const x = Math.random() * Math.max(maxX,1);
+      const y = Math.random() * Math.max(maxY,1);
 
-          const cx = x + sizePx/2;
-          const cy = y + sizePx/2;
+      const cx = x + sizePx/2;
+      const cy = y + sizePx/2;
 
-          let ok = true;
-          for (const p of placed){
-            const dist = Math.hypot(cx - p.cx, cy - p.cy);
-            const minDist = (sizePx/2) + (p.size/2) + 70; // bigger gap (no full overlap)
-            if (dist < minDist){ ok = false; break; }
-          }
-
-          if (ok){
-            placed.push({ cx, cy, size: sizePx });
-            return { x, y };
-          }
-        }
-
-        return { x: Math.random() * Math.max(maxX, 1), y: Math.random() * Math.max(maxY, 1) };
+      let ok = true;
+      for(const p of placed){
+        const dist = Math.hypot(cx-p.cx, cy-p.cy);
+        const minDist = (sizePx/2)+(p.size/2)+70;
+        if(dist < minDist){ ok=false; break; }
       }
 
-      ITEMS.forEach(item => {
-        const blob = document.createElement("div");
-        blob.className = "blob";
-
-        const h = Number(item.hours || 0);
-
-        // still BIG, but fit-able (prevents stacking into one blob)
-        const size = 260 + (h / maxH) * 420;
-
-        blob.style.width = size + "px";
-        blob.style.height = size + "px";
-
-        const pos = tryPlace(size);
-        blob.style.left = pos.x + "px";
-        blob.style.top  = pos.y + "px";
-
-        blob.style.background = `radial-gradient(circle,
-          ${item.color} 0%,
-          rgba(255,255,255,0) 72%)`;
-
-        blob.addEventListener("mouseenter", () => {
-          tip.textContent = `${item.app} — ${h.toFixed(1)} HOURS`;
-          tip.style.opacity = "1";
-        });
-
-        blob.addEventListener("mouseleave", () => {
-          tip.style.opacity = "0";
-        });
-
-        stage.appendChild(blob);
-      });
-
-      document.addEventListener("mousemove", (e) => {
-        tip.style.left = (e.clientX + 14) + "px";
-        tip.style.top  = (e.clientY + 14) + "px";
-      });
+      if(ok){
+        placed.push({cx,cy,size:sizePx});
+        return {x,y};
+      }
     }
-  </script>
+
+    return {
+      x: Math.random()*Math.max(maxX,1),
+      y: Math.random()*Math.max(maxY,1)
+    };
+  }
+
+  ITEMS.forEach(item => {
+
+    const blob = document.createElement("div");
+    blob.className = "blob";
+
+    const h = Number(item.hours || 0);
+    const size = 260 + (h/maxH)*420;
+
+    blob.style.width = size+"px";
+    blob.style.height = size+"px";
+
+    const pos = tryPlace(size);
+    blob.style.left = pos.x+"px";
+    blob.style.top  = pos.y+"px";
+
+    blob.style.background =
+      `radial-gradient(circle,
+        ${item.color} 0%,
+        rgba(255,255,255,0) 72%)`;
+
+    stage.appendChild(blob);
+
+    /* -------- LEGEND ITEM -------- */
+
+    const row = document.createElement("div");
+    row.className = "legend-item";
+
+    row.innerHTML =
+      `<span class="legend-dot" style="background:${item.color}"></span>
+       ${item.app} — ${h.toFixed(1)}H`;
+
+    legend.appendChild(row);
+
+    function activate(){
+      document.querySelectorAll(".blob")
+        .forEach(b => b.classList.add("dim"));
+
+      blob.classList.remove("dim");
+      blob.classList.add("active");
+    }
+
+    function deactivate(){
+      document.querySelectorAll(".blob")
+        .forEach(b => b.classList.remove("dim","active"));
+    }
+
+    row.addEventListener("mouseenter", activate);
+    row.addEventListener("mouseleave", deactivate);
+
+    blob.addEventListener("mouseenter", ()=>{
+      tip.textContent = `${item.app} — ${h.toFixed(1)} HOURS`;
+      tip.style.opacity="1";
+      activate();
+    });
+
+    blob.addEventListener("mouseleave", ()=>{
+      tip.style.opacity="0";
+      deactivate();
+    });
+
+  });
+
+  document.addEventListener("mousemove",(e)=>{
+    tip.style.left=(e.clientX+14)+"px";
+    tip.style.top =(e.clientY+14)+"px";
+  });
+
+}
+</script>
 
 </body>
 </html>
