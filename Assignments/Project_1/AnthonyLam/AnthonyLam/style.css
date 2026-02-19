@@ -1,0 +1,69 @@
+body {
+  font-family: system-ui, -apple-system, Arial, sans-serif;
+  margin: 24px;
+  line-height: 1.4;
+}
+
+nav a {
+  margin-right: 12px;
+}
+
+.card {
+  border: 1px solid #3333;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 12px 0;
+}
+
+.row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.box {
+  border: 1px solid #3333;
+  border-radius: 12px;
+  padding: 12px;
+  min-width: 260px;
+}
+
+.bar {
+  height: 14px;
+  background: #0002;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: #000;
+  width: 0%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+small {
+  opacity: 0.75;
+}
+
+input, select, button {
+  padding: 8px;
+}
+
+.kpi {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #0002;
+  margin: 12px 0;
+}
