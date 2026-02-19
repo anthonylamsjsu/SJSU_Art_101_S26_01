@@ -1,42 +1,109 @@
-body{
-  font-family:"Doto",sans-serif;
-  font-weight:700;
-  text-transform:uppercase;
-  margin:40px;
-  letter-spacing:1px;
+@import url("https://fonts.googleapis.com/css2?family=Doto:wght@100..900&display=swap");
 
-  background-color:#ffffff;
-
-  background-image:
-    radial-gradient(circle at 12% 18%, rgba(0,140,255,.55) 0%, rgba(0,140,255,0) 34%),
-    radial-gradient(circle at 28% 72%, rgba(120,70,255,.45) 0%, rgba(120,70,255,0) 38%),
-    radial-gradient(circle at 52% 22%, rgba(255,70,200,.40) 0%, rgba(255,70,200,0) 32%),
-    radial-gradient(circle at 78% 34%, rgba(70,210,255,.38) 0%, rgba(70,210,255,0) 36%),
-    radial-gradient(circle at 88% 78%, rgba(160,90,255,.40) 0%, rgba(160,90,255,0) 40%),
-    radial-gradient(circle at 18% 48%, rgba(255,120,220,.30) 0%, rgba(255,120,220,0) 26%),
-    radial-gradient(circle at 42% 86%, rgba(90,160,255,.28) 0%, rgba(90,160,255,0) 28%),
-    radial-gradient(circle at 66% 64%, rgba(200,90,255,.26) 0%, rgba(200,90,255,0) 30%),
-    radial-gradient(circle at 92% 52%, rgba(255,110,180,.22) 0%, rgba(255,110,180,0) 24%),
-    radial-gradient(circle at 60% 44%, rgba(0,190,255,.20) 0%, rgba(0,190,255,0) 22%);
-
-  background-repeat:no-repeat;
-  background-size:
-    520px 520px,
-    560px 560px,
-    480px 480px,
-    520px 520px,
-    600px 600px,
-    340px 340px,
-    360px 360px,
-    380px 380px,
-    300px 300px,
-    280px 280px;
-
-  animation: blobMove 1.8s ease-in-out infinite alternate;
+html, body{
+  height:100%;
 }
 
+body{
+  margin:0;
+  padding:40px;
+  font-family:"Doto", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:#121212;
+  background:#ffffff;
+  overflow-x:hidden;
+  position:relative;
+}
+
+/* BASE ORBS (static layer so the whole page always has blobs) */
+body{
+  background-image:
+    radial-gradient(circle at 15% 25%, rgba(120,190,255,.35) 0%, rgba(120,190,255,0) 45%),
+    radial-gradient(circle at 70% 20%, rgba(190,130,255,.30) 0%, rgba(190,130,255,0) 48%),
+    radial-gradient(circle at 55% 55%, rgba(255,140,220,.22) 0%, rgba(255,140,220,0) 52%),
+    radial-gradient(circle at 25% 80%, rgba(120,110,255,.20) 0%, rgba(120,110,255,0) 55%),
+    radial-gradient(circle at 85% 78%, rgba(90,220,255,.18) 0%, rgba(90,220,255,0) 50%);
+  background-repeat:no-repeat;
+  background-size: 70vmax 70vmax, 64vmax 64vmax, 60vmax 60vmax, 58vmax 58vmax, 54vmax 54vmax;
+}
+
+/* MOVING LAVA LAYERS (no “screen sliding” because we never reveal edges) */
+body::before,
+body::after{
+  content:"";
+  position:fixed;
+  left:50%;
+  top:50%;
+  width:220vmax;
+  height:220vmax;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  z-index:-1;
+  filter: blur(28px);
+  opacity:0.85;
+}
+
+body::before{
+  background:
+    radial-gradient(circle, rgba(70,170,255,.45) 0%, rgba(70,170,255,0) 52%),
+    radial-gradient(circle, rgba(150,90,255,.42) 0%, rgba(150,90,255,0) 55%),
+    radial-gradient(circle, rgba(255,120,210,.30) 0%, rgba(255,120,210,0) 58%),
+    radial-gradient(circle, rgba(0,210,255,.22) 0%, rgba(0,210,255,0) 50%),
+    radial-gradient(circle, rgba(220,160,255,.22) 0%, rgba(220,160,255,0) 55%);
+  background-repeat:no-repeat;
+  background-size:
+    40vmax 40vmax,
+    34vmax 34vmax,
+    30vmax 30vmax,
+    24vmax 24vmax,
+    20vmax 20vmax;
+  background-position:
+    18% 30%,
+    78% 28%,
+    55% 78%,
+    88% 60%,
+    28% 70%;
+  animation: lavaA 1.9s ease-in-out infinite alternate;
+}
+
+body::after{
+  background:
+    radial-gradient(circle, rgba(255,140,230,.28) 0%, rgba(255,140,230,0) 55%),
+    radial-gradient(circle, rgba(90,170,255,.26) 0%, rgba(90,170,255,0) 55%),
+    radial-gradient(circle, rgba(180,110,255,.24) 0%, rgba(180,110,255,0) 55%),
+    radial-gradient(circle, rgba(0,200,255,.18) 0%, rgba(0,200,255,0) 50%),
+    radial-gradient(circle, rgba(255,80,190,.18) 0%, rgba(255,80,190,0) 50%);
+  background-repeat:no-repeat;
+  background-size:
+    28vmax 28vmax,
+    24vmax 24vmax,
+    22vmax 22vmax,
+    18vmax 18vmax,
+    16vmax 16vmax;
+  background-position:
+    30% 40%,
+    80% 78%,
+    40% 22%,
+    90% 28%,
+    14% 88%;
+  animation: lavaB 1.5s ease-in-out infinite alternate;
+  mix-blend-mode:multiply;
+}
+
+@keyframes lavaA{
+  0%   { transform:translate(-50%,-50%) scale(1.02) rotate(-2deg); }
+  100% { transform:translate(-50%,-50%) scale(1.06) rotate(2deg); }
+}
+
+@keyframes lavaB{
+  0%   { transform:translate(-50%,-50%) scale(1.01) rotate(2deg); }
+  100% { transform:translate(-50%,-50%) scale(1.05) rotate(-2deg); }
+}
+
+/* TEXT + VIZ */
 h1{
-  color:#1a1a1a;
   margin:0 0 24px 0;
 }
 
@@ -54,40 +121,10 @@ h1{
 
 .label{
   width:70px;
-  color:#1a1a1a;
 }
 
 .bar{
   height:18px;
-  background:#1a1a1a;
+  background:#121212;
   border-radius:4px;
-}
-
-@keyframes blobMove{
-  0%{
-    background-position:
-      12% 18%,
-      28% 72%,
-      52% 22%,
-      78% 34%,
-      88% 78%,
-      18% 48%,
-      42% 86%,
-      66% 64%,
-      92% 52%,
-      60% 44%;
-  }
-  100%{
-    background-position:
-      18% 28%,
-      20% 62%,
-      60% 16%,
-      72% 44%,
-      80% 70%,
-      26% 56%,
-      36% 78%,
-      58% 72%,
-      84% 44%,
-      66% 36%;
-  }
 }
