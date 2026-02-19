@@ -15,92 +15,73 @@ body{
   position:relative;
 }
 
-/* FULL-SCREEN LAVA LAMP LAYER (covers entire page, never crops) */
+/* FULL-SCREEN LAVA LAMP LAYER */
 body::before{
   content:"";
   position:fixed;
-  inset:-30vmax;            /* extra bleed so edges never show */
+  inset:-30vmax;
   z-index:-1;
   pointer-events:none;
   background-color:#ffffff;
 
-  /* MANY SMALL + MEDIUM ORBS */
   background-image:
-    radial-gradient(circle, rgba(120,190,255,.55) 0%, rgba(120,190,255,0) 55%),
-    radial-gradient(circle, rgba(170,120,255,.50) 0%, rgba(170,120,255,0) 58%),
-    radial-gradient(circle, rgba(255,120,220,.42) 0%, rgba(255,120,220,0) 60%),
-    radial-gradient(circle, rgba(80,220,255,.35) 0%, rgba(80,220,255,0) 58%),
-    radial-gradient(circle, rgba(210,160,255,.34) 0%, rgba(210,160,255,0) 62%),
+    radial-gradient(circle, rgba(120,190,255,.58) 0%, rgba(120,190,255,0) 58%),
+    radial-gradient(circle, rgba(170,120,255,.54) 0%, rgba(170,120,255,0) 60%),
+    radial-gradient(circle, rgba(255,120,220,.48) 0%, rgba(255,120,220,0) 62%),
 
-    radial-gradient(circle, rgba(120,190,255,.35) 0%, rgba(120,190,255,0) 55%),
-    radial-gradient(circle, rgba(170,120,255,.33) 0%, rgba(170,120,255,0) 58%),
-    radial-gradient(circle, rgba(255,120,220,.28) 0%, rgba(255,120,220,0) 60%),
-    radial-gradient(circle, rgba(80,220,255,.22) 0%, rgba(80,220,255,0) 58%),
-    radial-gradient(circle, rgba(210,160,255,.22) 0%, rgba(210,160,255,0) 62%);
+    radial-gradient(circle, rgba(80,220,255,.42) 0%, rgba(80,220,255,0) 60%),
+    radial-gradient(circle, rgba(210,160,255,.40) 0%, rgba(210,160,255,0) 64%),
+    radial-gradient(circle, rgba(255,170,240,.36) 0%, rgba(255,170,240,0) 64%),
+    radial-gradient(circle, rgba(120,190,255,.36) 0%, rgba(120,190,255,0) 60%),
+    radial-gradient(circle, rgba(170,120,255,.34) 0%, rgba(170,120,255,0) 62%),
+    radial-gradient(circle, rgba(255,120,220,.30) 0%, rgba(255,120,220,0) 64%),
+
+    radial-gradient(circle, rgba(80,220,255,.30) 0%, rgba(80,220,255,0) 62%),
+    radial-gradient(circle, rgba(210,160,255,.28) 0%, rgba(210,160,255,0) 66%),
+    radial-gradient(circle, rgba(255,120,220,.26) 0%, rgba(255,120,220,0) 66%),
+    radial-gradient(circle, rgba(120,190,255,.26) 0%, rgba(120,190,255,0) 66%),
+    radial-gradient(circle, rgba(170,120,255,.24) 0%, rgba(170,120,255,0) 68%),
+    radial-gradient(circle, rgba(255,170,240,.22) 0%, rgba(255,170,240,0) 70%),
+
+    radial-gradient(circle, rgba(80,220,255,.22) 0%, rgba(80,220,255,0) 70%),
+    radial-gradient(circle, rgba(210,160,255,.20) 0%, rgba(210,160,255,0) 72%),
+    radial-gradient(circle, rgba(255,120,220,.18) 0%, rgba(255,120,220,0) 72%),
+    radial-gradient(circle, rgba(120,190,255,.18) 0%, rgba(120,190,255,0) 74%),
+    radial-gradient(circle, rgba(170,120,255,.16) 0%, rgba(170,120,255,0) 76%),
+    radial-gradient(circle, rgba(255,170,240,.16) 0%, rgba(255,170,240,0) 78%);
 
   background-repeat:no-repeat;
 
-  /* orb sizes */
   background-size:
-    46vmax 46vmax,
-    38vmax 38vmax,
-    34vmax 34vmax,
-    28vmax 28vmax,
-    26vmax 26vmax,
+    60vmax 60vmax, 54vmax 54vmax, 48vmax 48vmax,
+    36vmax 36vmax, 34vmax 34vmax, 32vmax 32vmax, 30vmax 30vmax, 28vmax 28vmax, 26vmax 26vmax,
+    22vmax 22vmax, 20vmax 20vmax, 18vmax 18vmax, 16vmax 16vmax, 15vmax 15vmax, 14vmax 14vmax,
+    12vmax 12vmax, 11vmax 11vmax, 10vmax 10vmax, 10vmax 10vmax, 9vmax 9vmax, 9vmax 9vmax;
 
-    22vmax 22vmax,
-    20vmax 20vmax,
-    18vmax 18vmax,
-    16vmax 16vmax,
-    14vmax 14vmax;
-
-  /* start positions */
   background-position:
-    12% 20%,
-    78% 18%,
-    55% 60%,
-    88% 72%,
-    24% 78%,
+    10% 18%, 80% 16%, 55% 55%,
+    88% 72%, 22% 78%, 35% 35%, 70% 48%, 16% 62%, 92% 40%,
+    62% 84%, 8% 50%, 44% 22%, 30% 64%, 76% 66%, 52% 78%,
+    24% 30%, 60% 24%, 84% 28%, 12% 86%, 40% 88%, 96% 60%;
 
-    35% 35%,
-    70% 48%,
-    18% 62%,
-    92% 40%,
-    60% 85%;
-
-  filter: blur(26px) saturate(1.2);
-  animation: lavaMove 6s ease-in-out infinite alternate;
+  filter: blur(26px) saturate(1.35);
+  animation: lavaMove 5s ease-in-out infinite alternate;
 }
 
-/* animate POSITIONS so blobs “float” instead of the whole page sliding */
 @keyframes lavaMove{
   0%{
     background-position:
-      12% 20%,
-      78% 18%,
-      55% 60%,
-      88% 72%,
-      24% 78%,
-
-      35% 35%,
-      70% 48%,
-      18% 62%,
-      92% 40%,
-      60% 85%;
+      10% 18%, 80% 16%, 55% 55%,
+      88% 72%, 22% 78%, 35% 35%, 70% 48%, 16% 62%, 92% 40%,
+      62% 84%, 8% 50%, 44% 22%, 30% 64%, 76% 66%, 52% 78%,
+      24% 30%, 60% 24%, 84% 28%, 12% 86%, 40% 88%, 96% 60%;
   }
   100%{
     background-position:
-      22% 28%,
-      68% 26%,
-      62% 52%,
-      80% 64%,
-      18% 70%,
-
-      42% 44%,
-      62% 56%,
-      26% 54%,
-      84% 48%,
-      52% 76%;
+      18% 26%, 70% 24%, 60% 48%,
+      78% 62%, 16% 70%, 42% 44%, 62% 56%, 26% 54%, 84% 48%,
+      54% 76%, 14% 58%, 52% 18%, 22% 72%, 68% 74%, 44% 84%,
+      32% 22%, 72% 18%, 92% 34%, 18% 78%, 36% 92%, 88% 66%;
   }
 }
 
