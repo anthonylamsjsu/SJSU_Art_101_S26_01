@@ -1,29 +1,23 @@
 /* ---- GLOBAL STYLE ---- */
 
 body{
-  font-family: "Bungee Tint", sans-serif;
+  font-family:"Bungee Tint", sans-serif;
   font-weight:700;
   text-transform:uppercase;
   margin:40px;
   letter-spacing:1px;
 
-  /* lava lamp orange background */
+  /* RED LAVA BLOBS ON WHITE */
   background:
-    radial-gradient(circle at 20% 30%, #ff6a00, transparent 40%),
-    radial-gradient(circle at 80% 70%, #ff8c00, transparent 40%),
-    radial-gradient(circle at 50% 50%, #ff3c00, transparent 50%),
-    linear-gradient(120deg,#ffb347,#ff5e00);
+    radial-gradient(circle at 20% 30%, #ff2a2a, transparent 45%),
+    radial-gradient(circle at 80% 60%, #ff0033, transparent 45%),
+    radial-gradient(circle at 50% 80%, #ff5c5c, transparent 40%),
+    #ffffff;
 
   background-size:200% 200%;
   animation:lavaMove 18s ease-in-out infinite;
 }
 
-/* animated movement */
-@keyframes lavaMove{
-  0%{background-position:0% 50%;}
-  50%{background-position:100% 50%;}
-  100%{background-position:0% 50%;}
-}
 
 /* title */
 h1{
