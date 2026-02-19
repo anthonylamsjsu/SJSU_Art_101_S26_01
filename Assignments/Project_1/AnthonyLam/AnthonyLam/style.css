@@ -87,9 +87,10 @@ body::before{
 
 /* CENTER TITLE + SUBTITLE */
 h1{
-  margin:0 0 6px 0;
+  margin:0;
   text-align:center;
-  font-size:72px;  
+  font-size:72px;
+  opacity:0.85;
 }
 
 .subtitle{
