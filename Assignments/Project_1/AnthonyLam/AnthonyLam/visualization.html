@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title>DIGITAL RESIDUE — Visualization</title>
-  <link rel="stylesheet" href="./style.css?v=1003">
+  <link rel="stylesheet" href="./style.css?v=1004">
 </head>
 
 <body data-page="viz">
@@ -11,18 +11,16 @@
 <a class="back" href="./index.html">← BACK</a>
 
 <h1 class="viz-title">MY SCREEN TIME</h1>
-<p class="viz-sub">HOVER OVER A COLOR BLOB OR LABEL TO REVEAL THE SCREENTIME.</p>
+<p class="viz-sub">HOVER OVER A COLOR BLOB TO REVEAL THE SCREENTIME.</p>
 
-<div id="legend" class="legend"></div>
 <div id="blob-stage"></div>
 <div id="tip" class="tip"></div>
 
-<script src="./data.js?v=1003"></script>
+<script src="./data.js?v=1004"></script>
 
 <script>
 const stage = document.getElementById("blob-stage");
 const tip = document.getElementById("tip");
-const legend = document.getElementById("legend");
 
 const ITEMS = (typeof APPS !== "undefined") ? APPS : [];
 
@@ -32,13 +30,14 @@ if (!ITEMS.length) {
 
   const maxH = Math.max(...ITEMS.map(x => Number(x.hours || 0)), 1);
   const placed = [];
+  const blobs = [];
 
   function tryPlace(sizePx){
     const stageRect = stage.getBoundingClientRect();
     const maxX = stageRect.width - sizePx;
     const maxY = stageRect.height - sizePx;
 
-    for (let attempt = 0; attempt < 400; attempt++){
+    for (let attempt = 0; attempt < 500; attempt++){
       const x = Math.random() * Math.max(maxX,1);
       const y = Math.random() * Math.max(maxY,1);
 
@@ -54,14 +53,69 @@ if (!ITEMS.length) {
 
       if(ok){
         placed.push({cx,cy,size:sizePx});
-        return {x,y};
+        return {x,y,cx,cy};
       }
     }
 
-    return {
-      x: Math.random()*Math.max(maxX,1),
-      y: Math.random()*Math.max(maxY,1)
-    };
+    const stageRect2 = stage.getBoundingClientRect();
+    const x = Math.random() * Math.max(stageRect2.width - sizePx, 1);
+    const y = Math.random() * Math.max(stageRect2.height - sizePx, 1);
+    return {x,y,cx:x+sizePx/2, cy:y+sizePx/2};
+  }
+
+  function setActive(activeBlob, labelText){
+    if (labelText){
+      tip.textContent = labelText;
+      tip.style.opacity = "1";
+    }
+
+    document.querySelectorAll(".blob").forEach(b => b.classList.add("dim"));
+    activeBlob.classList.remove("dim");
+    activeBlob.classList.add("active");
+
+    const a = blobs.find(o => o.el === activeBlob);
+    if (!a) return;
+
+    const strength = 170;   // higher = stronger push
+    const extraGap  = 90;   // higher = more space around active blob
+
+    blobs.forEach(o => {
+      if (o.el === activeBlob) {
+        o.el.style.transform = `translate(0px, 0px) scale(1.32)`;
+        return;
+      }
+
+      const dx = o.cx - a.cx;
+      const dy = o.cy - a.cy;
+      const dist = Math.max(Math.hypot(dx, dy), 0.001);
+
+      const radius = (a.size/2) + (o.size/2) + extraGap;
+      if (dist > radius) {
+        o.el.style.transform = `translate(0px, 0px) scale(0.90)`;
+        return;
+      }
+
+      const t = 1 - (dist / radius);   // 0..1
+      const push = strength * t;
+
+      const ux = dx / dist;
+      const uy = dy / dist;
+
+      const tx = ux * push;
+      const ty = uy * push;
+
+      o.el.style.transform = `translate(${tx}px, ${ty}px) scale(0.88)`;
+    });
+  }
+
+  function clearActive(){
+    tip.style.opacity = "0";
+    document.querySelectorAll(".blob")
+      .forEach(b => b.classList.remove("dim","active"));
+
+    blobs.forEach(o => {
+      o.el.style.transform = `translate(0px, 0px) scale(1)`;
+    });
   }
 
   ITEMS.forEach(item => {
@@ -86,44 +140,17 @@ if (!ITEMS.length) {
 
     stage.appendChild(blob);
 
-    /* -------- LEGEND ITEM -------- */
+    blobs.push({ el: blob, cx: pos.cx, cy: pos.cy, size });
 
-    const row = document.createElement("div");
-    row.className = "legend-item";
+    const label = `${item.app} — ${h.toFixed(1)} HOURS`;
 
-    row.innerHTML =
-      `<span class="legend-dot" style="background:${item.color}"></span>
-       ${item.app} — ${h.toFixed(1)}H`;
+    const show = () => setActive(blob, label);
 
-    legend.appendChild(row);
+    blob.addEventListener("mouseenter", show);
+    blob.addEventListener("click", show);
+    blob.addEventListener("touchstart", (e)=>{ e.preventDefault(); show(); }, {passive:false});
 
-    function activate(){
-      document.querySelectorAll(".blob")
-        .forEach(b => b.classList.add("dim"));
-
-      blob.classList.remove("dim");
-      blob.classList.add("active");
-    }
-
-    function deactivate(){
-      document.querySelectorAll(".blob")
-        .forEach(b => b.classList.remove("dim","active"));
-    }
-
-    row.addEventListener("mouseenter", activate);
-    row.addEventListener("mouseleave", deactivate);
-
-    blob.addEventListener("mouseenter", ()=>{
-      tip.textContent = `${item.app} — ${h.toFixed(1)} HOURS`;
-      tip.style.opacity="1";
-      activate();
-    });
-
-    blob.addEventListener("mouseleave", ()=>{
-      tip.style.opacity="0";
-      deactivate();
-    });
-
+    blob.addEventListener("mouseleave", clearActive);
   });
 
   document.addEventListener("mousemove",(e)=>{
@@ -131,6 +158,9 @@ if (!ITEMS.length) {
     tip.style.top =(e.clientY+14)+"px";
   });
 
+  stage.addEventListener("click", (e)=>{
+    if (e.target === stage) clearActive();
+  });
 }
 </script>
 
