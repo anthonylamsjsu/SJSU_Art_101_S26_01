@@ -99,12 +99,17 @@ h1{
   opacity:.65;     
 }
 .intro{
-  max-width:600px;
-  margin:20px auto;
+  max-width:900px;   
+  margin:30px auto;
   text-align:center;
   font-size:20px;
-  line-height:1.4;
+  line-height:1.5;
   opacity:.6;
+}
+.enter-link{
+  display:block;
+  text-align:center;
+  margin-top:40px;
 }
 
 .day{ display:flex; align-items:center; gap:10px; margin:10px 0; }
