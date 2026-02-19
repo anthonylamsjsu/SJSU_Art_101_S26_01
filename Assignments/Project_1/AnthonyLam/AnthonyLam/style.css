@@ -86,8 +86,11 @@ body::before{
 }
 
 /* CONTENT */
-h1{ margin:0 0 24px 0; }
-#viz{ margin-top:20px; max-width:900px; }
+h1{
+  margin:0 0 24px 0;
+  font-size:72px; 
+  line-height:1;
+}
 
 .day{ display:flex; align-items:center; gap:10px; margin:10px 0; }
 .label{ width:70px; }
