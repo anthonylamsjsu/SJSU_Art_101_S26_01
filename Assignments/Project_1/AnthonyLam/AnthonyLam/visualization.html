@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title>DIGITAL RESIDUE — Visualization</title>
-  <link rel="stylesheet" href="./style.css?v=1001">
+  <link rel="stylesheet" href="./style.css?v=1002">
 </head>
 
 <body data-page="viz">
@@ -16,7 +16,7 @@
   <div id="blob-stage"></div>
   <div id="tip" class="tip"></div>
 
-  <script src="./data.js?v=1001"></script>
+  <script src="./data.js?v=1002"></script>
 
   <script>
     const stage = document.getElementById("blob-stage");
@@ -29,7 +29,6 @@
     } else {
       const maxH = Math.max(...ITEMS.map(x => Number(x.hours || 0)), 1);
 
-      // ---- place blobs without overlapping (defined ONCE) ----
       const placed = [];
 
       function tryPlace(sizePx){
@@ -37,7 +36,7 @@
         const maxX = stageRect.width - sizePx;
         const maxY = stageRect.height - sizePx;
 
-        for (let attempt = 0; attempt < 250; attempt++){
+        for (let attempt = 0; attempt < 400; attempt++){
           const x = Math.random() * Math.max(maxX, 1);
           const y = Math.random() * Math.max(maxY, 1);
 
@@ -47,7 +46,7 @@
           let ok = true;
           for (const p of placed){
             const dist = Math.hypot(cx - p.cx, cy - p.cy);
-            const minDist = (sizePx/2) + (p.size/2) + 18; // gap
+            const minDist = (sizePx/2) + (p.size/2) + 70; // bigger gap (no full overlap)
             if (dist < minDist){ ok = false; break; }
           }
 
@@ -57,37 +56,34 @@
           }
         }
 
-        // fallback if crowded
         return { x: Math.random() * Math.max(maxX, 1), y: Math.random() * Math.max(maxY, 1) };
       }
 
-      // ---- build blobs ----
       ITEMS.forEach(item => {
         const blob = document.createElement("div");
         blob.className = "blob";
 
         const h = Number(item.hours || 0);
 
-        // BIG blobs: size by time
-        const size = 380 + (h / maxH) * 520;
+        // still BIG, but fit-able (prevents stacking into one blob)
+        const size = 260 + (h / maxH) * 420;
+
         blob.style.width = size + "px";
         blob.style.height = size + "px";
 
-        // no-overlap placement
         const pos = tryPlace(size);
         blob.style.left = pos.x + "px";
         blob.style.top  = pos.y + "px";
 
-        // color-coded per app
         blob.style.background = `radial-gradient(circle,
           ${item.color} 0%,
-          rgba(255,255,255,0) 70%)`;
+          rgba(255,255,255,0) 72%)`;
 
-        // hover label
         blob.addEventListener("mouseenter", () => {
           tip.textContent = `${item.app} — ${h.toFixed(1)} HOURS`;
           tip.style.opacity = "1";
         });
+
         blob.addEventListener("mouseleave", () => {
           tip.style.opacity = "0";
         });
@@ -95,7 +91,6 @@
         stage.appendChild(blob);
       });
 
-      // tooltip follows mouse
       document.addEventListener("mousemove", (e) => {
         tip.style.left = (e.clientX + 14) + "px";
         tip.style.top  = (e.clientY + 14) + "px";
