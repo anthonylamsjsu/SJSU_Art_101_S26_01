@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title>DIGITAL RESIDUE — Visualization</title>
-  <link rel="stylesheet" href="./style.css?v=1000">
+  <link rel="stylesheet" href="./style.css?v=1001">
 </head>
 
 <body data-page="viz">
@@ -14,10 +14,9 @@
   <p class="viz-sub">Hover a blob to reveal the app + time.</p>
 
   <div id="blob-stage"></div>
-
   <div id="tip" class="tip"></div>
 
-  <script src="./data.js?v=1000"></script>
+  <script src="./data.js?v=1001"></script>
 
   <script>
     const stage = document.getElementById("blob-stage");
@@ -30,69 +29,65 @@
     } else {
       const maxH = Math.max(...ITEMS.map(x => Number(x.hours || 0)), 1);
 
+      // ---- place blobs without overlapping (defined ONCE) ----
+      const placed = [];
+
+      function tryPlace(sizePx){
+        const stageRect = stage.getBoundingClientRect();
+        const maxX = stageRect.width - sizePx;
+        const maxY = stageRect.height - sizePx;
+
+        for (let attempt = 0; attempt < 250; attempt++){
+          const x = Math.random() * Math.max(maxX, 1);
+          const y = Math.random() * Math.max(maxY, 1);
+
+          const cx = x + sizePx/2;
+          const cy = y + sizePx/2;
+
+          let ok = true;
+          for (const p of placed){
+            const dist = Math.hypot(cx - p.cx, cy - p.cy);
+            const minDist = (sizePx/2) + (p.size/2) + 18; // gap
+            if (dist < minDist){ ok = false; break; }
+          }
+
+          if (ok){
+            placed.push({ cx, cy, size: sizePx });
+            return { x, y };
+          }
+        }
+
+        // fallback if crowded
+        return { x: Math.random() * Math.max(maxX, 1), y: Math.random() * Math.max(maxY, 1) };
+      }
+
+      // ---- build blobs ----
       ITEMS.forEach(item => {
         const blob = document.createElement("div");
         blob.className = "blob";
 
         const h = Number(item.hours || 0);
 
-        // SIZE BY TIME (bigger time = bigger blob)
+        // BIG blobs: size by time
         const size = 380 + (h / maxH) * 520;
         blob.style.width = size + "px";
         blob.style.height = size + "px";
 
-// ---- place blobs without overlapping ----
-const stageRect = stage.getBoundingClientRect();
+        // no-overlap placement
+        const pos = tryPlace(size);
+        blob.style.left = pos.x + "px";
+        blob.style.top  = pos.y + "px";
 
-const placed = window.__placedBlobs || (window.__placedBlobs = []);
-
-function tryPlace(sizePx){
-  const maxX = stageRect.width - sizePx;
-  const maxY = stageRect.height - sizePx;
-
-  for (let attempt = 0; attempt < 200; attempt++){
-    const x = Math.random() * Math.max(maxX, 1);
-    const y = Math.random() * Math.max(maxY, 1);
-
-    // center points
-    const cx = x + sizePx/2;
-    const cy = y + sizePx/2;
-
-    // require spacing so circles don't intersect
-    let ok = true;
-    for (const p of placed){
-      const dx = cx - p.cx;
-      const dy = cy - p.cy;
-      const dist = Math.hypot(dx, dy);
-      const minDist = (sizePx/2) + (p.size/2) + 18; // 18px gap
-      if (dist < minDist){ ok = false; break; }
-    }
-
-    if (ok){
-      placed.push({ cx, cy, size: sizePx });
-      return { x, y };
-    }
-  }
-
-  // fallback if crowded
-  return { x: Math.random() * Math.max(maxX, 1), y: Math.random() * Math.max(maxY, 1) };
-}
-
-const pos = tryPlace(size);
-blob.style.left = pos.x + "px";
-blob.style.top  = pos.y + "px";
-
-        // COLOR CODED PER APP
+        // color-coded per app
         blob.style.background = `radial-gradient(circle,
           ${item.color} 0%,
           rgba(255,255,255,0) 70%)`;
 
-        // HOVER LABEL
+        // hover label
         blob.addEventListener("mouseenter", () => {
           tip.textContent = `${item.app} — ${h.toFixed(1)} HOURS`;
           tip.style.opacity = "1";
         });
-
         blob.addEventListener("mouseleave", () => {
           tip.style.opacity = "0";
         });
@@ -100,7 +95,7 @@ blob.style.top  = pos.y + "px";
         stage.appendChild(blob);
       });
 
-      // TOOLTIP FOLLOWS MOUSE
+      // tooltip follows mouse
       document.addEventListener("mousemove", (e) => {
         tip.style.left = (e.clientX + 14) + "px";
         tip.style.top  = (e.clientY + 14) + "px";
