@@ -46,18 +46,35 @@
       pointer-events:none;
     }
 
-    .blob-core.pulse-on::after{
-      animation: blobPulseFill 650ms ease-out forwards;
+    /* ===== HOLD INTERACTION PULSE (NEW) ===== */
+    .blob-core.pulse-in::after{
+      animation: blobPulseIn 240ms ease-out forwards;
     }
 
-    @keyframes blobPulseFill{
-      0%   { opacity:0.92; transform: scale(1); }
-      55%  { opacity:0.98; transform: scale(9.5); }
-      100% { opacity:0;    transform: scale(9.5); }
+    .blob-core.hold::after{
+      opacity:0.98;
+      transform: scale(9.5);
+    }
+
+    .blob-core.pulse-out::after{
+      animation: blobPulseOut 1100ms ease-out forwards;
+    }
+
+    @keyframes blobPulseIn{
+      0%   { opacity:0.00; transform: scale(1); }
+      100% { opacity:0.98; transform: scale(9.5); }
+    }
+
+    @keyframes blobPulseOut{
+      0%   { opacity:0.98; transform: scale(9.5); }
+      60%  { opacity:0.78; transform: scale(6.8); }
+      100% { opacity:0.00; transform: scale(1.0); }
     }
 
     @media (prefers-reduced-motion: reduce){
-      .blob-core.pulse-on::after{ animation:none; opacity:0; }
+      .blob-core.pulse-in::after,
+      .blob-core.pulse-out::after{ animation:none; opacity:0; }
+      .blob-core.hold::after{ opacity:0; transform: scale(1); }
     }
   </style>
 </head>
@@ -222,12 +239,31 @@
       return randPos(sizePx);
     }
 
-    function triggerPulse(coreEl){
-      document.querySelectorAll(".blob-core.pulse-on").forEach(n => n.classList.remove("pulse-on"));
-      coreEl.classList.remove("pulse-on");
+    /* ===== HOLD PULSE FUNCTIONS (NEW) ===== */
+    function startHoldPulse(coreEl){
+      coreEl.classList.remove("pulse-out","hold","pulse-in");
       void coreEl.offsetWidth;
-      coreEl.classList.add("pulse-on");
-      setTimeout(() => coreEl.classList.remove("pulse-on"), 700);
+      coreEl.classList.add("pulse-in");
+
+      clearTimeout(coreEl._holdTimer);
+      coreEl._holdTimer = setTimeout(() => {
+        coreEl.classList.remove("pulse-in");
+        coreEl.classList.add("hold");
+      }, 240);
+    }
+
+    function endHoldPulse(coreEl){
+      clearTimeout(coreEl._holdTimer);
+
+      coreEl.classList.remove("hold","pulse-in");
+      void coreEl.offsetWidth;
+
+      coreEl.classList.add("pulse-out");
+
+      clearTimeout(coreEl._outTimer);
+      coreEl._outTimer = setTimeout(() => {
+        coreEl.classList.remove("pulse-out");
+      }, 1150);
     }
 
     // Build blobs
@@ -284,8 +320,27 @@
         wrap.style.zIndex = "9999";
         setTimeout(() => { wrap.style.zIndex = String(10 + idx); }, 800);
 
-        triggerPulse(core);
+        /* ===== HOLD TO KEEP BURST, RELEASE TO SLOW FADE (NEW) ===== */
+        try { wrap.setPointerCapture(e.pointerId); } catch(_) {}
+
+        startHoldPulse(core);
         showTip(blobs[idx].label, e.clientX, e.clientY);
+
+        const stop = (ev) => {
+          if (ev.pointerId !== e.pointerId) return;
+
+          endHoldPulse(core);
+
+          window.removeEventListener("pointerup", stop, true);
+          window.removeEventListener("pointercancel", stop, true);
+          window.removeEventListener("blur", stop, true);
+
+          try { wrap.releasePointerCapture(e.pointerId); } catch(_) {}
+        };
+
+        window.addEventListener("pointerup", stop, true);
+        window.addEventListener("pointercancel", stop, true);
+        window.addEventListener("blur", stop, true);
       });
     });
 
