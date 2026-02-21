@@ -106,11 +106,15 @@
     const BOUNCE    = 1.01;
 
     // Roaming targets (makes motion feel organic, not stiff)
-    const RETARGET_MS = 2600; // pick a new "float point" every ~2–3s
-    const STEER       = 0.018; // how gently it turns toward the target
-    const ARRIVE      = 420;   // slows near target (bigger = smoother arcs)
+    const RETARGET_MS = 2600;
+    const STEER       = 0.018;
+    const ARRIVE      = 420;
 
-    // Tooltip timing (FIX: +1 second)
+    // NEW: smooth continuous drift so it ALWAYS moves (even if targets are "near")
+    const WAVE_PUSH = 0.040;   // main float strength
+    const MICRO_PUSH = 0.010;  // tiny extra life
+
+    // Tooltip timing
     const TIP_MS = 2000;
 
     const maxH = Math.max(...ITEMS.map(x => Number(x.hours || 0)), 1);
@@ -132,7 +136,9 @@
       sumArea += Math.PI * r * r;
     }
 
-    const TARGET_FILL = 0.32;
+    // FIX: lower fill = more empty space = less merging
+    const TARGET_FILL = 0.20;
+
     const SCALE = Math.min(1, Math.sqrt((stageArea * TARGET_FILL) / Math.max(sumArea, 1)));
 
     const PHYS_GAP_S   = Math.max(40, PHYS_GAP * SCALE);
@@ -192,7 +198,7 @@
       const maxX = Math.max(b.maxXFor(sizePx), b.minX);
       const maxY = Math.max(b.maxYFor(sizePx), b.minY);
 
-      for (let attempt = 0; attempt < 4000; attempt++){
+      for (let attempt = 0; attempt < 5000; attempt++){
         const x = b.minX + Math.random() * Math.max(maxX - b.minX, 1);
         const y = b.minY + Math.random() * Math.max(maxY - b.minY, 1);
 
@@ -261,6 +267,7 @@
         tx: t0.x,
         ty: t0.y,
         nextTargetAt: performance.now() + (600 + Math.random() * RETARGET_MS),
+        seed: Math.random() * 1000, // NEW: unique float pattern per blob
         baseZ: 10 + idx,
         label: `${item.app} — ${h.toFixed(1)} HOURS`
       });
@@ -309,6 +316,13 @@
 
         o.vx += (desiredVx - o.vx) * STEER;
         o.vy += (desiredVy - o.vy) * STEER;
+
+        // NEW: continuous dreamy wave drift (guarantees "lava lamp" motion)
+        const tt = now * 0.001;
+        o.vx += Math.sin(tt * 0.55 + o.seed) * WAVE_PUSH;
+        o.vy += Math.cos(tt * 0.48 + o.seed) * WAVE_PUSH;
+        o.vx += Math.sin(tt * 1.40 + o.seed * 0.7) * MICRO_PUSH;
+        o.vy += Math.cos(tt * 1.25 + o.seed * 0.7) * MICRO_PUSH;
 
         // guarantee visible motion
         let sp = Math.hypot(o.vx, o.vy) || 0.0001;
