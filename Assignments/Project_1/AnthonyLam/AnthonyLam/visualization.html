@@ -32,7 +32,7 @@
       filter: blur(8px) saturate(3.0);
     }
 
-    /* pulse lives on ::after so it NEVER overwrites translate() */
+    /* small local pulse (kept subtle to avoid square artifacts) */
     .blob-core::after{
       content:"";
       position:absolute;
@@ -46,35 +46,43 @@
       pointer-events:none;
     }
 
-    /* ===== HOLD INTERACTION PULSE (NEW) ===== */
-    .blob-core.pulse-in::after{
-      animation: blobPulseIn 240ms ease-out forwards;
+    .blob-core.pulse-local::after{
+      animation: blobLocalPulse 520ms ease-out forwards;
     }
 
-    .blob-core.hold::after{
-      opacity:0.98;
-      transform: scale(9.5);
-    }
-
-    .blob-core.pulse-out::after{
-      animation: blobPulseOut 1100ms ease-out forwards;
-    }
-
-    @keyframes blobPulseIn{
-      0%   { opacity:0.00; transform: scale(1); }
-      100% { opacity:0.98; transform: scale(9.5); }
-    }
-
-    @keyframes blobPulseOut{
-      0%   { opacity:0.98; transform: scale(9.5); }
-      60%  { opacity:0.78; transform: scale(6.8); }
-      100% { opacity:0.00; transform: scale(1.0); }
+    @keyframes blobLocalPulse{
+      0%   { opacity:0.65; transform: scale(1); }
+      70%  { opacity:0.25; transform: scale(1.25); }
+      100% { opacity:0;    transform: scale(1.25); }
     }
 
     @media (prefers-reduced-motion: reduce){
-      .blob-core.pulse-in::after,
-      .blob-core.pulse-out::after{ animation:none; opacity:0; }
-      .blob-core.hold::after{ opacity:0; transform: scale(1); }
+      .blob-core.pulse-local::after{ animation:none; opacity:0; }
+    }
+
+    /* ===== FULLSCREEN HOLD-PULSE OVERLAY (prevents square cutout) ===== */
+    #pulse-overlay{
+      position: fixed;
+      left: var(--px, 50vw);
+      top:  var(--py, 50vh);
+      width: var(--ps, 140vmax);
+      height: var(--ps, 140vmax);
+      transform: translate(-50%, -50%) scale(var(--pk, 0));
+      opacity: var(--po, 0);
+      border-radius: 9999px;
+      pointer-events: none;
+      z-index: 9998;
+      filter: blur(10px) saturate(2.4);
+      will-change: transform, opacity;
+    }
+
+    #pulse-overlay.pulse-in{
+      transition: transform 450ms ease-out, opacity 250ms ease-out;
+    }
+
+    /* slower linger + retract + fade */
+    #pulse-overlay.pulse-out{
+      transition: transform 1100ms ease-in-out, opacity 1300ms ease-in-out;
     }
   </style>
 </head>
@@ -89,12 +97,16 @@
 <div id="blob-stage"></div>
 <div id="tip" class="tip"></div>
 
+<!-- NEW: fullscreen overlay for hold pulse -->
+<div id="pulse-overlay"></div>
+
 <script src="./data.js?v=1016"></script>
 
 <script>
 (() => {
   const stage = document.getElementById("blob-stage");
   const tip = document.getElementById("tip");
+  const pulse = document.getElementById("pulse-overlay");
   const ITEMS = (typeof APPS !== "undefined") ? APPS : [];
 
   if (!ITEMS.length) {
@@ -239,31 +251,30 @@
       return randPos(sizePx);
     }
 
-    /* ===== HOLD PULSE FUNCTIONS (NEW) ===== */
-    function startHoldPulse(coreEl){
-      coreEl.classList.remove("pulse-out","hold","pulse-in");
-      void coreEl.offsetWidth;
-      coreEl.classList.add("pulse-in");
+    // ===== FULLSCREEN HOLD PULSE (NO SQUARE CUTOUT) =====
+    function pulseStart(color, clientX, clientY){
+      pulse.style.setProperty("--px", clientX + "px");
+      pulse.style.setProperty("--py", clientY + "px");
+      pulse.style.background = `radial-gradient(circle, ${color} 0%, rgba(255,255,255,0) 55%)`;
 
-      clearTimeout(coreEl._holdTimer);
-      coreEl._holdTimer = setTimeout(() => {
-        coreEl.classList.remove("pulse-in");
-        coreEl.classList.add("hold");
-      }, 240);
+      pulse.classList.remove("pulse-out");
+      pulse.classList.add("pulse-in");
+      pulse.style.setProperty("--po", "0.92");
+      pulse.style.setProperty("--pk", "1");
     }
 
-    function endHoldPulse(coreEl){
-      clearTimeout(coreEl._holdTimer);
+    function pulseEnd(){
+      pulse.classList.remove("pulse-in");
+      pulse.classList.add("pulse-out");
+      pulse.style.setProperty("--pk", "0.92"); // retract a bit before fading
+      pulse.style.setProperty("--po", "0");
+    }
 
-      coreEl.classList.remove("hold","pulse-in");
+    function localPulse(coreEl){
+      coreEl.classList.remove("pulse-local");
       void coreEl.offsetWidth;
-
-      coreEl.classList.add("pulse-out");
-
-      clearTimeout(coreEl._outTimer);
-      coreEl._outTimer = setTimeout(() => {
-        coreEl.classList.remove("pulse-out");
-      }, 1150);
+      coreEl.classList.add("pulse-local");
+      setTimeout(() => coreEl.classList.remove("pulse-local"), 560);
     }
 
     // Build blobs
@@ -310,6 +321,7 @@
         label: `${item.app} — ${h.toFixed(1)} HOURS`
       });
 
+      // HOLD: burst stays while holding; RELEASE: slow fade
       wrap.addEventListener("pointerdown", (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -320,16 +332,16 @@
         wrap.style.zIndex = "9999";
         setTimeout(() => { wrap.style.zIndex = String(10 + idx); }, 800);
 
-        /* ===== HOLD TO KEEP BURST, RELEASE TO SLOW FADE (NEW) ===== */
         try { wrap.setPointerCapture(e.pointerId); } catch(_) {}
 
-        startHoldPulse(core);
+        pulseStart(item.color, e.clientX, e.clientY);
+        localPulse(core);
         showTip(blobs[idx].label, e.clientX, e.clientY);
 
         const stop = (ev) => {
           if (ev.pointerId !== e.pointerId) return;
 
-          endHoldPulse(core);
+          pulseEnd();
 
           window.removeEventListener("pointerup", stop, true);
           window.removeEventListener("pointercancel", stop, true);
