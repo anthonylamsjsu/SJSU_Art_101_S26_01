@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+]<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
@@ -13,6 +13,8 @@
       left:0; top:0;
       will-change: transform;
       touch-action: manipulation;
+      z-index: 10; /* baseline */
+      isolation: isolate; /* helps keep stacking sane */
     }
 
     .blob-core{
@@ -26,7 +28,7 @@
       transition: filter 180ms ease, opacity 180ms ease;
       position: relative;
 
-      /* === NEW: burst tuning knob === */
+      /* burst tuning knob */
       --burst-scale: 13; /* increase to 15/18 if you want even bigger */
     }
 
@@ -36,30 +38,33 @@
     }
 
     .blob-core::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:50%;
-  background: inherit;
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:50%;
+      background: inherit;
 
-  /* KEY FIX: don't inherit the heavy blur (this causes the square/rect box) */
-  filter: none;
+      /* KEY FIX: don't inherit heavy blur (can cause square artifacts) */
+      filter: none;
 
-  opacity:0;
-  transform: scale(1) translateZ(0);
-  transform-origin:center;
-  pointer-events:none;
+      opacity:0;
+      transform: scale(1) translateZ(0);
+      transform-origin:center;
+      pointer-events:none;
 
-  /* extra safety: force circular clip in browsers that still box the blur layer */
-  clip-path: circle(50% at 50% 50%);
+      /* extra safety to force circular clip */
+      clip-path: circle(50% at 50% 50%);
 
-  will-change: transform, opacity;
-}
+      will-change: transform, opacity;
 
-    /* Keep tooltip above the burst */
+      /* keep burst above other blobs */
+      z-index: 9999;
+    }
+
+    /* Keep tooltip above everything */
     #tip.tip{
       position: fixed;
-      z-index: 999999; /* NEW */
+      z-index: 2147483647;
     }
 
     /* ===== HOLD INTERACTION PULSE ===== */
@@ -96,387 +101,395 @@
 </head>
 
 <body data-page="viz">
-  <audio id="bg-music" autoplay loop>
-  <source src="ice background.mp3" type="audio/mpeg">
-</audio>
 
-<a class="back" href="./index.html">← BACK</a>
+  <!-- NOTE: autoplay often gets blocked; we start playback on first user gesture in JS -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="./ice-background.mp3" type="audio/mpeg">
+  </audio>
 
-<h1 class="viz-title">MY SCREEN TIME</h1>
-<p class="viz-sub">TAP ON A COLOR BLOB TO REVEAL THE APP + SCREENTIME</p>
+  <a class="back" href="./index.html">← BACK</a>
 
-<div id="blob-stage"></div>
-<div id="tip" class="tip"></div>
+  <h1 class="viz-title">MY SCREEN TIME</h1>
+  <p class="viz-sub">TAP ON A COLOR BLOB TO REVEAL THE APP + SCREENTIME</p>
 
-<script src="./data.js?v=1016"></script>
+  <div id="blob-stage"></div>
+  <div id="tip" class="tip"></div>
 
-<script>
-(() => {
-  const stage = document.getElementById("blob-stage");
-  const tip = document.getElementById("tip");
-  const ITEMS = (typeof APPS !== "undefined") ? APPS : [];
+  <script src="./data.js?v=1016"></script>
 
-  if (!ITEMS.length) {
-    stage.innerHTML = `<p style="opacity:.7">No APPS data found in data.js.</p>`;
-    return;
-  }
+  <script>
+  (() => {
+    const stage = document.getElementById("blob-stage");
+    const tip = document.getElementById("tip");
+    const ITEMS = (typeof APPS !== "undefined") ? APPS : [];
 
-  window.addEventListener("load", () => requestAnimationFrame(init), { once:true });
+    const music = document.getElementById("bg-music");
+    function startMusic(){
+      if (!music) return;
+      music.volume = 0.65;
+      music.play().catch(()=>{});
+    }
+    // Start music on first user gesture (required by most browsers)
+    window.addEventListener("pointerdown", startMusic, { once:true, capture:true });
+    window.addEventListener("keydown", startMusic, { once:true, capture:true });
 
-  function init(){
-    // ===== TUNING =====
-    const PAD = 24;
-
-    // Separation buffers
-    const PHYS_GAP   = 70;
-    const VISUAL_GAP = 55;
-
-    // Solver stability
-    const SOLVER_PASSES  = 42;
-    const SEPARATE_RATIO = 0.86;
-
-    // Movement (dreamy lava lamp)
-    const MAX_SPEED = 3.8;
-    const MIN_SPEED = 1.4;
-    const DAMP      = 0.998;
-    const BOUNCE    = 1.01;
-
-    // Roaming targets
-    const RETARGET_MS = 2600;
-    const STEER       = 0.018;
-    const ARRIVE      = 420;
-
-    // smooth continuous drift so it ALWAYS moves
-    const WAVE_PUSH = 0.040;
-    const MICRO_PUSH = 0.010;
-
-    // Tooltip timing
-    const TIP_MS = 2000;
-
-    const maxH = Math.max(...ITEMS.map(x => Number(x.hours || 0)), 1);
-
-    // =========================
-    // AUTO-FIT SIZES
-    // =========================
-    const rect0 = stage.getBoundingClientRect();
-    const stageArea = Math.max(rect0.width * rect0.height, 1);
-
-    const BASE_SIZE  = 520;
-    const RANGE_SIZE = 360;
-
-    let sumArea = 0;
-    for (const item of ITEMS){
-      const h = Number(item.hours || 0);
-      const rawSize = BASE_SIZE + (h / maxH) * RANGE_SIZE;
-      const r = rawSize * 0.5;
-      sumArea += Math.PI * r * r;
+    if (!ITEMS.length) {
+      stage.innerHTML = `<p style="opacity:.7">No APPS data found in data.js.</p>`;
+      return;
     }
 
-    const TARGET_FILL = 0.32;
-    const SCALE = Math.min(1, Math.sqrt((stageArea * TARGET_FILL) / Math.max(sumArea, 1)));
+    window.addEventListener("load", () => requestAnimationFrame(init), { once:true });
 
-    const PHYS_GAP_S   = Math.max(18, PHYS_GAP * SCALE);
-    const VISUAL_GAP_S = Math.max(18, VISUAL_GAP * SCALE);
+    function init(){
+      // ===== TUNING =====
+      const PAD = 24;
 
-    const blobs = [];
-    const placed = [];
+      // Separation buffers
+      const PHYS_GAP   = 70;
+      const VISUAL_GAP = 55;
 
-    let tipTimer = null;
-    function showTip(text, x, y){
-      if (tipTimer) clearTimeout(tipTimer);
+      // Solver stability
+      const SOLVER_PASSES  = 42;
+      const SEPARATE_RATIO = 0.86;
 
-      tip.textContent = text;
-      tip.style.opacity = "1";
-      tip.style.left = (x + 14) + "px";
-      tip.style.top  = (y + 14) + "px";
+      // Movement (dreamy lava lamp)
+      const MAX_SPEED = 3.8;
+      const MIN_SPEED = 1.4;
+      const DAMP      = 0.998;
+      const BOUNCE    = 1.01;
 
-      tipTimer = setTimeout(() => {
+      // Roaming targets
+      const RETARGET_MS = 2600;
+      const STEER       = 0.018;
+      const ARRIVE      = 420;
+
+      // smooth continuous drift so it ALWAYS moves
+      const WAVE_PUSH = 0.040;
+      const MICRO_PUSH = 0.010;
+
+      // Tooltip timing
+      const TIP_MS = 2000;
+
+      const maxH = Math.max(...ITEMS.map(x => Number(x.hours || 0)), 1);
+
+      // =========================
+      // AUTO-FIT SIZES
+      // =========================
+      const rect0 = stage.getBoundingClientRect();
+      const stageArea = Math.max(rect0.width * rect0.height, 1);
+
+      const BASE_SIZE  = 520;
+      const RANGE_SIZE = 360;
+
+      let sumArea = 0;
+      for (const item of ITEMS){
+        const h = Number(item.hours || 0);
+        const rawSize = BASE_SIZE + (h / maxH) * RANGE_SIZE;
+        const r = rawSize * 0.5;
+        sumArea += Math.PI * r * r;
+      }
+
+      const TARGET_FILL = 0.32;
+      const SCALE = Math.min(1, Math.sqrt((stageArea * TARGET_FILL) / Math.max(sumArea, 1)));
+
+      const PHYS_GAP_S   = Math.max(18, PHYS_GAP * SCALE);
+      const VISUAL_GAP_S = Math.max(18, VISUAL_GAP * SCALE);
+
+      const blobs = [];
+      const placed = [];
+
+      let tipTimer = null;
+      function showTip(text, x, y){
+        if (tipTimer) clearTimeout(tipTimer);
+
+        tip.textContent = text;
+        tip.style.opacity = "1";
+        tip.style.left = (x + 14) + "px";
+        tip.style.top  = (y + 14) + "px";
+
+        tipTimer = setTimeout(() => {
+          tip.style.opacity = "0";
+          document.querySelectorAll(".blob-core").forEach(b => b.classList.remove("active"));
+          tipTimer = null;
+        }, TIP_MS);
+      }
+
+      function clearTip(){
+        if (tipTimer) clearTimeout(tipTimer);
         tip.style.opacity = "0";
         document.querySelectorAll(".blob-core").forEach(b => b.classList.remove("active"));
         tipTimer = null;
-      }, TIP_MS);
-    }
-
-    function clearTip(){
-      if (tipTimer) clearTimeout(tipTimer);
-      tip.style.opacity = "0";
-      document.querySelectorAll(".blob-core").forEach(b => b.classList.remove("active"));
-      tipTimer = null;
-    }
-
-    function getBounds(){
-      const rect = stage.getBoundingClientRect();
-      return {
-        rect,
-        minX: PAD,
-        minY: PAD,
-        maxXFor: (size) => rect.width  - size - PAD,
-        maxYFor: (size) => rect.height - size - PAD,
-      };
-    }
-
-    function randPos(sizePx){
-      const b = getBounds();
-      const maxX = Math.max(b.maxXFor(sizePx), b.minX);
-      const maxY = Math.max(b.maxYFor(sizePx), b.minY);
-      return {
-        x: b.minX + Math.random() * Math.max(maxX - b.minX, 1),
-        y: b.minY + Math.random() * Math.max(maxY - b.minY, 1),
-      };
-    }
-
-    function tryPlace(sizePx){
-      const b = getBounds();
-      const r = sizePx / 2;
-
-      const maxX = Math.max(b.maxXFor(sizePx), b.minX);
-      const maxY = Math.max(b.maxYFor(sizePx), b.minY);
-
-      for (let attempt = 0; attempt < 5000; attempt++){
-        const x = b.minX + Math.random() * Math.max(maxX - b.minX, 1);
-        const y = b.minY + Math.random() * Math.max(maxY - b.minY, 1);
-
-        const cx = x + r;
-        const cy = y + r;
-
-        let ok = true;
-        for (const p of placed){
-          const dist = Math.hypot(cx - p.cx, cy - p.cy);
-          const minDist = r + p.r + PHYS_GAP_S + VISUAL_GAP_S;
-          if (dist < minDist){ ok = false; break; }
-        }
-        if (ok){
-          placed.push({ cx, cy, r });
-          return { x, y };
-        }
       }
 
-      return randPos(sizePx);
-    }
-
-    /* ===== HOLD PULSE FUNCTIONS ===== */
-    function startHoldPulse(coreEl){
-      coreEl.classList.remove("pulse-out","hold","pulse-in");
-      void coreEl.offsetWidth;
-      coreEl.classList.add("pulse-in");
-
-      clearTimeout(coreEl._holdTimer);
-      coreEl._holdTimer = setTimeout(() => {
-        coreEl.classList.remove("pulse-in");
-        coreEl.classList.add("hold");
-      }, 240);
-    }
-
-    function endHoldPulse(coreEl){
-      clearTimeout(coreEl._holdTimer);
-
-      coreEl.classList.remove("hold","pulse-in");
-      void coreEl.offsetWidth;
-
-      coreEl.classList.add("pulse-out");
-
-      clearTimeout(coreEl._outTimer);
-      coreEl._outTimer = setTimeout(() => {
-        coreEl.classList.remove("pulse-out");
-      }, 1150);
-    }
-
-    // Build blobs
-    ITEMS.forEach((item, idx) => {
-      const h = Number(item.hours || 0);
-
-      const size = (BASE_SIZE + (h / maxH) * RANGE_SIZE) * SCALE;
-      const r = size / 2;
-
-      const wrap = document.createElement("div");
-      wrap.className = "blob-wrap";
-      wrap.style.width = size + "px";
-      wrap.style.height = size + "px";
-      wrap.style.zIndex = String(10 + idx);
-
-      const core = document.createElement("div");
-      core.className = "blob-core";
-      core.style.background = `radial-gradient(circle, ${item.color} 0%, rgba(255,255,255,0) 50%)`;
-
-      wrap.appendChild(core);
-      stage.appendChild(wrap);
-
-      const pos = tryPlace(size);
-
-      const ang = Math.random() * Math.PI * 2;
-      const sp  = MIN_SPEED + Math.random() * (MAX_SPEED - MIN_SPEED);
-
-      const t0 = randPos(size);
-
-      blobs.push({
-        wrap,
-        core,
-        size,
-        r,
-        x: pos.x,
-        y: pos.y,
-        vx: Math.cos(ang) * sp,
-        vy: Math.sin(ang) * sp,
-        tx: t0.x,
-        ty: t0.y,
-        nextTargetAt: performance.now() + (600 + Math.random() * RETARGET_MS),
-        seed: Math.random() * 1000,
-        baseZ: 10 + idx,
-        label: `${item.app} — ${h.toFixed(1)} HOURS`
-      });
-
-      wrap.addEventListener("pointerdown", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        document.querySelectorAll(".blob-core").forEach(b => b.classList.remove("active"));
-        core.classList.add("active");
-
-        wrap.style.zIndex = "9999";
-        setTimeout(() => { wrap.style.zIndex = String(10 + idx); }, 800);
-
-        try { wrap.setPointerCapture(e.pointerId); } catch(_) {}
-
-        startHoldPulse(core);
-        showTip(blobs[idx].label, e.clientX, e.clientY);
-
-        const stop = (ev) => {
-          if (ev.pointerId !== e.pointerId) return;
-
-          endHoldPulse(core);
-
-          window.removeEventListener("pointerup", stop, true);
-          window.removeEventListener("pointercancel", stop, true);
-          window.removeEventListener("blur", stop, true);
-
-          try { wrap.releasePointerCapture(e.pointerId); } catch(_) {}
+      function getBounds(){
+        const rect = stage.getBoundingClientRect();
+        return {
+          rect,
+          minX: PAD,
+          minY: PAD,
+          maxXFor: (size) => rect.width  - size - PAD,
+          maxYFor: (size) => rect.height - size - PAD,
         };
+      }
 
-        window.addEventListener("pointerup", stop, true);
-        window.addEventListener("pointercancel", stop, true);
-        window.addEventListener("blur", stop, true);
+      function randPos(sizePx){
+        const b = getBounds();
+        const maxX = Math.max(b.maxXFor(sizePx), b.minX);
+        const maxY = Math.max(b.maxYFor(sizePx), b.minY);
+        return {
+          x: b.minX + Math.random() * Math.max(maxX - b.minX, 1),
+          y: b.minY + Math.random() * Math.max(maxY - b.minY, 1),
+        };
+      }
+
+      function tryPlace(sizePx){
+        const b = getBounds();
+        const r = sizePx / 2;
+
+        const maxX = Math.max(b.maxXFor(sizePx), b.minX);
+        const maxY = Math.max(b.maxYFor(sizePx), b.minY);
+
+        for (let attempt = 0; attempt < 5000; attempt++){
+          const x = b.minX + Math.random() * Math.max(maxX - b.minX, 1);
+          const y = b.minY + Math.random() * Math.max(maxY - b.minY, 1);
+
+          const cx = x + r;
+          const cy = y + r;
+
+          let ok = true;
+          for (const p of placed){
+            const dist = Math.hypot(cx - p.cx, cy - p.cy);
+            const minDist = r + p.r + PHYS_GAP_S + VISUAL_GAP_S;
+            if (dist < minDist){ ok = false; break; }
+          }
+          if (ok){
+            placed.push({ cx, cy, r });
+            return { x, y };
+          }
+        }
+
+        return randPos(sizePx);
+      }
+
+      /* ===== HOLD PULSE FUNCTIONS ===== */
+      function startHoldPulse(coreEl){
+        coreEl.classList.remove("pulse-out","hold","pulse-in");
+        void coreEl.offsetWidth;
+        coreEl.classList.add("pulse-in");
+
+        clearTimeout(coreEl._holdTimer);
+        coreEl._holdTimer = setTimeout(() => {
+          coreEl.classList.remove("pulse-in");
+          coreEl.classList.add("hold");
+        }, 240);
+      }
+
+      function endHoldPulse(coreEl){
+        clearTimeout(coreEl._holdTimer);
+
+        coreEl.classList.remove("hold","pulse-in");
+        void coreEl.offsetWidth;
+
+        coreEl.classList.add("pulse-out");
+
+        clearTimeout(coreEl._outTimer);
+        coreEl._outTimer = setTimeout(() => {
+          coreEl.classList.remove("pulse-out");
+        }, 1150);
+      }
+
+      // Build blobs
+      ITEMS.forEach((item, idx) => {
+        const h = Number(item.hours || 0);
+
+        const size = (BASE_SIZE + (h / maxH) * RANGE_SIZE) * SCALE;
+        const r = size / 2;
+
+        const wrap = document.createElement("div");
+        wrap.className = "blob-wrap";
+        wrap.style.width = size + "px";
+        wrap.style.height = size + "px";
+        wrap.style.zIndex = String(10 + idx);
+
+        const core = document.createElement("div");
+        core.className = "blob-core";
+        core.style.background = `radial-gradient(circle, ${item.color} 0%, rgba(255,255,255,0) 50%)`;
+
+        wrap.appendChild(core);
+        stage.appendChild(wrap);
+
+        const pos = tryPlace(size);
+
+        const ang = Math.random() * Math.PI * 2;
+        const sp  = MIN_SPEED + Math.random() * (MAX_SPEED - MIN_SPEED);
+
+        const t0 = randPos(size);
+
+        blobs.push({
+          wrap,
+          core,
+          size,
+          r,
+          x: pos.x,
+          y: pos.y,
+          vx: Math.cos(ang) * sp,
+          vy: Math.sin(ang) * sp,
+          tx: t0.x,
+          ty: t0.y,
+          nextTargetAt: performance.now() + (600 + Math.random() * RETARGET_MS),
+          seed: Math.random() * 1000,
+          baseZ: 10 + idx,
+          label: `${item.app} — ${h.toFixed(1)} HOURS`
+        });
+
+        wrap.addEventListener("pointerdown", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          // kick music if it hasn't started yet
+          startMusic();
+
+          document.querySelectorAll(".blob-core").forEach(b => b.classList.remove("active"));
+          core.classList.add("active");
+
+          // Make THIS blob (and its burst) render above others
+          wrap.style.zIndex = "999999";
+          setTimeout(() => { wrap.style.zIndex = String(10 + idx); }, 900);
+
+          try { wrap.setPointerCapture(e.pointerId); } catch(_) {}
+
+          startHoldPulse(core);
+          showTip(blobs[idx].label, e.clientX, e.clientY);
+
+          const stop = (ev) => {
+            if (ev.pointerId !== e.pointerId) return;
+
+            endHoldPulse(core);
+
+            window.removeEventListener("pointerup", stop, true);
+            window.removeEventListener("pointercancel", stop, true);
+            window.removeEventListener("blur", stop, true);
+
+            try { wrap.releasePointerCapture(e.pointerId); } catch(_) {}
+          };
+
+          window.addEventListener("pointerup", stop, true);
+          window.addEventListener("pointercancel", stop, true);
+          window.addEventListener("blur", stop, true);
+        });
       });
-    });
 
-    stage.addEventListener("pointerdown", (e) => {
-      if (e.target === stage) clearTip();
-    });
+      stage.addEventListener("pointerdown", (e) => {
+        if (e.target === stage) clearTip();
+      });
 
-    function animate(now){
-      const b = getBounds();
+      function animate(now){
+        const b = getBounds();
 
-      // 1) pick roaming targets + steer gently
-      blobs.forEach(o => {
-        if (now >= o.nextTargetAt){
-          const t = randPos(o.size);
-          o.tx = t.x;
-          o.ty = t.y;
-          o.nextTargetAt = now + (RETARGET_MS * (0.75 + Math.random() * 0.75));
-        }
+        // 1) pick roaming targets + steer gently
+        blobs.forEach(o => {
+          if (now >= o.nextTargetAt){
+            const t = randPos(o.size);
+            o.tx = t.x;
+            o.ty = t.y;
+            o.nextTargetAt = now + (RETARGET_MS * (0.75 + Math.random() * 0.75));
+          }
 
-        const dx = (o.tx - o.x);
-        const dy = (o.ty - o.y);
-        const dist = Math.hypot(dx, dy) || 0.0001;
+          const dx = (o.tx - o.x);
+          const dy = (o.ty - o.y);
+          const dist = Math.hypot(dx, dy) || 0.0001;
 
-        const desiredSpeed = Math.min(MAX_SPEED, Math.max(MIN_SPEED, (dist / ARRIVE) * MAX_SPEED));
-        const ux = dx / dist;
-        const uy = dy / dist;
+          const desiredSpeed = Math.min(MAX_SPEED, Math.max(MIN_SPEED, (dist / ARRIVE) * MAX_SPEED));
+          const ux = dx / dist;
+          const uy = dy / dist;
 
-        const desiredVx = ux * desiredSpeed;
-        const desiredVy = uy * desiredSpeed;
+          const desiredVx = ux * desiredSpeed;
+          const desiredVy = uy * desiredSpeed;
 
-        o.vx += (desiredVx - o.vx) * STEER;
-        o.vy += (desiredVy - o.vy) * STEER;
+          o.vx += (desiredVx - o.vx) * STEER;
+          o.vy += (desiredVy - o.vy) * STEER;
 
-        const tt = now * 0.001;
-        o.vx += Math.sin(tt * 0.55 + o.seed) * WAVE_PUSH;
-        o.vy += Math.cos(tt * 0.48 + o.seed) * WAVE_PUSH;
-        o.vx += Math.sin(tt * 1.40 + o.seed * 0.7) * MICRO_PUSH;
-        o.vy += Math.cos(tt * 1.25 + o.seed * 0.7) * MICRO_PUSH;
+          const tt = now * 0.001;
+          o.vx += Math.sin(tt * 0.55 + o.seed) * WAVE_PUSH;
+          o.vy += Math.cos(tt * 0.48 + o.seed) * WAVE_PUSH;
+          o.vx += Math.sin(tt * 1.40 + o.seed * 0.7) * MICRO_PUSH;
+          o.vy += Math.cos(tt * 1.25 + o.seed * 0.7) * MICRO_PUSH;
 
-        let sp = Math.hypot(o.vx, o.vy) || 0.0001;
-        if (sp < MIN_SPEED){
-          const s = MIN_SPEED / sp;
-          o.vx *= s; o.vy *= s;
-        }
-        if (sp > MAX_SPEED){
-          const s = MAX_SPEED / sp;
-          o.vx *= s; o.vy *= s;
-        }
+          let sp = Math.hypot(o.vx, o.vy) || 0.0001;
+          if (sp < MIN_SPEED){
+            const s = MIN_SPEED / sp;
+            o.vx *= s; o.vy *= s;
+          }
+          if (sp > MAX_SPEED){
+            const s = MAX_SPEED / sp;
+            o.vx *= s; o.vy *= s;
+          }
 
-        if (!o.stuckAt) o.stuckAt = now;
-        const sp2 = Math.hypot(o.vx, o.vy) || 0.0001;
-        if (sp2 < (MIN_SPEED * 1.05)) {
-          if (now - o.stuckAt > 700) {
-            o.vx += (Math.random() - 0.5) * 0.45;
-            o.vy += (Math.random() - 0.5) * 0.45;
+          if (!o.stuckAt) o.stuckAt = now;
+          const sp2 = Math.hypot(o.vx, o.vy) || 0.0001;
+          if (sp2 < (MIN_SPEED * 1.05)) {
+            if (now - o.stuckAt > 700) {
+              o.vx += (Math.random() - 0.5) * 0.45;
+              o.vy += (Math.random() - 0.5) * 0.45;
+              o.stuckAt = now;
+            }
+          } else {
             o.stuckAt = now;
           }
-        } else {
-          o.stuckAt = now;
-        }
-      });
+        });
 
-      // 2) separation solver
-      for (let pass = 0; pass < SOLVER_PASSES; pass++){
-        for (let i = 0; i < blobs.length; i++){
-          for (let j = i + 1; j < blobs.length; j++){
-            const a = blobs[i], c = blobs[j];
+        // 2) separation solver
+        for (let pass = 0; pass < SOLVER_PASSES; pass++){
+          for (let i = 0; i < blobs.length; i++){
+            for (let j = i + 1; j < blobs.length; j++){
+              const a = blobs[i], c = blobs[j];
 
-            const ax = a.x + a.r, ay = a.y + a.r;
-            const bx = c.x + c.r, by = c.y + c.r;
+              const ax = a.x + a.r, ay = a.y + a.r;
+              const bx = c.x + c.r, by = c.y + c.r;
 
-            const dx = bx - ax, dy = by - ay;
-            const dist = Math.hypot(dx, dy) || 0.0001;
+              const dx = bx - ax, dy = by - ay;
+              const dist = Math.hypot(dx, dy) || 0.0001;
 
-            const minDist = (a.r + c.r) + PHYS_GAP_S + VISUAL_GAP_S;
+              const minDist = (a.r + c.r) + PHYS_GAP_S + VISUAL_GAP_S;
 
-            if (dist < minDist){
-              const overlap = (minDist - dist);
-              const ux = dx / dist, uy = dy / dist;
+              if (dist < minDist){
+                const overlap = (minDist - dist);
+                const ux = dx / dist, uy = dy / dist;
 
-              const sep = overlap * SEPARATE_RATIO * 0.5;
-              a.x -= ux * sep; a.y -= uy * sep;
-              c.x += ux * sep; c.y += uy * sep;
+                const sep = overlap * SEPARATE_RATIO * 0.5;
+                a.x -= ux * sep; a.y -= uy * sep;
+                c.x += ux * sep; c.y += uy * sep;
+              }
             }
           }
         }
+
+        // 3) integrate + walls
+        blobs.forEach(o => {
+          o.vx *= DAMP;
+          o.vy *= DAMP;
+
+          o.x += o.vx;
+          o.y += o.vy;
+
+          const maxX = Math.max(b.maxXFor(o.size), b.minX);
+          const maxY = Math.max(b.maxYFor(o.size), b.minY);
+
+          if (o.x < b.minX){ o.x = b.minX; o.vx = Math.abs(o.vx) * BOUNCE; }
+          if (o.x > maxX){ o.x = maxX; o.vx = -Math.abs(o.vx) * BOUNCE; }
+          if (o.y < b.minY){ o.y = b.minY; o.vy = Math.abs(o.vy) * BOUNCE; }
+          if (o.y > maxY){ o.y = maxY; o.vy = -Math.abs(o.vy) * BOUNCE; }
+
+          o.wrap.style.transform = `translate(${o.x}px, ${o.y}px)`;
+        });
+
+        requestAnimationFrame(animate);
       }
-
-      // 3) integrate + walls
-      blobs.forEach(o => {
-        o.vx *= DAMP;
-        o.vy *= DAMP;
-
-        o.x += o.vx;
-        o.y += o.vy;
-
-        const maxX = Math.max(b.maxXFor(o.size), b.minX);
-        const maxY = Math.max(b.maxYFor(o.size), b.minY);
-
-        if (o.x < b.minX){ o.x = b.minX; o.vx = Math.abs(o.vx) * BOUNCE; }
-        if (o.x > maxX){ o.x = maxX; o.vx = -Math.abs(o.vx) * BOUNCE; }
-        if (o.y < b.minY){ o.y = b.minY; o.vy = Math.abs(o.vy) * BOUNCE; }
-        if (o.y > maxY){ o.y = maxY; o.vy = -Math.abs(o.vy) * BOUNCE; }
-
-        o.wrap.style.transform = `translate(${o.x}px, ${o.y}px)`;
-      });
 
       requestAnimationFrame(animate);
     }
-
-    requestAnimationFrame(animate);
-  }
-})();
-  const music = document.getElementById("bg-music");
-
-document.addEventListener("pointerdown", () => {
-  if (music && music.paused) {
-    music.volume = 0.65;
-    music.play().catch(()=>{});
-  }
-}, { once:true });
-</script>
+  })();
+  </script>
 
 </body>
 </html>
