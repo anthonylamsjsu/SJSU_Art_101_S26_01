@@ -1,20 +1,26 @@
-]<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
   <title>DIGITAL RESIDUE — Visualization</title>
   <link rel="stylesheet" href="./style.css?v=1016">
 
-  <!-- IMPORTANT: styles here are ONLY for blob-wrap/blob-core + pulse.
-       They do NOT override JS translate(). -->
   <style>
+    /* IMPORTANT: styles here are ONLY for blob-wrap/blob-core + pulse.
+       They do NOT override JS translate(). */
+
+    /* Make stage its own stacking context so z-index behaves predictably */
+    #blob-stage{
+      position: relative;
+      isolation: isolate;
+    }
+
     .blob-wrap{
       position:absolute;
       left:0; top:0;
       will-change: transform;
       touch-action: manipulation;
       z-index: 10; /* baseline */
-      isolation: isolate; /* helps keep stacking sane */
     }
 
     .blob-core{
@@ -26,7 +32,7 @@
       mix-blend-mode: normal;
       pointer-events: none; /* clicks go to wrap */
       transition: filter 180ms ease, opacity 180ms ease;
-      position: relative;
+      position: relative; /* needed for ::after positioning */
 
       /* burst tuning knob */
       --burst-scale: 13; /* increase to 15/18 if you want even bigger */
@@ -57,7 +63,7 @@
 
       will-change: transform, opacity;
 
-      /* keep burst above other blobs */
+      /* ensure it layers above siblings inside blob-core */
       z-index: 9999;
     }
 
@@ -102,8 +108,9 @@
 
 <body data-page="viz">
 
-  <!-- NOTE: autoplay often gets blocked; we start playback on first user gesture in JS -->
-  <audio id="bg-music" loop preload="auto">
+  <!-- autoplay is blocked; we start on first user gesture -->
+  <!-- preload NONE prevents audio from slowing initial blob load -->
+  <audio id="bg-music" loop preload="none" playsinline>
     <source src="./ice-background.mp3" type="audio/mpeg">
   </audio>
 
@@ -123,13 +130,25 @@
     const tip = document.getElementById("tip");
     const ITEMS = (typeof APPS !== "undefined") ? APPS : [];
 
+    // ===== MUSIC (starts on first gesture, and does NOT preload) =====
     const music = document.getElementById("bg-music");
+    let musicStarted = false;
+
     function startMusic(){
-      if (!music) return;
+      if (!music || musicStarted) return;
+      musicStarted = true;
+
       music.volume = 0.65;
-      music.play().catch(()=>{});
+
+      // load only after user gesture so it won't lag initial blob placement
+      try { music.load(); } catch(_) {}
+
+      music.play().catch((err) => {
+        // If file path is wrong you'll usually see an error here
+        console.log("Music play failed:", err);
+      });
     }
-    // Start music on first user gesture (required by most browsers)
+
     window.addEventListener("pointerdown", startMusic, { once:true, capture:true });
     window.addEventListener("keydown", startMusic, { once:true, capture:true });
 
@@ -352,7 +371,7 @@
           document.querySelectorAll(".blob-core").forEach(b => b.classList.remove("active"));
           core.classList.add("active");
 
-          // Make THIS blob (and its burst) render above others
+          // Make THIS blob render above others while bursting
           wrap.style.zIndex = "999999";
           setTimeout(() => { wrap.style.zIndex = String(10 + idx); }, 900);
 
