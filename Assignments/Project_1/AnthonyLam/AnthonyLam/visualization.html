@@ -35,19 +35,26 @@
       filter: blur(8px) saturate(3.0);
     }
 
-    /* pulse lives on ::after so it NEVER overwrites translate() */
     .blob-core::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      border-radius:50%;
-      background: inherit;
-      filter: inherit;
-      opacity:0;
-      transform: scale(1);
-      transform-origin:center;
-      pointer-events:none;
-    }
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  background: inherit;
+
+  /* KEY FIX: don't inherit the heavy blur (this causes the square/rect box) */
+  filter: none;
+
+  opacity:0;
+  transform: scale(1) translateZ(0);
+  transform-origin:center;
+  pointer-events:none;
+
+  /* extra safety: force circular clip in browsers that still box the blur layer */
+  clip-path: circle(50% at 50% 50%);
+
+  will-change: transform, opacity;
+}
 
     /* Keep tooltip above the burst */
     #tip.tip{
