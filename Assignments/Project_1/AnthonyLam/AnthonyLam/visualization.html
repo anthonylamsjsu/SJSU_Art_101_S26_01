@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title>DIGITAL RESIDUE — Visualization</title>
-  <link rel="stylesheet" href="./style.css?v=1008">
+  <link rel="stylesheet" href="./style.css?v=1009">
 </head>
 
 <body data-page="viz">
@@ -16,7 +16,7 @@
 <div id="blob-stage"></div>
 <div id="tip" class="tip"></div>
 
-<script src="./data.js?v=1008"></script>
+<script src="./data.js?v=1009"></script>
 
 <script>
 const stage = document.getElementById("blob-stage");
@@ -27,20 +27,20 @@ if (!ITEMS.length) {
   stage.innerHTML = `<p style="opacity:.7">No APPS data found in data.js.</p>`;
 } else {
 
-  // ===== TUNING (feel free to tweak later) =====
-  const PAD = 24;                 // keep blobs away from edges
-  const GAP = 260;                // spacing between blobs (bigger = farther apart)
-  const SOLVER_PASSES = 12;        // collision solver quality (bigger = less touching)
-  const SEPARATE_RATIO = 0.72;     // how hard we "teleport-separate" overlaps (0..1)
-  const REPEL = 0.030;             // velocity push apart
-  const DAMP = 0.992;              // closer to 1 = more momentum (lava lamp)
-  const BOUNCE = 0.98;             // wall bounce energy
-  const DRIFT = 0.085;             // roaming force (bigger = travels more)
-  const MAX_SPEED = 6.0;           // prevents runaway speed
-  const ACTIVE_REPEL = 1.90;       // extra spacing when one is active
+  /* ===== TUNING ===== */
+  const PAD = 24;
+  const GAP = 260;
+  const SOLVER_PASSES = 10;
 
-  // VISUAL_GAP: extra distance to prevent BLUR "touching" even if circles don't overlap.
-  // blur ~10px * 2 = ~20px; give extra to be safe.
+  /* CHANGED — softer physics */
+  const SEPARATE_RATIO = 0.35;   // was 0.72 (this caused darting)
+  const REPEL = 0.012;           // was 0.030 (too aggressive)
+  const DAMP = 0.994;            // smoother float
+  const BOUNCE = 0.92;           // less harsh wall bounce
+  const DRIFT = 0.060;           // calmer roaming
+  const MAX_SPEED = 3.2;         // prevents sudden speed spikes
+  const ACTIVE_REPEL = 1.25;     // gentle push, not explosion
+
   const VISUAL_GAP = 28;
 
   const maxH = Math.max(...ITEMS.map(x => Number(x.hours || 0)), 1);
@@ -49,20 +49,17 @@ if (!ITEMS.length) {
   const placed = [];
   let activeIndex = -1;
 
-  // ---------- tooltip helpers ----------
   function showTip(text, x, y){
     tip.textContent = text;
     tip.style.opacity = "1";
-    if (typeof x === "number" && typeof y === "number"){
-      tip.style.left = (x + 14) + "px";
-      tip.style.top  = (y + 14) + "px";
-    }
+    tip.style.left = (x + 14) + "px";
+    tip.style.top  = (y + 14) + "px";
   }
+
   function hideTip(){
     tip.style.opacity = "0";
   }
 
-  // ---------- initial placement (starts apart) ----------
   function tryPlace(sizePx){
     const rect = stage.getBoundingClientRect();
     const r = sizePx/2;
@@ -72,7 +69,7 @@ if (!ITEMS.length) {
     const maxX = rect.width  - sizePx - PAD;
     const maxY = rect.height - sizePx - PAD;
 
-    for (let attempt = 0; attempt < 2600; attempt++){
+    for (let attempt = 0; attempt < 2400; attempt++){
       const x = minX + Math.random() * Math.max(maxX - minX, 1);
       const y = minY + Math.random() * Math.max(maxY - minY, 1);
 
@@ -92,17 +89,14 @@ if (!ITEMS.length) {
       }
     }
 
-    // fallback (solver will still separate them)
     return {
       x: minX + Math.random() * Math.max(maxX - minX, 1),
       y: minY + Math.random() * Math.max(maxY - minY, 1),
     };
   }
 
-  // ---------- active behavior ----------
   function setActive(idx, clientX, clientY){
     activeIndex = idx;
-
     showTip(blobs[idx].label, clientX, clientY);
 
     document.querySelectorAll(".blob").forEach(b => b.classList.add("dim"));
@@ -116,10 +110,10 @@ if (!ITEMS.length) {
     document.querySelectorAll(".blob").forEach(b => b.classList.remove("dim","active"));
   }
 
-  // ---------- build blobs ----------
+  /* ===== BUILD BLOBS ===== */
   ITEMS.forEach((item, idx) => {
-    const h = Number(item.hours || 0);
 
+    const h = Number(item.hours || 0);
     const size = 240 + (h/maxH) * 360;
     const r = size/2;
 
@@ -127,9 +121,8 @@ if (!ITEMS.length) {
     el.className = "blob";
     el.style.width = size + "px";
     el.style.height = size + "px";
-
-    // slightly tighter falloff to reduce visual blending
-    el.style.background = `radial-gradient(circle, ${item.color} 0%, rgba(255,255,255,0) 68%)`;
+    el.style.background =
+      `radial-gradient(circle, ${item.color} 0%, rgba(255,255,255,0) 68%)`;
 
     stage.appendChild(el);
 
@@ -141,121 +134,106 @@ if (!ITEMS.length) {
       r,
       x: pos.x,
       y: pos.y,
-      vx: (Math.random()-0.5) * 2.8,
-      vy: (Math.random()-0.5) * 2.8,
+      vx: (Math.random()-0.5) * 2.0,
+      vy: (Math.random()-0.5) * 2.0,
       phase: Math.random() * Math.PI * 2,
       speed: 0.006 + Math.random() * 0.010,
       label: `${item.app} — ${h.toFixed(1)} HOURS`
     });
 
-    // ✅ FIX: pointer events = one event that works on desktop + mobile
-    el.addEventListener("pointerdown", (e) => {
+    /* CLICK / TAP ONLY (removed hover auto-trigger) */
+    el.addEventListener("pointerdown",(e)=>{
       e.preventDefault();
       e.stopPropagation();
       setActive(idx, e.clientX, e.clientY);
     });
-
-    // optional desktop hover (doesn't exist on most phones)
-    el.addEventListener("mouseenter", (e) => {
-      // only if not currently active, so it doesn't flicker
-      if (activeIndex === -1) setActive(idx, e.clientX, e.clientY);
-    });
-
-    el.addEventListener("mouseleave", () => {
-      // only auto-clear if it was hover-activated
-      if (activeIndex === -1) clearActive();
-    });
   });
 
-  // tooltip follows mouse while visible
   document.addEventListener("mousemove",(e)=>{
     if (tip.style.opacity !== "1") return;
     tip.style.left=(e.clientX+14)+"px";
     tip.style.top =(e.clientY+14)+"px";
   });
 
-  // tap/click empty area to clear
   stage.addEventListener("pointerdown",(e)=>{
     if (e.target === stage) clearActive();
   });
 
-  // ---------- physics loop ----------
+  /* ===== PHYSICS LOOP ===== */
   function animate(){
+
     const rect = stage.getBoundingClientRect();
 
-    // drift (ensures everyone keeps moving + roams)
-    blobs.forEach(o => {
+    blobs.forEach(o=>{
       o.phase += o.speed;
       o.vx += Math.cos(o.phase) * DRIFT;
-      o.vy += Math.sin(o.phase * 1.21) * DRIFT;
+      o.vy += Math.sin(o.phase*1.21) * DRIFT;
 
-      // clamp speed (keeps stable)
-      const sp = Math.hypot(o.vx, o.vy);
-      if (sp > MAX_SPEED){
-        const s = MAX_SPEED / sp;
-        o.vx *= s; o.vy *= s;
+      const sp = Math.hypot(o.vx,o.vy);
+      if(sp>MAX_SPEED){
+        const s = MAX_SPEED/sp;
+        o.vx*=s; o.vy*=s;
       }
     });
 
-    // collision solver (multi-pass = stable no-touch)
-    for (let pass = 0; pass < SOLVER_PASSES; pass++){
-      for (let i=0; i<blobs.length; i++){
-        for (let j=i+1; j<blobs.length; j++){
-          const a = blobs[i];
-          const b = blobs[j];
+    for(let pass=0; pass<SOLVER_PASSES; pass++){
+      for(let i=0;i<blobs.length;i++){
+        for(let j=i+1;j<blobs.length;j++){
 
-          const ax = a.x + a.r;
-          const ay = a.y + a.r;
-          const bx = b.x + b.r;
-          const by = b.y + b.r;
+          const a=blobs[i];
+          const b=blobs[j];
 
-          const dx = bx - ax;
-          const dy = by - ay;
-          const dist = Math.hypot(dx,dy) || 0.0001;
+          const ax=a.x+a.r;
+          const ay=a.y+a.r;
+          const bx=b.x+b.r;
+          const by=b.y+b.r;
+
+          const dx=bx-ax;
+          const dy=by-ay;
+          const dist=Math.hypot(dx,dy)||0.0001;
 
           const activeBoost =
-            (i === activeIndex || j === activeIndex) ? ACTIVE_REPEL : 1;
+            (i===activeIndex||j===activeIndex)?ACTIVE_REPEL:1;
 
-          const minDist = (a.r + b.r) + (GAP + VISUAL_GAP) * activeBoost;
+          const minDist=(a.r+b.r)+(GAP+VISUAL_GAP)*activeBoost;
 
-          if (dist < minDist){
-            const overlap = (minDist - dist);
-            const ux = dx / dist;
-            const uy = dy / dist;
+          if(dist<minDist){
 
-            // 1) hard separation in position (prevents touching)
-            const sep = overlap * SEPARATE_RATIO * 0.5;
-            a.x -= ux * sep; a.y -= uy * sep;
-            b.x += ux * sep; b.y += uy * sep;
+            const overlap=minDist-dist;
+            const ux=dx/dist;
+            const uy=dy/dist;
 
-            // 2) velocity repulsion (keeps them apart over time)
-            const force = overlap * REPEL;
-            a.vx -= ux * force; a.vy -= uy * force;
-            b.vx += ux * force; b.vy += uy * force;
+            const sep=overlap*SEPARATE_RATIO*0.5;
+            a.x-=ux*sep; a.y-=uy*sep;
+            b.x+=ux*sep; b.y+=uy*sep;
+
+            const force=overlap*REPEL;
+            a.vx-=ux*force; a.vy-=uy*force;
+            b.vx+=ux*force; b.vy+=uy*force;
           }
         }
       }
     }
 
-    // integrate + damping + walls
-    blobs.forEach(o => {
-      o.vx *= DAMP;
-      o.vy *= DAMP;
+    blobs.forEach(o=>{
 
-      o.x += o.vx;
-      o.y += o.vy;
+      o.vx*=DAMP;
+      o.vy*=DAMP;
 
-      const minX = PAD;
-      const minY = PAD;
-      const maxX = rect.width  - o.size - PAD;
-      const maxY = rect.height - o.size - PAD;
+      o.x+=o.vx;
+      o.y+=o.vy;
 
-      if (o.x < minX){ o.x = minX; o.vx = Math.abs(o.vx) * BOUNCE; }
-      if (o.x > maxX){ o.x = maxX; o.vx = -Math.abs(o.vx) * BOUNCE; }
-      if (o.y < minY){ o.y = minY; o.vy = Math.abs(o.vy) * BOUNCE; }
-      if (o.y > maxY){ o.y = maxY; o.vy = -Math.abs(o.vy) * BOUNCE; }
+      const minX=PAD;
+      const minY=PAD;
+      const maxX=rect.width-o.size-PAD;
+      const maxY=rect.height-o.size-PAD;
 
-      o.el.style.transform = `translate(${o.x}px, ${o.y}px)`;
+      if(o.x<minX){o.x=minX;o.vx=Math.abs(o.vx)*BOUNCE;}
+      if(o.x>maxX){o.x=maxX;o.vx=-Math.abs(o.vx)*BOUNCE;}
+      if(o.y<minY){o.y=minY;o.vy=Math.abs(o.vy)*BOUNCE;}
+      if(o.y>maxY){o.y=maxY;o.vy=-Math.abs(o.vy)*BOUNCE;}
+
+      o.el.style.transform=`translate(${o.x}px,${o.y}px)`;
     });
 
     requestAnimationFrame(animate);
