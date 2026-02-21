@@ -143,10 +143,8 @@ h1{margin:0;text-align:center;font-size:72px;opacity:0.80;}
 #blob-stage{
   position:relative;
   width:100vw;
-
   height: calc(100vh - 220px);
   min-height: 520px;
-
   margin: 0;
   overflow: visible;
   isolation:isolate;
@@ -192,19 +190,19 @@ h1{margin:0;text-align:center;font-size:72px;opacity:0.80;}
 
 /* =========================
    NEW: click "page fill" pulse
-   (only activates when JS adds .pulse-on)
+   (safe with JS movement because it uses scale ONLY)
    ========================= */
 .blob.pulse-on{
   z-index:9999;
-  animation: blobPulseFill 650ms ease-out forwards !important;
   transform-origin:center;
+  animation: blobPulseFill 650ms ease-out forwards !important;
 }
 
-/* expands fast, then fades back out */
+/* expands fast, then fades out */
 @keyframes blobPulseFill{
-  0%   { transform: translate(var(--x,0px), var(--y,0px)) scale(1);   opacity:0.92; }
-  55%  { transform: translate(var(--x,0px), var(--y,0px)) scale(9.5); opacity:0.98; }
-  100% { transform: translate(var(--x,0px), var(--y,0px)) scale(9.5); opacity:0; }
+  0%   { opacity:0.92; }
+  55%  { opacity:0.98; transform: scale(9.5); }
+  100% { opacity:0;    transform: scale(9.5); }
 }
 
 /* accessibility: respect reduced motion */
