@@ -91,21 +91,21 @@
     // ===== TUNING =====
     const PAD = 24;
 
-    // Separation buffers: (LOOSENED so blobs don’t feel “stuck”)
-    const PHYS_GAP   = 130;  // was 180
-    const VISUAL_GAP = 110;  // was 140
+    // Separation buffers: (forcefield smaller)
+    const PHYS_GAP   = 110;  // was 130
+    const VISUAL_GAP = 90;   // was 110
 
-    // Solver stability (LOOSENED so it doesn’t create “invisible walls”)
-    const SOLVER_PASSES  = 42;  // was 70
-    const SEPARATE_RATIO = 0.86; // was 0.95
+    // Solver stability (kept the same loosened feel)
+    const SOLVER_PASSES  = 42;
+    const SEPARATE_RATIO = 0.86;
 
     // Movement (dreamy lava lamp)
-    const MAX_SPEED = 3.8;   // visible but slow
-    const MIN_SPEED = 1.4;   // ensures it keeps moving
-    const DAMP      = 0.998; // smoother glide
+    const MAX_SPEED = 3.8;
+    const MIN_SPEED = 1.4;
+    const DAMP      = 0.998;
     const BOUNCE    = 1.01;
 
-    // Roaming targets (makes motion feel organic, not stiff)
+    // Roaming targets
     const RETARGET_MS = 2600;
     const STEER       = 0.018;
     const ARRIVE      = 420;
@@ -126,7 +126,7 @@
     const stageArea = Math.max(rect0.width * rect0.height, 1);
 
     // slightly bigger blobs
-    const BASE_SIZE  = 380;
+    const BASE_SIZE  = 420;  // was 380
     const RANGE_SIZE = 360;
 
     let sumArea = 0;
@@ -137,8 +137,8 @@
       sumArea += Math.PI * r * r;
     }
 
-    // FIX: give them more room to flow (still big)
-    const TARGET_FILL = 0.26; // was 0.35
+    // keep the same flowy spacing behavior
+    const TARGET_FILL = 0.26;
 
     const SCALE = Math.min(1, Math.sqrt((stageArea * TARGET_FILL) / Math.max(sumArea, 1)));
 
