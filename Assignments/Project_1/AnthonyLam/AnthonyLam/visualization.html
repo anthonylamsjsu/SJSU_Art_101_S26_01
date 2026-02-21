@@ -142,6 +142,9 @@
 
     const SCALE = Math.min(1, Math.sqrt((stageArea * TARGET_FILL) / Math.max(sumArea, 1)));
 
+    // NEW: visual size multiplier AFTER auto-fit
+    const SIZE_BOOST = 1.32; // try 1.15–1.40
+
     // smaller "forcefield" clamp so they can get closer when needed
     const PHYS_GAP_S   = Math.max(18, PHYS_GAP * SCALE);   // was 40
     const VISUAL_GAP_S = Math.max(18, VISUAL_GAP * SCALE); // was 40
@@ -234,7 +237,8 @@
     ITEMS.forEach((item, idx) => {
       const h = Number(item.hours || 0);
 
-      const size = (BASE_SIZE + (h / maxH) * RANGE_SIZE) * SCALE;
+      // UPDATED: apply SIZE_BOOST after SCALE
+      const size = (BASE_SIZE + (h / maxH) * RANGE_SIZE) * SCALE * SIZE_BOOST;
       const r = size / 2;
 
       const wrap = document.createElement("div");
