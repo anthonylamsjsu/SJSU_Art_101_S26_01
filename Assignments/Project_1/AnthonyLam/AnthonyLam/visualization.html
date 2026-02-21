@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title>DIGITAL RESIDUE — Visualization</title>
-  <link rel="stylesheet" href="./style.css?v=1011">
+  <link rel="stylesheet" href="./style.css?v=1012">
 </head>
 
 <body data-page="viz">
@@ -16,7 +16,7 @@
 <div id="blob-stage"></div>
 <div id="tip" class="tip"></div>
 
-<script src="./data.js?v=1011"></script>
+<script src="./data.js?v=1012"></script>
 
 <script>
 (() => {
@@ -36,29 +36,28 @@
     // ===== TUNING =====
     const PAD = 24;
 
-    // separation (bigger = farther apart)
-    const GAP = 320;
+    // IMPORTANT: If these are too big, the solver will jitter/clump.
+    // These values are strong enough to keep blobs apart without "locking up."
+    const GAP = 170;         // physics spacing between circles
+    const VISUAL_GAP = 40;   // extra spacing for blur so they don't "blend"
 
-    // IMPORTANT: this prevents "blur touching"
-    const VISUAL_GAP = 70;
+    // collision solver quality (higher = less overlap, but too high can jitter)
+    const SOLVER_PASSES = 14;
+    const SEPARATE_RATIO = 0.65; // lower = less “teleporty” separation
 
-    // solver quality
-    const SOLVER_PASSES = 30;
-    const SEPARATE_RATIO = 0.92;
+    // motion (screensaver)
+    const DAMP = 0.992;       // glide (close to 1)
+    const BOUNCE = 1.01;      // slightly > 1 keeps energy alive
+    const MAX_SPEED = 10.5;
+    const MIN_SPEED = 4.8;    // enforce minimum movement so they don't “sit”
+    const STEER = 0.085;      // gentle steering so it feels fluid (not darting)
 
-    // motion: screensaver steering
-    const DAMP = 0.992;          // lower = more friction, higher = more glide
-    const BOUNCE = 1.02;         // slightly >1 keeps it lively after bounces
-    const MAX_SPEED = 8.5;
-    const MIN_SPEED = 2.8;
+    // target behavior (drives roaming around screen)
+    const RETARGET_MS = 1600; // how often to pick new roaming points (per blob)
+    const ARRIVE = 260;       // slow down near target (bigger = smoother curves)
 
-    // steering toward roaming targets
-    const STEER = 0.22;          // higher = more “go somewhere”
-    const ARRIVE = 240;          // slows down near target
-    const TARGET_JITTER = 0.8;   // tiny randomness so paths aren’t identical
-
-    // mild velocity repulsion (avoid “darting”)
-    const REPEL = 0.006;
+    // tiny noise so paths are organic (very small to avoid jitter)
+    const NOISE = 0.10;
 
     // tooltip timing
     const TIP_MS = 1500;
@@ -67,9 +66,9 @@
 
     const blobs = [];
     const placed = [];
-    let activeIndex = -1;
 
     let tipTimer = null;
+
     function showTip(text, x, y){
       if (tipTimer) { clearTimeout(tipTimer); tipTimer = null; }
 
@@ -81,10 +80,10 @@
         tip.style.top  = (y + 14) + "px";
       }
 
+      // fade away after TIP_MS
       tipTimer = setTimeout(() => {
         tip.style.opacity = "0";
-        activeIndex = -1;
-        document.querySelectorAll(".blob").forEach(b => b.classList.remove("dim","active"));
+        document.querySelectorAll(".blob").forEach(b => b.classList.remove("active"));
         tipTimer = null;
       }, TIP_MS);
     }
@@ -92,6 +91,7 @@
     function clearTip(){
       if (tipTimer) { clearTimeout(tipTimer); tipTimer = null; }
       tip.style.opacity = "0";
+      document.querySelectorAll(".blob").forEach(b => b.classList.remove("active"));
     }
 
     function getBounds(){
@@ -107,9 +107,11 @@
 
     function randTarget(size){
       const b = getBounds();
+      const maxX = Math.max(b.maxXFor(size), b.minX);
+      const maxY = Math.max(b.maxYFor(size), b.minY);
       return {
-        tx: b.minX + Math.random() * Math.max(b.maxXFor(size) - b.minX, 1),
-        ty: b.minY + Math.random() * Math.max(b.maxYFor(size) - b.minY, 1),
+        tx: b.minX + Math.random() * Math.max(maxX - b.minX, 1),
+        ty: b.minY + Math.random() * Math.max(maxY - b.minY, 1),
       };
     }
 
@@ -118,9 +120,12 @@
       const b = getBounds();
       const r = sizePx/2;
 
-      for (let attempt = 0; attempt < 3400; attempt++){
-        const x = b.minX + Math.random() * Math.max(b.maxXFor(sizePx) - b.minX, 1);
-        const y = b.minY + Math.random() * Math.max(b.maxYFor(sizePx) - b.minY, 1);
+      const maxX = Math.max(b.maxXFor(sizePx), b.minX);
+      const maxY = Math.max(b.maxYFor(sizePx), b.minY);
+
+      for (let attempt = 0; attempt < 2400; attempt++){
+        const x = b.minX + Math.random() * Math.max(maxX - b.minX, 1);
+        const y = b.minY + Math.random() * Math.max(maxY - b.minY, 1);
 
         const cx = x + r;
         const cy = y + r;
@@ -137,19 +142,11 @@
         }
       }
 
+      // fallback (solver will fix)
       return {
-        x: b.minX + Math.random() * Math.max(b.maxXFor(sizePx) - b.minX, 1),
-        y: b.minY + Math.random() * Math.max(b.maxYFor(sizePx) - b.minY, 1),
+        x: b.minX + Math.random() * Math.max(maxX - b.minX, 1),
+        y: b.minY + Math.random() * Math.max(maxY - b.minY, 1),
       };
-    }
-
-    function setActive(idx, clientX, clientY){
-      activeIndex = idx;
-      showTip(blobs[idx].label, clientX, clientY);
-
-      document.querySelectorAll(".blob").forEach(b => b.classList.add("dim"));
-      blobs[idx].el.classList.remove("dim");
-      blobs[idx].el.classList.add("active");
     }
 
     // build
@@ -164,16 +161,16 @@
       el.style.width = size + "px";
       el.style.height = size + "px";
 
-      // tighter falloff reduces blending
-      el.style.background = `radial-gradient(circle, ${item.color} 0%, rgba(255,255,255,0) 62%)`;
+      // tighter falloff reduces visual blending
+      el.style.background = `radial-gradient(circle, ${item.color} 0%, rgba(255,255,255,0) 52%)`;
 
       stage.appendChild(el);
 
       const pos = tryPlace(size);
 
-      // strong initial movement so it NEVER looks stuck
+      // start moving immediately with a healthy speed
       const ang = Math.random() * Math.PI * 2;
-      const sp  = MIN_SPEED + Math.random() * 3.8;
+      const sp  = MIN_SPEED + Math.random() * (MAX_SPEED - MIN_SPEED) * 0.35;
 
       const t = randTarget(size);
 
@@ -183,68 +180,79 @@
         vx: Math.cos(ang) * sp,
         vy: Math.sin(ang) * sp,
         tx: t.tx, ty: t.ty,
+        nextTargetAt: performance.now() + (Math.random() * RETARGET_MS),
         label: `${item.app} — ${h.toFixed(1)} HOURS`
       });
 
+      // click/tap reveals text (no hover)
       el.addEventListener("pointerdown", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        setActive(idx, e.clientX, e.clientY);
+
+        document.querySelectorAll(".blob").forEach(b => b.classList.remove("active"));
+        el.classList.add("active");
+
+        showTip(blobs[idx].label, e.clientX, e.clientY);
       });
     });
 
+    // click/tap empty area clears tip
     stage.addEventListener("pointerdown", (e)=>{
-      if (e.target === stage){
-        activeIndex = -1;
-        clearTip();
-        document.querySelectorAll(".blob").forEach(b => b.classList.remove("dim","active"));
-      }
+      if (e.target === stage) clearTip();
     });
 
-    // keep things sane on resize
+    // keep targets sane on resize
     window.addEventListener("resize", () => {
-      // nudge targets so they re-roam across new bounds
       blobs.forEach(o => {
         const t = randTarget(o.size);
         o.tx = t.tx; o.ty = t.ty;
+        o.nextTargetAt = performance.now() + (Math.random() * RETARGET_MS);
       });
     });
 
-    function animate(){
+    function animate(now){
       const b = getBounds();
 
-      // 1) steering: each blob chases a target point (screensaver movement)
+      // 1) roaming targets (screensaver movement)
       blobs.forEach(o => {
+        if (now >= o.nextTargetAt){
+          const t = randTarget(o.size);
+          o.tx = t.tx; o.ty = t.ty;
+          o.nextTargetAt = now + RETARGET_MS * (0.8 + Math.random() * 0.7);
+        }
+
+        // steer toward target (gentle)
         const dx = (o.tx - o.x);
         const dy = (o.ty - o.y);
         const dist = Math.hypot(dx, dy) || 0.0001;
 
-        // pick a new target when close
-        if (dist < 120){
-          const t = randTarget(o.size);
-          o.tx = t.tx; o.ty = t.ty;
-        }
-
-        // arrive behavior (slow near target)
+        // arrive speed curve
         const desiredSpeed = Math.min(MAX_SPEED, Math.max(MIN_SPEED, (dist / ARRIVE) * MAX_SPEED));
         const ux = dx / dist;
         const uy = dy / dist;
 
-        const desiredVx = ux * desiredSpeed + (Math.random()-0.5)*TARGET_JITTER;
-        const desiredVy = uy * desiredSpeed + (Math.random()-0.5)*TARGET_JITTER;
+        // tiny noise keeps it organic
+        const desiredVx = ux * desiredSpeed + (Math.random()-0.5) * NOISE;
+        const desiredVy = uy * desiredSpeed + (Math.random()-0.5) * NOISE;
 
         o.vx += (desiredVx - o.vx) * STEER;
         o.vy += (desiredVy - o.vy) * STEER;
 
-        // clamp
+        // clamp max
         const sp = Math.hypot(o.vx, o.vy);
         if (sp > MAX_SPEED){
           const s = MAX_SPEED / sp;
           o.vx *= s; o.vy *= s;
         }
+
+        // enforce minimum cruising speed (prevents “sitting”)
+        if (sp < MIN_SPEED){
+          const s = MIN_SPEED / Math.max(sp, 0.0001);
+          o.vx *= s; o.vy *= s;
+        }
       });
 
-      // 2) separation solver (hard no-touch, including blur buffer)
+      // 2) separation solver (keeps them from touching / blending)
       for (let pass = 0; pass < SOLVER_PASSES; pass++){
         for (let i=0; i<blobs.length; i++){
           for (let j=i+1; j<blobs.length; j++){
@@ -262,15 +270,10 @@
               const overlap = (minDist - dist);
               const ux = dx / dist, uy = dy / dist;
 
-              // hard position separation
+              // position-only separation (less “darty” than velocity pushes)
               const sep = overlap * SEPARATE_RATIO * 0.5;
               a.x -= ux * sep; a.y -= uy * sep;
               c.x += ux * sep; c.y += uy * sep;
-
-              // gentle velocity separation (prevents re-clumping without darting)
-              const force = overlap * REPEL;
-              a.vx -= ux * force; a.vy -= uy * force;
-              c.vx += ux * force; c.vy += uy * force;
             }
           }
         }
@@ -298,7 +301,7 @@
       requestAnimationFrame(animate);
     }
 
-    animate();
+    requestAnimationFrame(animate);
   }
 })();
 </script>
