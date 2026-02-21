@@ -4,19 +4,6 @@
   <meta charset="utf-8" />
   <title>DIGITAL RESIDUE — Visualization</title>
   <link rel="stylesheet" href="./style.css?v=1012">
-
-  <!-- NEW: click pulse (expands to fill page, then returns) -->
-  <style>
-    .blob.pulse-on{
-      animation: blobPulse 650ms ease-out 1;
-      z-index: 9999;
-    }
-    @keyframes blobPulse{
-      0%   { transform: translate(var(--tx), var(--ty)) scale(1); opacity: 0.92; }
-      45%  { transform: translate(var(--tx), var(--ty)) scale(7.5); opacity: 0.55; }
-      100% { transform: translate(var(--tx), var(--ty)) scale(1); opacity: 0.88; }
-    }
-  </style>
 </head>
 
 <body data-page="viz">
@@ -162,6 +149,35 @@
       };
     }
 
+    // NEW: ensures the pulsing blob never "stays on top" and blocks other clicks
+    function triggerPulse(el, x, y){
+      // stop any old pulse on all blobs so nothing stays at z-index 9999
+      document.querySelectorAll(".blob.pulse-on").forEach(b => {
+        b.classList.remove("pulse-on");
+        b.style.pointerEvents = "";
+      });
+
+      // use CURRENT position for the pulse
+      el.style.setProperty("--x", `${x}px`);
+      el.style.setProperty("--y", `${y}px`);
+
+      // temporarily don't catch clicks while expanded
+      el.style.pointerEvents = "none";
+
+      // restart animation reliably
+      el.classList.remove("pulse-on");
+      void el.offsetWidth;
+      el.classList.add("pulse-on");
+
+      // remove pulse class when animation ends (so it doesn't stay stuck)
+      const onEnd = () => {
+        el.classList.remove("pulse-on");
+        el.style.pointerEvents = "";
+        el.removeEventListener("animationend", onEnd);
+      };
+      el.addEventListener("animationend", onEnd);
+    }
+
     // build
     ITEMS.forEach((item, idx) => {
       const h = Number(item.hours || 0);
@@ -205,12 +221,8 @@
         document.querySelectorAll(".blob").forEach(b => b.classList.remove("active"));
         el.classList.add("active");
 
-        // NEW: pulse expand (without breaking JS transform movement)
-        el.style.setProperty("--tx", `${blobs[idx].x}px`);
-        el.style.setProperty("--ty", `${blobs[idx].y}px`);
-        el.classList.remove("pulse-on");
-        void el.offsetWidth; // restart animation reliably
-        el.classList.add("pulse-on");
+        // pulse (uses the blob's CURRENT sim position)
+        triggerPulse(el, blobs[idx].x, blobs[idx].y);
 
         showTip(blobs[idx].label, e.clientX, e.clientY);
       });
