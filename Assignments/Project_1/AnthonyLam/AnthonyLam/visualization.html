@@ -94,21 +94,21 @@
     // Separation buffers:
     // PHYS_GAP keeps circle math apart
     // VISUAL_GAP keeps blur/gradient from visually blending
-    const PHYS_GAP   = 120;
-    const VISUAL_GAP = 120;
+    const PHYS_GAP   = 180;
+    const VISUAL_GAP = 140;
 
     // Solver stability
-    const SOLVER_PASSES  = 28;
-    const SEPARATE_RATIO = 0.82;
+    const SOLVER_PASSES  = 70;
+    const SEPARATE_RATIO = 0.95;
 
     // Movement (screensaver)
-    const MAX_SPEED = 9.5;
-    const MIN_SPEED = 3.5;
-    const DAMP      = 0.996;
-    const BOUNCE    = 1.02;
+    const MAX_SPEED = 6.2;
+    const MIN_SPEED = 2.8;
+    const DAMP      = 0.992;
+    const BOUNCE    = 1.01;
 
     // Gentle constant drift (keeps it alive)
-    const DRIFT = 0.10;
+    const DRIFT = 0.09;
 
     // Tooltip timing
     const TIP_MS = 1000;
@@ -264,10 +264,16 @@
     function animate(){
       const b = getBounds();
 
-      // 1) drift (keeps them moving)
+      // 1) drift (keeps them moving) — smooth "lava lamp" push (not jittery)
       blobs.forEach(o => {
-        o.vx += (Math.random() - 0.5) * DRIFT;
-        o.vy += (Math.random() - 0.5) * DRIFT;
+        const t = performance.now();
+
+        o.vx += Math.sin(t * 0.0007 + o.r)    * DRIFT * 0.22;
+        o.vy += Math.cos(t * 0.0006 + o.size) * DRIFT * 0.22;
+
+        // tiny randomness so paths aren’t identical
+        o.vx += (Math.random() - 0.5) * DRIFT * 0.10;
+        o.vy += (Math.random() - 0.5) * DRIFT * 0.10;
 
         // clamp speed
         let sp = Math.hypot(o.vx, o.vy) || 0.0001;
