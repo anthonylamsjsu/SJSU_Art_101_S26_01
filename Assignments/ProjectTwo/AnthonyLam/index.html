@@ -1,50 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SocialScore</title>
-
-  <!-- GOOGLE FONT -->
   <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600&display=swap" rel="stylesheet">
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
-  <!-- BACKGROUND BLOBS -->
   <div class="background">
+    <div class="ambient ambient-1"></div>
+    <div class="ambient ambient-2"></div>
+    <div class="noise"></div>
     <div class="blob blob1"></div>
     <div class="blob blob2"></div>
     <div class="blob blob3"></div>
+    <div class="blob blob4"></div>
   </div>
 
-  <!-- MAIN GLASS UI -->
-  <div class="glass">
-
-    <h1 class="logo">SOCIALSCORE</h1>
-
-    <div class="card">
-      <h2>Score</h2>
-      <p id="score">742</p>
+  <main class="glass" id="glassPanel">
+    <div class="topbar">
+      <h1 class="logo">SOCIALSCORE</h1>
+      <div class="status-badge">Tier 03 • Verified</div>
     </div>
 
-    <div class="card">
-      <h2>Reputation Trend</h2>
-
-      <div class="graph">
-        <div class="bar" style="height:40%"></div>
-        <div class="bar" style="height:60%"></div>
-        <div class="bar" style="height:50%"></div>
-        <div class="bar" style="height:80%"></div>
+    <section class="hero">
+      <div class="hero-left">
+        <p class="eyebrow">Current SocialScore</p>
+        <div class="score-wrap">
+          <h2 id="score">742</h2>
+          <span class="score-max">/ 1000</span>
+        </div>
+        <p class="subtitle">Reputation is the new currency.</p>
       </div>
-    </div>
 
-  </div>
+      <div class="hero-right card hero-card">
+        <p class="mini-label">Access Level</p>
+        <h3>Trusted Citizen</h3>
+        <p class="muted">Priority access to jobs, loans, and invite-only experiences.</p>
+      </div>
+    </section>
 
-  <!-- JS -->
+    <section class="grid">
+      <div class="card">
+        <h3>Score Activity</h3>
+        <div class="activity-list">
+          <div class="activity-item">
+            <span>Community Service Verified</span>
+            <strong class="plus">+15</strong>
+          </div>
+          <div class="activity-item">
+            <span>Rent Payment On Time</span>
+            <strong class="plus">+5</strong>
+          </div>
+          <div class="activity-item">
+            <span>Peer Endorsement Received</span>
+            <strong class="plus">+12</strong>
+          </div>
+          <div class="activity-item">
+            <span>Late Utility Payment</span>
+            <strong class="minus">-3</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Reputation Trend</h3>
+        <div class="graph">
+          <div class="bar" style="height: 34%"></div>
+          <div class="bar" style="height: 56%"></div>
+          <div class="bar" style="height: 49%"></div>
+          <div class="bar" style="height: 72%"></div>
+          <div class="bar" style="height: 68%"></div>
+          <div class="bar" style="height: 84%"></div>
+        </div>
+      </div>
+
+      <div class="card wide">
+        <div class="card-head">
+          <h3>Unlocked Opportunities</h3>
+          <span class="card-chip">3 Active</span>
+        </div>
+
+        <div class="opportunities">
+          <div class="op-card">
+            <p class="mini-label">Employment</p>
+            <h4>Priority Job Matching</h4>
+            <span class="unlock-pill">Unlocked</span>
+          </div>
+
+          <div class="op-card">
+            <p class="mini-label">Finance</p>
+            <h4>Fast Track Loan Review</h4>
+            <span class="unlock-pill">Unlocked</span>
+          </div>
+
+          <div class="op-card">
+            <p class="mini-label">Culture</p>
+            <h4>Exclusive Event Access</h4>
+            <span class="unlock-pill">Unlocked</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
   <script src="script.js"></script>
-
 </body>
 </html>
