@@ -1,0 +1,130 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #050505;
+  color: white;
+  overflow: hidden;
+}
+
+/* BACKGROUND BLOBS */
+.background {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.blob {
+  position: absolute;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  filter: blur(140px);
+  opacity: 0.55;
+  animation: float 20s infinite ease-in-out;
+}
+
+.blob1 {
+  background: #00ff99;
+  top: -200px;
+  left: -200px;
+}
+
+.blob2 {
+  background: #66ffcc;
+  bottom: -200px;
+  right: -200px;
+  animation-delay: 5s;
+}
+
+.blob3 {
+  background: #00cc66;
+  top: 40%;
+  left: 40%;
+  animation-delay: 10s;
+}
+
+/* FLOAT ANIMATION */
+@keyframes float {
+  0%   { transform: translate(0, 0); }
+  50%  { transform: translate(100px, -80px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* GLASS PANEL */
+.glass {
+  position: relative;
+  z-index: 2;
+  width: 85%;
+  max-width: 900px;
+  margin: 80px auto;
+  padding: 50px;
+
+  backdrop-filter: blur(40px);
+  background: rgba(255, 255, 255, 0.04);
+
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow: 0 20px 80px rgba(0,0,0,0.6);
+}
+
+/* LOGO */
+.logo {
+  text-align: center;
+  font-size: 32px;
+  letter-spacing: 6px;
+  margin-bottom: 40px;
+
+  color: #aaffdd;
+}
+
+/* CARDS */
+.card {
+  margin-top: 25px;
+  padding: 25px;
+
+  border-radius: 18px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.06);
+
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  background: rgba(255,255,255,0.08);
+}
+
+/* SCORE */
+#score {
+  font-size: 48px;
+  margin-top: 10px;
+  color: #00ff99;
+}
+
+/* GRAPH */
+.graph {
+  display: flex;
+  gap: 12px;
+  height: 120px;
+  align-items: flex-end;
+  margin-top: 20px;
+}
+
+.bar {
+  width: 20px;
+  border-radius: 6px;
+  background: linear-gradient(to top, #00ff99, #66ffcc);
+  transition: 0.3s;
+}
+
+.bar:hover {
+  transform: scaleY(1.2);
+}
