@@ -344,10 +344,28 @@ body {
 .graph {
   display: flex;
   align-items: flex-end;
+  justify-content: space-between;
   gap: 16px;
-  height: 160px;
+  height: 190px;
   margin-top: 12px;
   padding: 8px 0;
+}
+
+.bar-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  height: 100%;
+  flex: 1;
+}
+
+.bar-group span {
+  font-size: 10px;
+  letter-spacing: 1px;
+  opacity: 0.6;
+  color: var(--muted);
 }
 
 .bar {
@@ -432,5 +450,9 @@ body {
   .topbar {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .graph {
+    gap: 10px;
   }
 }
