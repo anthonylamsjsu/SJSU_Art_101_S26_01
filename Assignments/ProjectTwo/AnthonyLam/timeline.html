@@ -1,31 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SocialScore — Timeline</title>
 
-  <!-- FONT -->
   <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600&display=swap" rel="stylesheet">
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
-  <!-- BACKGROUND -->
   <div class="background">
+    <div class="noise"></div>
     <div class="blob blob1"></div>
     <div class="blob blob2"></div>
     <div class="blob blob3"></div>
     <div class="blob blob4"></div>
-    <div class="noise"></div>
   </div>
 
-  <!-- MAIN -->
-  <div class="glass">
+  <main class="glass">
 
-    <!-- NAV -->
     <div class="topbar">
       <div class="logo">SOCIALSCORE</div>
       <div>
@@ -34,40 +29,60 @@
       </div>
     </div>
 
-    <!-- TITLE -->
-    <h2 style="margin-bottom: 20px;">Reputation History</h2>
+    <section class="card">
+      <h3>Reputation Timeline</h3>
+      <p class="subtitle" style="margin-bottom: 20px;">
+        A record of how your SocialScore has changed over time.
+      </p>
 
-    <!-- TIMELINE LIST -->
-    <div class="activity-list">
+      <div class="activity-list">
+        <div class="activity-item">
+          <span>2026-03-18 • Community event attendance</span>
+          <strong class="plus">+15</strong>
+        </div>
 
-      <div class="activity-item">
-        <span>Paid rent on time</span>
-        <span class="plus">+12</span>
+        <div class="activity-item">
+          <span>2026-03-16 • Public courtesy report</span>
+          <strong class="plus">+8</strong>
+        </div>
+
+        <div class="activity-item">
+          <span>2026-03-14 • Missed class attendance</span>
+          <strong class="minus">-6</strong>
+        </div>
+
+        <div class="activity-item">
+          <span>2026-03-11 • Rent payment on time</span>
+          <strong class="plus">+5</strong>
+        </div>
+
+        <div class="activity-item">
+          <span>2026-03-08 • Late utility payment</span>
+          <strong class="minus">-3</strong>
+        </div>
+
+        <div class="activity-item">
+          <span>2026-03-04 • Peer endorsement received</span>
+          <strong class="plus">+12</strong>
+        </div>
       </div>
+    </section>
 
-      <div class="activity-item">
-        <span>Missed class attendance</span>
-        <span class="minus">-8</span>
+    <section class="card" style="margin-top: 20px;">
+      <h3>Score Trend</h3>
+
+      <div class="graph">
+        <div class="bar" style="height: 28%;"></div>
+        <div class="bar" style="height: 40%;"></div>
+        <div class="bar" style="height: 36%;"></div>
+        <div class="bar" style="height: 48%;"></div>
+        <div class="bar" style="height: 60%;"></div>
+        <div class="bar" style="height: 72%;"></div>
       </div>
+    </section>
 
-      <div class="activity-item">
-        <span>5-star restaurant review</span>
-        <span class="plus">+6</span>
-      </div>
+  </main>
 
-      <div class="activity-item">
-        <span>Late bill payment</span>
-        <span class="minus">-10</span>
-      </div>
-
-      <div class="activity-item">
-        <span>Community event participation</span>
-        <span class="plus">+15</span>
-      </div>
-
-    </div>
-
-  </div>
-
+  <script src="script.js"></script>
 </body>
 </html>
