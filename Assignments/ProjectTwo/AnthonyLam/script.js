@@ -3,12 +3,25 @@ let score = 742;
 const scoreEl = document.getElementById("score");
 const statusLabel = document.getElementById("statusLabel");
 const statusDesc = document.getElementById("statusDesc");
+const slider = document.getElementById("scoreSlider");
 
 const blob1 = document.getElementById("blob1");
 const blob2 = document.getElementById("blob2");
 const blob3 = document.getElementById("blob3");
 const blob4 = document.getElementById("blob4");
 
+/* SLIDER CONTROL */
+function updateScoreFromSlider(value) {
+  score = parseInt(value);
+
+  if (scoreEl) {
+    scoreEl.textContent = score;
+  }
+
+  updateThemeByScore();
+}
+
+/* (Optional fallback if buttons exist) */
 function changeScore(amount) {
   score += amount;
 
@@ -19,9 +32,15 @@ function changeScore(amount) {
     scoreEl.textContent = score;
   }
 
+  // sync slider position if used
+  if (slider) {
+    slider.value = score;
+  }
+
   updateThemeByScore();
 }
 
+/* MAIN THEME LOGIC */
 function updateThemeByScore() {
   if (score >= 700) {
     document.body.style.background =
@@ -37,6 +56,7 @@ function updateThemeByScore() {
       statusDesc.textContent =
         "Eligible for priority services, financial access, and exclusive social spaces.";
     }
+
   } else if (score >= 400) {
     document.body.style.background =
       "radial-gradient(circle at 20% 0%, rgba(255,210,120,0.10), transparent 28%), radial-gradient(circle at 80% 10%, rgba(255,170,90,0.08), transparent 24%), linear-gradient(180deg, #120d08 0%, #0c0907 100%)";
@@ -51,6 +71,7 @@ function updateThemeByScore() {
       statusDesc.textContent =
         "Your access remains active, but behavioral fluctuations are under review.";
     }
+
   } else {
     document.body.style.background =
       "radial-gradient(circle at 20% 0%, rgba(255,110,130,0.10), transparent 28%), radial-gradient(circle at 80% 10%, rgba(255,80,100,0.08), transparent 24%), linear-gradient(180deg, #14080b 0%, #0b0507 100%)";
@@ -68,4 +89,5 @@ function updateThemeByScore() {
   }
 }
 
+/* INITIAL LOAD */
 updateThemeByScore();
