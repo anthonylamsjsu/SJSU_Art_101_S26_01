@@ -1,17 +1,11 @@
-const blobs = document.querySelectorAll(".blob");
+let score = 742;
 
-blobs.forEach(blob => {
-  let x = Math.random() * window.innerWidth;
-  let y = Math.random() * window.innerHeight;
+function changeScore(amount) {
+  score += amount;
 
-  function move() {
-    x += (Math.random() - 0.5) * 2;
-    y += (Math.random() - 0.5) * 2;
+  // prevent going below 0 or above 1000 (optional but nice)
+  if (score < 0) score = 0;
+  if (score > 1000) score = 1000;
 
-    blob.style.transform = `translate(${x}px, ${y}px)`;
-
-    requestAnimationFrame(move);
-  }
-
-  move();
-});
+  document.getElementById("score").textContent = score;
+}
