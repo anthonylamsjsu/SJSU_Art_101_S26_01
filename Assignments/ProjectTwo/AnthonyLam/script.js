@@ -58,18 +58,27 @@ function getScoreColor(t) {
 function setCardState(card, label, state) {
   if (!card || !label) return;
 
+  const lockIcon = `
+    <span class="lock-icon">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="5" y="10" width="14" height="10" rx="3" stroke="white" stroke-width="1.5"/>
+        <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="white" stroke-width="1.5"/>
+      </svg>
+    </span>
+  `;
+
   if (state === "Unlocked") {
     card.style.opacity = "1";
     card.style.filter = "none";
-    label.textContent = "Unlocked";
+    label.innerHTML = "Unlocked";
   } else if (state === "Limited") {
     card.style.opacity = "0.75";
     card.style.filter = "saturate(0.8)";
-    label.textContent = "Limited";
+    label.innerHTML = "Limited";
   } else {
     card.style.opacity = "0.45";
     card.style.filter = "grayscale(0.35)";
-    label.textContent = "Locked";
+    label.innerHTML = `${lockIcon}Locked`;
   }
 }
 
