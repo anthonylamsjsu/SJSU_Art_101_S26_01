@@ -42,11 +42,16 @@
           Your reputation determines access, trust, and opportunity.
         </p>
 
-        <div class="controls">
-          <button onclick="changeScore(10)">+ Score</button>
-          <button onclick="changeScore(-10)">- Score</button>
-        </div>
-      </div>
+     <div class="controls">
+  <input 
+    type="range" 
+    min="0" 
+    max="1000" 
+    value="742" 
+    id="scoreSlider"
+    oninput="updateScoreFromSlider(this.value)"
+  />
+</div>
 
       <div class="hero-right card">
         <p class="mini-label">Access Level</p>
