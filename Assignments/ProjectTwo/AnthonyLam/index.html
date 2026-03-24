@@ -5,16 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SocialScore</title>
 
-  <!-- FONT -->
   <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600&display=swap" rel="stylesheet">
-
-  <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
-  <!-- BACKGROUND -->
   <div class="background">
     <div class="noise"></div>
     <div class="blob blob1"></div>
@@ -23,18 +19,17 @@
     <div class="blob blob4"></div>
   </div>
 
-  <!-- MAIN PANEL -->
   <main class="glass" id="glassPanel">
 
-    <!-- TOP BAR -->
     <div class="topbar">
       <h1 class="logo">SOCIALSCORE</h1>
-      <div class="status-badge">Tier 03 • Verified</div>
+      <div>
+        <a href="index.html" style="margin-right:15px; color:white;">Dashboard</a>
+        <a href="timeline.html" style="color:white;">Timeline</a>
+      </div>
     </div>
 
-    <!-- HERO -->
     <section class="hero">
-
       <div class="hero-left">
         <p class="eyebrow">Current SocialScore</p>
 
@@ -46,6 +41,11 @@
         <p class="subtitle">
           Your reputation determines access, trust, and opportunity.
         </p>
+
+        <div class="controls">
+          <button onclick="changeScore(10)">+ Score</button>
+          <button onclick="changeScore(-10)">- Score</button>
+        </div>
       </div>
 
       <div class="hero-right card">
@@ -55,13 +55,10 @@
           Eligible for priority services, financial access, and exclusive social spaces.
         </p>
       </div>
-
     </section>
 
-    <!-- GRID -->
     <section class="grid">
 
-      <!-- ACTIVITY -->
       <div class="card">
         <h3>Score Activity</h3>
 
@@ -88,30 +85,26 @@
         </div>
       </div>
 
-      <!-- GRAPH -->
       <div class="card">
         <h3>Reputation Trend</h3>
 
         <div class="graph">
-          <div class="bar" style="height: 34%"></div>
-          <div class="bar" style="height: 56%"></div>
-          <div class="bar" style="height: 49%"></div>
-          <div class="bar" style="height: 72%"></div>
-          <div class="bar" style="height: 68%"></div>
-          <div class="bar" style="height: 84%"></div>
+          <div class="bar" style="height: 34%;"></div>
+          <div class="bar" style="height: 56%;"></div>
+          <div class="bar" style="height: 49%;"></div>
+          <div class="bar" style="height: 72%;"></div>
+          <div class="bar" style="height: 68%;"></div>
+          <div class="bar" style="height: 84%;"></div>
         </div>
       </div>
 
-      <!-- OPPORTUNITIES -->
       <div class="card wide">
-
         <div class="card-head">
           <h3>Unlocked Opportunities</h3>
           <span class="card-chip">3 Active</span>
         </div>
 
         <div class="opportunities">
-
           <div class="op-card">
             <p class="mini-label">Employment</p>
             <h4>Priority Job Matching</h4>
@@ -129,17 +122,13 @@
             <h4>Exclusive Event Access</h4>
             <span class="unlock-pill">Unlocked</span>
           </div>
-
         </div>
-
       </div>
 
     </section>
 
   </main>
 
-  <!-- JS -->
   <script src="script.js"></script>
-
 </body>
 </html>
