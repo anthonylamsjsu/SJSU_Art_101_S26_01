@@ -43,11 +43,11 @@
         </p>
 
         <div class="controls">
-          <input 
-            type="range" 
-            min="0" 
-            max="1000" 
-            value="742" 
+          <input
+            type="range"
+            min="0"
+            max="1000"
+            value="742"
             id="scoreSlider"
             oninput="updateScoreFromSlider(this.value)"
           />
@@ -95,12 +95,35 @@
         <h3>Reputation Trend</h3>
 
         <div class="graph">
-          <div class="bar" style="height: 34%;"></div>
-          <div class="bar" style="height: 56%;"></div>
-          <div class="bar" style="height: 49%;"></div>
-          <div class="bar" style="height: 72%;"></div>
-          <div class="bar" style="height: 68%;"></div>
-          <div class="bar" style="height: 84%;"></div>
+          <div class="bar-group">
+            <div class="bar" style="height: 34%;"></div>
+            <span>JAN</span>
+          </div>
+
+          <div class="bar-group">
+            <div class="bar" style="height: 56%;"></div>
+            <span>FEB</span>
+          </div>
+
+          <div class="bar-group">
+            <div class="bar" style="height: 49%;"></div>
+            <span>MAR</span>
+          </div>
+
+          <div class="bar-group">
+            <div class="bar" style="height: 72%;"></div>
+            <span>APR</span>
+          </div>
+
+          <div class="bar-group">
+            <div class="bar" style="height: 68%;"></div>
+            <span>MAY</span>
+          </div>
+
+          <div class="bar-group">
+            <div class="bar" style="height: 84%;"></div>
+            <span>JUN</span>
+          </div>
         </div>
       </div>
 
