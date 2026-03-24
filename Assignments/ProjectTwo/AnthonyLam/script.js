@@ -1,49 +1,146 @@
 let score = 742;
 
 const scoreEl = document.getElementById("score");
-const statusEl = document.getElementById("status");
+const statusLabel = document.getElementById("statusLabel");
+const statusDesc = document.getElementById("statusDesc");
+const slider = document.getElementById("scoreSlider");
 
 const blob1 = document.getElementById("blob1");
 const blob2 = document.getElementById("blob2");
 const blob3 = document.getElementById("blob3");
 const blob4 = document.getElementById("blob4");
 
-function updateScore(value) {
-  score = parseInt(value);
+const opportunityCount = document.getElementById("opportunityCount");
+const jobCard = document.getElementById("jobCard");
+const loanCard = document.getElementById("loanCard");
+const eventCard = document.getElementById("eventCard");
 
-  scoreEl.textContent = score;
+const jobStatus = document.getElementById("jobStatus");
+const loanStatus = document.getElementById("loanStatus");
+const eventStatus = document.getElementById("eventStatus");
 
-  updateTheme();
+function updateScoreFromSlider(value) {
+  score = parseInt(value, 10);
+
+  if (scoreEl) {
+    scoreEl.textContent = score;
+  }
+
+  updateThemeByScore();
 }
 
-function updateTheme() {
-  let color;
+function lerp(start, end, t) {
+  return start + (end - start) * t;
+}
+
+function rgba(r, g, b, a = 1) {
+  return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a})`;
+}
+
+function getScoreColor(t) {
+  let r, g, b;
+
+  if (t < 0.5) {
+    const mid = t / 0.5;
+    r = lerp(255, 255, mid);
+    g = lerp(92, 201, mid);
+    b = lerp(114, 120, mid);
+  } else {
+    const mid = (t - 0.5) / 0.5;
+    r = lerp(255, 95, mid);
+    g = lerp(201, 242, mid);
+    b = lerp(120, 172, mid);
+  }
+
+  return { r, g, b };
+}
+
+function setCardState(card, label, state) {
+  if (!card || !label) return;
+
+  const lockIcon = `
+    <span class="lock-icon">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="5" y="10" width="14" height="10" rx="3" stroke="white" stroke-width="1.5"/>
+        <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="white" stroke-width="1.5"/>
+      </svg>
+    </span>
+  `;
+
+  if (state === "Unlocked") {
+    card.style.opacity = "1";
+    card.style.filter = "none";
+    label.innerHTML = "Unlocked";
+  } else if (state === "Limited") {
+    card.style.opacity = "0.75";
+    card.style.filter = "saturate(0.8)";
+    label.innerHTML = "Limited";
+  } else {
+    card.style.opacity = "0.45";
+    card.style.filter = "grayscale(0.35)";
+    label.innerHTML = `${lockIcon}Locked`;
+  }
+}
+
+function updateOpportunities() {
+  if (score >= 700) {
+    if (opportunityCount) opportunityCount.textContent = "3 Active";
+    setCardState(jobCard, jobStatus, "Unlocked");
+    setCardState(loanCard, loanStatus, "Unlocked");
+    setCardState(eventCard, eventStatus, "Unlocked");
+  } else if (score >= 400) {
+    if (opportunityCount) opportunityCount.textContent = "2 Active";
+    setCardState(jobCard, jobStatus, "Unlocked");
+    setCardState(loanCard, loanStatus, "Limited");
+    setCardState(eventCard, eventStatus, "Unlocked");
+  } else {
+    if (opportunityCount) opportunityCount.textContent = "1 Active";
+    setCardState(jobCard, jobStatus, "Limited");
+    setCardState(loanCard, loanStatus, "Locked");
+    setCardState(eventCard, eventStatus, "Locked");
+  }
+}
+
+function updateThemeByScore() {
+  const t = score / 1000;
+  const { r, g, b } = getScoreColor(t);
+
+  document.body.style.background = `
+    radial-gradient(circle at 20% 0%, ${rgba(r, g, b, 0.10)}, transparent 28%),
+    radial-gradient(circle at 80% 10%, ${rgba(r, g, b, 0.08)}, transparent 24%),
+    linear-gradient(180deg, #0a0b10 0%, #070a08 100%)
+  `;
+
+  if (blob1) blob1.style.background = `radial-gradient(circle, ${rgba(r + 20, g + 20, b + 20, 0.85)}, transparent 70%)`;
+  if (blob2) blob2.style.background = `radial-gradient(circle, ${rgba(r, g, b, 0.75)}, transparent 70%)`;
+  if (blob3) blob3.style.background = `radial-gradient(circle, ${rgba(r - 10, g - 10, b - 10, 0.70)}, transparent 70%)`;
+  if (blob4) blob4.style.background = `radial-gradient(circle, ${rgba(r + 30, g + 30, b + 30, 0.35)}, transparent 70%)`;
 
   if (score >= 700) {
-    color = "green";
-    statusEl.textContent = "Trusted Citizen";
+    if (statusLabel) statusLabel.textContent = "Trusted Citizen";
+    if (statusDesc) {
+      statusDesc.textContent =
+        "Eligible for priority services, financial access, and exclusive social spaces.";
+    }
   } else if (score >= 400) {
-    color = "orange";
-    statusEl.textContent = "Monitored Citizen";
+    if (statusLabel) statusLabel.textContent = "Monitored Citizen";
+    if (statusDesc) {
+      statusDesc.textContent =
+        "Your access remains active, but behavioral fluctuations are under review.";
+    }
   } else {
-    color = "red";
-    statusEl.textContent = "Restricted Citizen";
+    if (statusLabel) statusLabel.textContent = "Restricted Citizen";
+    if (statusDesc) {
+      statusDesc.textContent =
+        "Access to services, financial tools, and social privileges is currently limited.";
+    }
   }
 
-  if (color === "green") {
-    blob1.style.background = "radial-gradient(circle, #5ff2ac, transparent)";
-    blob2.style.background = "radial-gradient(circle, #8dffcc, transparent)";
-  }
+  updateOpportunities();
 
-  if (color === "orange") {
-    blob1.style.background = "radial-gradient(circle, #ffc978, transparent)";
-    blob2.style.background = "radial-gradient(circle, #ffb15c, transparent)";
-  }
-
-  if (color === "red") {
-    blob1.style.background = "radial-gradient(circle, #ff5c72, transparent)";
-    blob2.style.background = "radial-gradient(circle, #ff7a8f, transparent)";
+  if (slider) {
+    slider.value = score;
   }
 }
 
-updateTheme();
+updateThemeByScore();
