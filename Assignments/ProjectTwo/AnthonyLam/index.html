@@ -19,47 +19,42 @@
     <div class="blob blob4" id="blob4"></div>
   </div>
 
-  <main class="glass" id="glassPanel">
+  <main class="glass">
 
     <div class="topbar">
-      <h1 class="logo animate" id="logoText">SOCIALSCORE</h1>
+      <h1 class="logo">SOCIALSCORE</h1>
       <div>
-        <a href="index.html" style="margin-right:15px; color:white;">Dashboard</a>
-        <a href="timeline.html" style="color:white;">Timeline</a>
+        <a href="index.html">Dashboard</a>
+        <a href="timeline.html">Timeline</a>
       </div>
     </div>
 
     <section class="hero">
-      <div class="hero-left">
+      <div>
         <p class="eyebrow">Current SocialScore</p>
 
         <div class="score-wrap">
           <h2 id="score">742</h2>
-          <span class="score-max">/ 1000</span>
+          <span>/ 1000</span>
         </div>
 
         <p class="subtitle">
           Your reputation determines access, trust, and opportunity.
         </p>
 
-        <div class="controls">
-          <input
-            type="range"
-            min="0"
-            max="1000"
-            value="742"
-            id="scoreSlider"
-            oninput="updateScoreFromSlider(this.value)"
-          />
-        </div>
+        <input
+          type="range"
+          min="0"
+          max="1000"
+          value="742"
+          id="scoreSlider"
+          oninput="updateScore(this.value)"
+        />
       </div>
 
-      <div class="hero-right card">
-        <p class="mini-label">Access Level</p>
-        <h3 id="statusLabel">Trusted Citizen</h3>
-        <p class="muted" id="statusDesc">
-          Eligible for priority services, financial access, and exclusive social spaces.
-        </p>
+      <div class="card">
+        <p>Access Level</p>
+        <h3 id="status">Trusted Citizen</h3>
       </div>
     </section>
 
@@ -67,28 +62,9 @@
 
       <div class="card">
         <h3>Score Activity</h3>
-
-        <div class="activity-list">
-          <div class="activity-item">
-            <span>Community Service Verified</span>
-            <strong class="plus">+15</strong>
-          </div>
-
-          <div class="activity-item">
-            <span>On-Time Rent Payment</span>
-            <strong class="plus">+5</strong>
-          </div>
-
-          <div class="activity-item">
-            <span>Peer Endorsement</span>
-            <strong class="plus">+12</strong>
-          </div>
-
-          <div class="activity-item">
-            <span>Late Utility Payment</span>
-            <strong class="minus">-3</strong>
-          </div>
-        </div>
+        <p>Community Service +15</p>
+        <p>Rent Paid +5</p>
+        <p>Late Payment -3</p>
       </div>
 
       <div class="card">
@@ -96,60 +72,20 @@
 
         <div class="graph">
           <div class="bar-group">
-            <div class="bar" style="height: 34%;"></div>
+            <div class="bar good" style="height:40%"></div>
             <span>JAN</span>
           </div>
-
           <div class="bar-group">
-            <div class="bar" style="height: 56%;"></div>
+            <div class="bar mid" style="height:60%"></div>
             <span>FEB</span>
           </div>
-
           <div class="bar-group">
-            <div class="bar" style="height: 49%;"></div>
+            <div class="bar bad" style="height:30%"></div>
             <span>MAR</span>
           </div>
-
           <div class="bar-group">
-            <div class="bar" style="height: 72%;"></div>
+            <div class="bar good" style="height:80%"></div>
             <span>APR</span>
-          </div>
-
-          <div class="bar-group">
-            <div class="bar" style="height: 68%;"></div>
-            <span>MAY</span>
-          </div>
-
-          <div class="bar-group">
-            <div class="bar" style="height: 84%;"></div>
-            <span>JUN</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="card wide">
-        <div class="card-head">
-          <h3>Unlocked Opportunities</h3>
-          <span class="card-chip" id="opportunityCount">3 Active</span>
-        </div>
-
-        <div class="opportunities">
-          <div class="op-card" id="jobCard">
-            <p class="mini-label">Employment</p>
-            <h4>Priority Job Matching</h4>
-            <span class="unlock-pill" id="jobStatus">Unlocked</span>
-          </div>
-
-          <div class="op-card" id="loanCard">
-            <p class="mini-label">Finance</p>
-            <h4>Fast Track Loan Review</h4>
-            <span class="unlock-pill" id="loanStatus">Unlocked</span>
-          </div>
-
-          <div class="op-card" id="eventCard">
-            <p class="mini-label">Culture</p>
-            <h4>Exclusive Event Access</h4>
-            <span class="unlock-pill" id="eventStatus">Unlocked</span>
           </div>
         </div>
       </div>
