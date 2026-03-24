@@ -10,6 +10,15 @@ const blob2 = document.getElementById("blob2");
 const blob3 = document.getElementById("blob3");
 const blob4 = document.getElementById("blob4");
 
+const opportunityCount = document.getElementById("opportunityCount");
+const jobCard = document.getElementById("jobCard");
+const loanCard = document.getElementById("loanCard");
+const eventCard = document.getElementById("eventCard");
+
+const jobStatus = document.getElementById("jobStatus");
+const loanStatus = document.getElementById("loanStatus");
+const eventStatus = document.getElementById("eventStatus");
+
 function updateScoreFromSlider(value) {
   score = parseInt(value, 10);
 
@@ -46,6 +55,43 @@ function getScoreColor(t) {
   return { r, g, b };
 }
 
+function setCardState(card, label, state) {
+  if (!card || !label) return;
+
+  if (state === "Unlocked") {
+    card.style.opacity = "1";
+    card.style.filter = "none";
+    label.textContent = "Unlocked";
+  } else if (state === "Limited") {
+    card.style.opacity = "0.75";
+    card.style.filter = "saturate(0.8)";
+    label.textContent = "Limited";
+  } else {
+    card.style.opacity = "0.45";
+    card.style.filter = "grayscale(0.35)";
+    label.textContent = "Locked";
+  }
+}
+
+function updateOpportunities() {
+  if (score >= 700) {
+    if (opportunityCount) opportunityCount.textContent = "3 Active";
+    setCardState(jobCard, jobStatus, "Unlocked");
+    setCardState(loanCard, loanStatus, "Unlocked");
+    setCardState(eventCard, eventStatus, "Unlocked");
+  } else if (score >= 400) {
+    if (opportunityCount) opportunityCount.textContent = "2 Active";
+    setCardState(jobCard, jobStatus, "Unlocked");
+    setCardState(loanCard, loanStatus, "Limited");
+    setCardState(eventCard, eventStatus, "Unlocked");
+  } else {
+    if (opportunityCount) opportunityCount.textContent = "1 Active";
+    setCardState(jobCard, jobStatus, "Limited");
+    setCardState(loanCard, loanStatus, "Locked");
+    setCardState(eventCard, eventStatus, "Locked");
+  }
+}
+
 function updateThemeByScore() {
   const t = score / 1000;
   const { r, g, b } = getScoreColor(t);
@@ -80,6 +126,8 @@ function updateThemeByScore() {
         "Access to services, financial tools, and social privileges is currently limited.";
     }
   }
+
+  updateOpportunities();
 
   if (slider) {
     slider.value = score;
